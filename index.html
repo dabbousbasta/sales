@@ -2,56 +2,127 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>مبيعات دبوس البسطة</title>
   <!-- SheetJS -->
   <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 20px;
+      margin: 10px;
+      padding: 0;
       background-color: #f7f7f7;
+      font-size: 1rem;
     }
+
+    /* تحسين على الموبايل */
+    @media (max-width: 768px) {
+      body {
+        font-size: 1.1rem;
+      }
+    }
+
     .logo-container {
       text-align: center;
+      margin-bottom: 10px;
     }
     .logo-container img {
       max-height: 80px;
-      margin-bottom: 10px;
     }
+
     .controls {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 15px;
+      gap: 8px;
+      margin: 10px 0 15px;
+      padding: 8px 0;
+      background: #fff;
+      border-radius: 6px;
+      border: 1px solid #ddd;
     }
     .controls label {
       white-space: nowrap;
     }
-    .controls input, .controls select {
-      padding: 8px;
+    .controls input,
+    .controls select {
+      padding: 8px 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      min-width: 120px;
     }
+    @media (max-width: 480px) {
+      .controls input,
+      .controls select {
+        min-width: 100px;
+        font-size: 0.95rem;
+      }
+    }
+    .controls button {
+      padding: 9px 14px;
+      font-size: 1rem;
+      background-color: #007cba;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .controls button:hover {
+      background-color: #005a87;
+    }
+
     .summary {
       margin: 10px 0;
-      padding: 8px;
+      padding: 10px 12px;
       background-color: #e0f7fa;
-      border-radius: 4px;
+      border-radius: 6px;
       font-weight: bold;
       text-align: center;
+      font-size: 1.15rem;
+      border: 1px solid #bbeeff;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
+
+    #tableContainer {
+      margin-top: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
     table {
       border-collapse: collapse;
       width: 100%;
-      margin-top: 5px;
+      min-width: 600px;
+      font-size: 1rem;
     }
+
+    @media (max-width: 480px) {
+      table {
+        min-width: 500px;
+        font-size: 0.95rem;
+      }
+    }
+
     th, td {
       border: 1px solid #ccc;
       padding: 6px 8px;
       text-align: right;
+      white-space: nowrap;
     }
+
     th {
       background-color: #007cba;
       color: white;
+    }
+
+    /* تحسينات إضافية على الموبايل */
+    h1 {
+      text-align: center;
+      margin-top: 10px;
+      margin-bottom: 12px;
+      font-size: 1.3rem;
+    }
+    label {
+      font-size: 0.95rem;
     }
   </style>
 </head>
@@ -62,7 +133,7 @@
     <img src="logo.png" alt="شعار دبوس البسطة" />
   </div>
 
-  <h1 style="text-align: center;">مبيعات دبوس البسطة - صندوق دبوس</h1>
+  <h1>مبيعات دبوس البسطة - صندوق دبوس</h1>
 
   <!-- رأس الصفحة: مجموعات واختيارات -->
   <div class="controls">
@@ -135,7 +206,7 @@
 
       const day = parseInt(m[1], 10);
       const month = parseInt(m[2], 10);
-      const year = 2026; // يمكنك تغييره لاحقًا إذا احتجت
+      const year = 2026;
 
       const date = new Date(year, month - 1, day);
 
@@ -209,7 +280,7 @@
           if (descriptionFilter && !desc.includes(descriptionFilter)) {
             continue;
           }
-          // فلتر نصي للسعر (مثلاً بحث في جزء من الرقم)
+          // فلتر نصي للسعر
           const amountStr = amount.toString();
           if (amountFilter && !amountStr.includes(amountFilter)) {
             continue;
@@ -271,7 +342,7 @@
       validSheets.forEach(sheet => {
         const opt = document.createElement("option");
         opt.value = sheet;
-        opt.textContent = sheet; // اسم الورقة الحقيقي
+        opt.textContent = sheet;
         selectDate.appendChild(opt);
       });
 
@@ -314,7 +385,7 @@
         renderTable(allRows);
       };
 
-      // --- 4. تصفية فورية أثناء الكتابة (رقم السعر فقط في الوقت الحالي) ---
+      // --- 4. تصفية فورية أثناء الكتابة ---
       filterDescription.addEventListener("input", () => {
         btnShow.click();
       });
