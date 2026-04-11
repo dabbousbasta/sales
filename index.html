@@ -11,20 +11,38 @@
       margin: 20px;
       background-color: #f7f7f7;
     }
-    fieldset {
-      border: 1px solid #ccc;
-      padding: 15px;
-      margin-bottom: 15px;
-      background: #fff;
+    .logo-container {
+      text-align: center;
     }
-    select, button {
-      padding: 8px 10px;
-      margin: 5px;
+    .logo-container img {
+      max-height: 80px;
+      margin-bottom: 10px;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .controls label {
+      white-space: nowrap;
+    }
+    .controls input, .controls select {
+      padding: 8px;
+    }
+    .summary {
+      margin: 10px 0;
+      padding: 8px;
+      background-color: #e0f7fa;
+      border-radius: 4px;
+      font-weight: bold;
+      text-align: center;
     }
     table {
       border-collapse: collapse;
       width: 100%;
-      margin-top: 10px;
+      margin-top: 5px;
     }
     th, td {
       border: 1px solid #ccc;
@@ -35,45 +53,58 @@
       background-color: #007cba;
       color: white;
     }
-    .total-row td {
-      font-weight: bold;
-      background-color: #f0f0f0;
-    }
   </style>
 </head>
 <body>
-  <h1>مبيعات دبوس البسطة - صندوق دبوس</h1>
 
-  <fieldset>
-    <legend>اختر</legend>
-    <label>التاريخ:</label>
-    <select id="selectDate">
-      <option value="">الكل</option>
-    </select>
+  <!-- اللوقو -->
+  <div class="logo-container">
+    <img src="logo.png" alt="شعار دبوس البسطة" />
+  </div>
 
-    <label>العملية:</label>
-    <select id="selectOperation">
-      <option value="">الكل</option>
-    </select>
+  <h1 style="text-align: center;">مبيعات دبوس البسطة - صندوق دبوس</h1>
 
+  <!-- رأس الصفحة: مجموعات واختيارات -->
+  <div class="controls">
+    <div>
+      <label>التاريخ:</label>
+      <select id="selectDate">
+        <option value="">الكل</option>
+      </select>
+    </div>
+    <div>
+      <label>العملية:</label>
+      <select id="selectOperation">
+        <option value="">الكل</option>
+      </select>
+    </div>
+    <div>
+      <label>فلتر البيان:</label>
+      <input type="text" id="filterDescription" placeholder="بحث في البيانات" />
+    </div>
+    <div>
+      <label>فلتر السعر:</label>
+      <input type="text" id="filterAmount" placeholder="بحث في السعر" />
+    </div>
     <button id="btnShow">إظهار البيانات</button>
-  </fieldset>
+  </div>
 
+  <div class="summary">
+    <span>إجمالي المبيع $: </span>
+    <span id="totalAmount">0</span>
+  </div>
+
+  <!-- جدول العرض -->
   <div id="tableContainer">
     <table id="dataTable">
       <thead>
         <tr>
+          <th>التاريخ</th>
           <th>البيان</th>
           <th>المبيع $</th>
         </tr>
       </thead>
       <tbody id="tableBody"></tbody>
-      <tfoot id="tableFoot">
-        <tr class="total-row">
-          <td>المجموع</td>
-          <td id="totalAmount">0</td>
-        </tr>
-      </tfoot>
     </table>
   </div>
 
@@ -97,7 +128,28 @@
       }
     }
 
-    // --- هل الاسم بتاعة ورقة على صيغة DD-MM مثل 01-03؟ ---
+    // --- تحويل اسم الورقة مثل 08-04 إلى "Wednesday-08-Apr-2026" ---
+    function sheetNameToFullDate(sheetName) {
+      const m = sheetName.trim().match(/^(\d{2})-(\d{2})$/);
+      if (!m) return sheetName;
+
+      const day = parseInt(m[1], 10);
+      const month = parseInt(m[2], 10);
+      const year = 2026; // يمكنك تغييره لاحقًا إذا احتجت
+
+      const date = new Date(year, month - 1, day);
+
+      const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      const dayName = days[date.getDay()];
+
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const monthName = months[date.getMonth()];
+
+      return `${dayName}-${day.toString().padStart(2, "0")}-${monthName}-${year}`;
+    }
+
+    // --- هل اسم الورقة على صيغة DD-MM مثل 01-03؟ ---
     function isDateSheetName(sheetName) {
       return /^\d{2}-\d{2}$/.test(sheetName.trim());
     }
@@ -107,7 +159,7 @@
       return workbook.SheetNames.filter(isDateSheetName);
     }
 
-    // --- جلب قائمة "العمليات" من كل الأوراق (كلمات في عمود H) ---
+    // --- جلب قائمة "العمليات" من كل الأوراق ---
     function getOperationList(workbook) {
       const ops = new Set();
       const sheets = workbook.SheetNames.filter(isDateSheetName);
@@ -116,10 +168,9 @@
         const ws = workbook.Sheets[sheetName];
         const data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "", blankrows: false });
 
-        // نبدأ من H1 (ROW1) ونلتفت على كل صف
         for (let i = 0; i < data.length; i++) {
           const row = data[i];
-          const op = row[7]; // العمود H = index 7
+          const op = row[7]; // عمود H = index 7
           if (op && typeof op === "string" && op.trim() !== "") {
             ops.add(op.trim());
           }
@@ -129,32 +180,44 @@
       return Array.from(ops).sort();
     }
 
-    // --- فحص إذا كان "مبيع $" عدد غير صفري ---
+    // --- فحص إذا كان "مبيع $" عدد غير صفري (موجب أو سالب)، ولا يقبل 0 أو فارغ ---
     function isValidAmount(val) {
       if (val == null || val === "") return false;
       const num = parseFloat(val);
-      return !isNaN(num) && num > 0;
+      return !isNaN(num) && num !== 0;
     }
 
     // --- جلب البيانات المفلترة من ورقة واحدة ---
-    function getFilteredRows(workbook, sheetName, operation) {
+    function getFilteredRows(workbook, sheetName, operation, descriptionFilter, amountFilter) {
       const ws = workbook.Sheets[sheetName];
       const data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" });
 
       const rows = [];
+      const dateStr = sheetNameToFullDate(sheetName);
+
       for (let i = 0; i < data.length; i++) {
         const row = data[i];
         const op = row[7];      // H = index 7
-        const desc = row[8];    // I = index 8
+        const desc = String(row[8] || "").trim(); // I = index 8
         const amount = row[11]; // L = index 11
 
         // تجاهل إذا كان "المبيع $" = 0 أو فارغ
         if (!isValidAmount(amount)) continue;
 
-        // إذا كان operation = "" أو = op
         if (!operation || op === operation) {
+          // فلتر نصي للبيان
+          if (descriptionFilter && !desc.includes(descriptionFilter)) {
+            continue;
+          }
+          // فلتر نصي للسعر (مثلاً بحث في جزء من الرقم)
+          const amountStr = amount.toString();
+          if (amountFilter && !amountStr.includes(amountFilter)) {
+            continue;
+          }
+
           rows.push({
-            desc: String(desc || "").trim(),
+            date: dateStr,
+            desc: desc,
             amount: parseFloat(amount)
           });
         }
@@ -166,15 +229,14 @@
     // --- ملء الجدول في HTML ---
     function renderTable(rows) {
       const tbody = document.getElementById("tableBody");
-      const totalTd = document.getElementById("totalAmount");
 
       tbody.innerHTML = "";
 
       if (rows.length === 0) {
         const tr = document.createElement("tr");
-        tr.innerHTML = '<td colspan="2">لا توجد بيانات مطابقة للبحث.</td>';
+        tr.innerHTML = '<td colspan="3">لا توجد بيانات مطابقة للبحث.</td>';
         tbody.appendChild(tr);
-        totalTd.textContent = "0";
+        document.getElementById("totalAmount").textContent = "0";
         return;
       }
 
@@ -182,6 +244,7 @@
       rows.forEach(row => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
+          <td>${row.date}</td>
           <td>${row.desc}</td>
           <td>${row.amount.toFixed(2)}</td>
         `;
@@ -189,7 +252,7 @@
         total += row.amount;
       });
 
-      totalTd.textContent = total.toFixed(2);
+      document.getElementById("totalAmount").textContent = total.toFixed(2);
     }
 
     // --- الأحداث عند التغيير ---
@@ -197,19 +260,22 @@
       const workbook = await loadWorkbook();
       if (!workbook) return;
 
-      // --- 1. ملء خيار "التاريخ" ---
       const selectDate = document.getElementById("selectDate");
+      const selectOperation = document.getElementById("selectOperation");
+      const filterDescription = document.getElementById("filterDescription");
+      const filterAmount = document.getElementById("filterAmount");
+
+      // --- 1. ملء خيار "التاريخ" ---
       const validSheets = getValidSheets(workbook);
       selectDate.innerHTML = '<option value="">الكل</option>';
       validSheets.forEach(sheet => {
         const opt = document.createElement("option");
         opt.value = sheet;
-        opt.textContent = sheet;
+        opt.textContent = sheet; // اسم الورقة الحقيقي
         selectDate.appendChild(opt);
       });
 
       // --- 2. ملء خيار "العملية" ---
-      const selectOperation = document.getElementById("selectOperation");
       const operations = getOperationList(workbook);
       selectOperation.innerHTML = '<option value="">الكل</option>';
       operations.forEach(op => {
@@ -220,9 +286,12 @@
       });
 
       // --- 3. عند الضغط على زر الإظهار ---
-      document.getElementById("btnShow").onclick = () => {
+      const btnShow = document.getElementById("btnShow");
+      btnShow.onclick = () => {
         const selectedDate = selectDate.value;
         const selectedOperation = selectOperation.value;
+        const descFilter = filterDescription.value.trim();
+        const amountFilter = filterAmount.value.trim();
 
         let allRows = [];
         let targetSheets = validSheets;
@@ -232,16 +301,29 @@
         }
 
         targetSheets.forEach(sheet => {
-          const rowsInSheet = getFilteredRows(workbook, sheet, selectedOperation);
+          const rowsInSheet = getFilteredRows(
+            workbook,
+            sheet,
+            selectedOperation,
+            descFilter,
+            amountFilter
+          );
           allRows = allRows.concat(rowsInSheet);
         });
 
         renderTable(allRows);
       };
 
+      // --- 4. تصفية فورية أثناء الكتابة (رقم السعر فقط في الوقت الحالي) ---
+      filterDescription.addEventListener("input", () => {
+        btnShow.click();
+      });
+      filterAmount.addEventListener("input", () => {
+        btnShow.click();
+      });
+
       // تحميل بيانات "الكل" عند فتح الصفحة
-      const btnShow = document.getElementById("btnShow");
-      if (btnShow) btnShow.click();
+      btnShow.click();
     }
 
     // --- تشغيل المنطق عند تحميل الصفحة ---
