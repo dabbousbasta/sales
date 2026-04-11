@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>مبيعات دبوس البسطة</title>
+  <!-- SheetJS -->
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f7f7f7;
+    }
+    fieldset {
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin-bottom: 15px;
+      background: #fff;
+    }
+    select, button {
+      padding: 8px 10px;
+      margin: 5px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px 8px;
+      text-align: right;
+    }
+    th {
+      background-color: #007cba;
+      color: white;
+    }
+    .total-row td {
+      font-weight: bold;
+      background-color: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+  <h1>مبيعات دبوس البسطة - صندوق دبوس</h1>
+
+  <fieldset>
+    <legend>اختر</legend>
+    <label>التاريخ:</label>
+    <select id="selectDate">
+      <option value="">الكل</option>
+    </select>
+
+    <label>العملية:</label>
+    <select id="selectOperation">
+      <option value="">الكل</option>
+    </select>
+
+    <button id="btnShow">إظهار البيانات</button>
+  </fieldset>
+
+  <div id="tableContainer">
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>البيان</th>
+          <th>المبيع $</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+      <tfoot id="tableFoot">
+        <tr class="total-row">
+          <td>المجموع</td>
+          <td id="totalAmount">0</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <script>
+    // اسم ملف Excel في نفس المجلد
+    const EXCEL_FILE_NAME = "صندوق دبوس.xlsx";
+
+    // --- تحميل ملف Excel ---
+    async function loadWorkbook() {
+      let workbook;
+
+      try {
+        const response = await fetch(EXCEL_FILE_NAME);
+        const data = await response.arrayBuffer();
+        workbook = XLSX.read(data, { type: "array" });
+        return workbook;
+      } catch (e) {
+        alert("خطأ في قراءة ملف صندوق دبوس.xlsx:\n" + e.message);
+        console.error(e);
+        return null;
+      }
+    }
+
+    // --- هل الاسم بتاعة ورقة على صيغة DD-MM مثل 01-03؟ ---
+    function isDateSheetName(sheetName) {
+      return /^\d{2}-\d{2}$/.test(sheetName.trim());
+    }
+
+    // --- جلب قائمة الأوراق حسب تاريخ ---
+    function getValidSheets(workbook) {
+      return workbook.SheetNames.filter(isDateSheetName);
+    }
+
+    // --- جلب قائمة "العمليات" من كل الأوراق (كلمات في عمود H) ---
+    function getOperationList(workbook) {
+      const ops = new Set();
+      const sheets = workbook.SheetNames.filter(isDateSheetName);
+
+      sheets.forEach(sheetName => {
+        const ws = workbook.Sheets[sheetName];
+        const data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "", blankrows: false });
+
+        // نبدأ من H1 (ROW1) ونلتفت على كل صف
+        for (let i = 0; i < data.length; i++) {
+          const row = data[i];
+          const op = row[7]; // العمود H = index 7
+          if (op && typeof op === "string" && op.trim() !== "") {
+            ops.add(op.trim());
+          }
+        }
+      });
+
+      return Array.from(ops).sort();
+    }
+
+    // --- فحص إذا كان "مبيع $" عدد غير صفري ---
+    function isValidAmount(val) {
+      if (val == null || val === "") return false;
+      const num = parseFloat(val);
+      return !isNaN(num) && num > 0;
+    }
+
+    // --- جلب البيانات المفلترة من ورقة واحدة ---
+    function getFilteredRows(workbook, sheetName, operation) {
+      const ws = workbook.Sheets[sheetName];
+      const data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" });
+
+      const rows = [];
+      for (let i = 0; i < data.length; i++) {
+        const row = data[i];
+        const op = row[7];      // H = index 7
+        const desc = row[8];    // I = index 8
+        const amount = row[11]; // L = index 11
+
+        // تجاهل إذا كان "المبيع $" = 0 أو فارغ
+        if (!isValidAmount(amount)) continue;
+
+        // إذا كان operation = "" أو = op
+        if (!operation || op === operation) {
+          rows.push({
+            desc: String(desc || "").trim(),
+            amount: parseFloat(amount)
+          });
+        }
+      }
+
+      return rows;
+    }
+
+    // --- ملء الجدول في HTML ---
+    function renderTable(rows) {
+      const tbody = document.getElementById("tableBody");
+      const totalTd = document.getElementById("totalAmount");
+
+      tbody.innerHTML = "";
+
+      if (rows.length === 0) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = '<td colspan="2">لا توجد بيانات مطابقة للبحث.</td>';
+        tbody.appendChild(tr);
+        totalTd.textContent = "0";
+        return;
+      }
+
+      let total = 0;
+      rows.forEach(row => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${row.desc}</td>
+          <td>${row.amount.toFixed(2)}</td>
+        `;
+        tbody.appendChild(tr);
+        total += row.amount;
+      });
+
+      totalTd.textContent = total.toFixed(2);
+    }
+
+    // --- الأحداث عند التغيير ---
+    async function refreshPage() {
+      const workbook = await loadWorkbook();
+      if (!workbook) return;
+
+      // --- 1. ملء خيار "التاريخ" ---
+      const selectDate = document.getElementById("selectDate");
+      const validSheets = getValidSheets(workbook);
+      selectDate.innerHTML = '<option value="">الكل</option>';
+      validSheets.forEach(sheet => {
+        const opt = document.createElement("option");
+        opt.value = sheet;
+        opt.textContent = sheet;
+        selectDate.appendChild(opt);
+      });
+
+      // --- 2. ملء خيار "العملية" ---
+      const selectOperation = document.getElementById("selectOperation");
+      const operations = getOperationList(workbook);
+      selectOperation.innerHTML = '<option value="">الكل</option>';
+      operations.forEach(op => {
+        const opt = document.createElement("option");
+        opt.value = op;
+        opt.textContent = op;
+        selectOperation.appendChild(opt);
+      });
+
+      // --- 3. عند الضغط على زر الإظهار ---
+      document.getElementById("btnShow").onclick = () => {
+        const selectedDate = selectDate.value;
+        const selectedOperation = selectOperation.value;
+
+        let allRows = [];
+        let targetSheets = validSheets;
+
+        if (selectedDate) {
+          targetSheets = [selectedDate];
+        }
+
+        targetSheets.forEach(sheet => {
+          const rowsInSheet = getFilteredRows(workbook, sheet, selectedOperation);
+          allRows = allRows.concat(rowsInSheet);
+        });
+
+        renderTable(allRows);
+      };
+
+      // تحميل بيانات "الكل" عند فتح الصفحة
+      const btnShow = document.getElementById("btnShow");
+      if (btnShow) btnShow.click();
+    }
+
+    // --- تشغيل المنطق عند تحميل الصفحة ---
+    window.addEventListener("load", refreshPage);
+  </script>
+</body>
+</html>
