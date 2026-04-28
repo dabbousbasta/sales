@@ -22,14 +22,6 @@
       }
     }
 
-    .logo-container {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-    .logo-container img {
-      max-height: 80px;
-    }
-
     .controls {
       display: flex;
       flex-wrap: wrap;
@@ -115,25 +107,12 @@
     }
 
     /* تحسينات إضافية على الموبايل */
-    h1 {
-      text-align: center;
-      margin-top: 10px;
-      margin-bottom: 12px;
-      font-size: 1.3rem;
-    }
     label {
       font-size: 0.95rem;
     }
   </style>
 </head>
 <body>
-
-  <!-- اللوقو -->
-  <div class="logo-container">
-    <img src="logo.png" alt="شعار دبوس البسطة" />
-  </div>
-
-  <h1>مبيعات دبوس البسطة - صندوق دبوس</h1>
 
   <!-- رأس الصفحة: مجموعات واختيارات -->
   <div class="controls">
@@ -193,7 +172,7 @@
         workbook = XLSX.read(data, { type: "array" });
         return workbook;
       } catch (e) {
-        alert("خطأ في قراءة ملف صندوق دبوس.xlsx:\n" + e.message);
+        alert("خطأ في قراءة ملف صندوق دبوس.xlsx:\\n" + e.message);
         console.error(e);
         return null;
       }
@@ -271,6 +250,9 @@
         const op = row[7];      // H = index 7
         const desc = String(row[8] || "").trim(); // I = index 8
         const amount = row[11]; // L = index 11
+
+        // استبعاد الصف الذي يحتوي "حركة الصندوق" في العمود I
+        if (desc === "حركة الصندوق") continue;
 
         // تجاهل إذا كان "المبيع $" = 0 أو فارغ
         if (!isValidAmount(amount)) continue;
