@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>مبيعات دبوس البسطة</title>
-  <!-- SheetJS -->
   <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   <style>
     body {
@@ -18,7 +17,42 @@
     @media (max-width: 768px) {
       body {
         font-size: 1.1rem;
+      }
     }
+
+    .summary-box {
+      margin: 10px 0 15px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 10px;
+      overflow-x: auto;
+    }
+
+    .summary-box h3 {
+      margin: 0 0 10px;
+      font-size: 1.05rem;
+      color: #333;
+    }
+
+    .monthly-table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 900px;
+      font-size: 0.95rem;
+    }
+
+    .monthly-table th,
+    .monthly-table td {
+      border: 1px solid #ccc;
+      padding: 6px 8px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .monthly-table th {
+      background: #007cba;
+      color: #fff;
     }
 
     .controls {
@@ -31,9 +65,11 @@
       border-radius: 6px;
       border: 1px solid #ddd;
     }
+
     .controls label {
       white-space: nowrap;
     }
+
     .controls input,
     .controls select {
       padding: 8px 10px;
@@ -41,6 +77,7 @@
       border-radius: 4px;
       min-width: 120px;
     }
+
     @media (max-width: 480px) {
       .controls input,
       .controls select {
@@ -48,6 +85,7 @@
         font-size: 0.95rem;
       }
     }
+
     .controls button {
       padding: 9px 14px;
       font-size: 1rem;
@@ -57,6 +95,7 @@
       border-radius: 4px;
       cursor: pointer;
     }
+
     .controls button:hover {
       background-color: #005a87;
     }
@@ -105,12 +144,12 @@
       color: white;
     }
 
-    tbody tr:nth-child(odd) {
-      background-color: #fff8cc;
+    tbody tr.row-positive {
+      background-color: #d9e8ff !important;
     }
 
-    tbody tr:nth-child(even) {
-      background-color: #dff5d8;
+    tbody tr.row-negative {
+      background-color: #ffd9d9 !important;
     }
 
     td.amount-positive {
@@ -129,6 +168,13 @@
   </style>
 </head>
 <body>
+
+  <div class="summary-box">
+    <h3>الملخص الشهري</h3>
+    <table class="monthly-table" id="monthlyTable">
+      <tbody id="monthlyBody"></tbody>
+    </table>
+  </div>
 
   <div class="controls">
     <div>
@@ -342,7 +388,9 @@
       let total = 0;
       rows.forEach(row => {
         const tr = document.createElement("tr");
-        const amountClass = row.amount > 0 ? "amount-positive" : (row.amount < 0 ? "amount-negative" : "");
+        const rowClass = row.amount > 0 ? "row-positive" : "row-negative";
+        const amountClass = row.amount > 0 ? "amount-positive" : "amount-negative";
+        tr.className = rowClass;
         tr.innerHTML = `
           <td>${row.date}</td>
           <td>${row.desc}</td>
@@ -355,9 +403,48 @@
       document.getElementById("totalAmount").textContent = formatNumber(total);
     }
 
+    function renderMonthlySummary(workbook) {
+      const ws = workbook.Sheets["شهري"];
+      const tbody = document.getElementById("monthlyBody");
+      tbody.innerHTML = "";
+
+      if (!ws) {
+        tbody.innerHTML = '<tr><td>لا توجد ورقة باسم "شهري".</td></tr>';
+        return;
+      }
+
+      const data = XLSX.utils.sheet_to_json(ws, {
+        header: 1,
+        defval: "",
+        blankrows: false,
+        range: "A1:K6"
+      });
+
+      data.forEach((row, rowIndex) => {
+        const tr = document.createElement("tr");
+        row.forEach((cell, colIndex) => {
+          const td = document.createElement(rowIndex === 0 ? "th" : "td");
+          let value = cell;
+
+          if (colIndex > 0 && rowIndex > 0 && value !== "" && value != null) {
+            const num = parseFloat(String(value).replace(/,/g, ""));
+            if (!isNaN(num)) {
+              value = formatNumber(num);
+            }
+          }
+
+          td.textContent = value;
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+    }
+
     async function refreshPage() {
       const workbook = await loadWorkbook();
       if (!workbook) return;
+
+      renderMonthlySummary(workbook);
 
       const selectDate = document.getElementById("selectDate");
       const selectOperation = document.getElementById("selectOperation");
