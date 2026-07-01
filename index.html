@@ -18,7 +18,7 @@
     @media (max-width: 768px) {
       body {
         font-size: 1.1rem;
-      }
+    }
     }
 
     .controls {
@@ -103,6 +103,24 @@
     th {
       background-color: #007cba;
       color: white;
+    }
+
+    tbody tr:nth-child(odd) {
+      background-color: #fff8cc;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #dff5d8;
+    }
+
+    td.amount-positive {
+      color: #003399;
+      font-weight: bold;
+    }
+
+    td.amount-negative {
+      color: #ff0000;
+      font-weight: bold;
     }
 
     label {
@@ -278,12 +296,6 @@
       return Array.from(ops).sort();
     }
 
-    function isValidAmount(val) {
-      if (val == null || val === "") return false;
-      const num = parseFloat(String(val).replace(/,/g, ""));
-      return !isNaN(num) && num !== 0;
-    }
-
     function getFilteredRows(workbook, sheetName, operation, descriptionFilter, amountFilter) {
       const ws = workbook.Sheets[sheetName];
       const data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" });
@@ -330,10 +342,11 @@
       let total = 0;
       rows.forEach(row => {
         const tr = document.createElement("tr");
+        const amountClass = row.amount > 0 ? "amount-positive" : (row.amount < 0 ? "amount-negative" : "");
         tr.innerHTML = `
           <td>${row.date}</td>
           <td>${row.desc}</td>
-          <td>${formatNumber(row.amount)}</td>
+          <td class="${amountClass}">${formatNumber(row.amount)}</td>
         `;
         tbody.appendChild(tr);
         total += row.amount;
