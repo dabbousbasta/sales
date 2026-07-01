@@ -15,7 +15,6 @@
       font-size: 1rem;
     }
 
-    /* تحسين على الموبايل */
     @media (max-width: 768px) {
       body {
         font-size: 1.1rem;
@@ -106,7 +105,6 @@
       color: white;
     }
 
-    /* تحسينات إضافية على الموبايل */
     label {
       font-size: 0.95rem;
     }
@@ -114,7 +112,6 @@
 </head>
 <body>
 
-  <!-- رأس الصفحة: مجموعات واختيارات -->
   <div class="controls">
     <div>
       <label>التاريخ:</label>
@@ -134,17 +131,16 @@
     </div>
     <div>
       <label>فلتر السعر:</label>
-      <input type="text" id="filterAmount" placeholder="بحث في السعر" />
+      <input type="text" id="filterAmount" placeholder="مثال: 1000 أو >= 500" />
     </div>
     <button id="btnShow">إظهار البيانات</button>
   </div>
 
   <div class="summary">
     <span>إجمالي المبيع $: </span>
-    <span id="totalAmount">0</span>
+    <span id="totalAmount">0,000.00</span>
   </div>
 
-  <!-- جدول العرض -->
   <div id="tableContainer">
     <table id="dataTable">
       <thead>
@@ -159,26 +155,81 @@
   </div>
 
   <script>
-    // اسم ملف Excel في نفس المجلد
     const EXCEL_FILE_NAME = "صندوق دبوس.xlsx";
 
-    // --- تحميل ملف Excel ---
-    async function loadWorkbook() {
-      let workbook;
+    function formatNumber(value) {
+      return new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(value);
+    }
 
+    function parseNumericFilter(input) {
+      const text = String(input || "").trim();
+      if (!text) return null;
+
+      const cleaned = text.replace(/,/g, "");
+
+      let m = cleaned.match(/^>=\s*(-?\d+(?:\.\d+)?)$/);
+      if (m) return { type: "gte", value: parseFloat(m[1]) };
+
+      m = cleaned.match(/^<=\s*(-?\d+(?:\.\d+)?)$/);
+      if (m) return { type: "lte", value: parseFloat(m[1]) };
+
+      m = cleaned.match(/^>\s*(-?\d+(?:\.\d+)?)$/);
+      if (m) return { type: "gt", value: parseFloat(m[1]) };
+
+      m = cleaned.match(/^<\s*(-?\d+(?:\.\d+)?)$/);
+      if (m) return { type: "lt", value: parseFloat(m[1]) };
+
+      m = cleaned.match(/^(-?\d+(?:\.\d+)?)\s*-\s*(-?\d+(?:\.\d+)?)$/);
+      if (m) return { type: "range", min: parseFloat(m[1]), max: parseFloat(m[2]) };
+
+      const num = parseFloat(cleaned);
+      if (!isNaN(num)) return { type: "exact", value: num };
+
+      return { type: "text", value: cleaned };
+    }
+
+    function matchesNumericFilter(amount, filterText) {
+      if (!filterText) return true;
+
+      const filter = parseNumericFilter(filterText);
+      if (!filter) return true;
+
+      if (filter.type === "text") {
+        return formatNumber(amount).includes(filter.value) || String(amount).includes(filter.value);
+      }
+
+      if (filter.type === "exact") {
+        return Math.abs(amount - filter.value) < 0.000001;
+      }
+
+      if (filter.type === "gte") return amount >= filter.value;
+      if (filter.type === "lte") return amount <= filter.value;
+      if (filter.type === "gt") return amount > filter.value;
+      if (filter.type === "lt") return amount < filter.value;
+      if (filter.type === "range") {
+        const min = Math.min(filter.min, filter.max);
+        const max = Math.max(filter.min, filter.max);
+        return amount >= min && amount <= max;
+      }
+
+      return true;
+    }
+
+    async function loadWorkbook() {
       try {
         const response = await fetch(EXCEL_FILE_NAME);
         const data = await response.arrayBuffer();
-        workbook = XLSX.read(data, { type: "array" });
-        return workbook;
+        return XLSX.read(data, { type: "array" });
       } catch (e) {
-        alert("خطأ في قراءة ملف صندوق دبوس.xlsx:\\n" + e.message);
+        alert("خطأ في قراءة ملف صندوق دبوس.xlsx:\n" + e.message);
         console.error(e);
         return null;
       }
     }
 
-    // --- تحويل اسم الورقة مثل 08-04 إلى "Wednesday-08-Apr-2026" ---
     function sheetNameToFullDate(sheetName) {
       const m = sheetName.trim().match(/^(\d{2})-(\d{2})$/);
       if (!m) return sheetName;
@@ -199,17 +250,14 @@
       return `${dayName}-${day.toString().padStart(2, "0")}-${monthName}-${year}`;
     }
 
-    // --- هل اسم الورقة على صيغة DD-MM مثل 01-03؟ ---
     function isDateSheetName(sheetName) {
       return /^\d{2}-\d{2}$/.test(sheetName.trim());
     }
 
-    // --- جلب قائمة الأوراق حسب تاريخ ---
     function getValidSheets(workbook) {
       return workbook.SheetNames.filter(isDateSheetName);
     }
 
-    // --- جلب قائمة "العمليات" من كل الأوراق ---
     function getOperationList(workbook) {
       const ops = new Set();
       const sheets = workbook.SheetNames.filter(isDateSheetName);
@@ -220,7 +268,7 @@
 
         for (let i = 0; i < data.length; i++) {
           const row = data[i];
-          const op = row[7]; // عمود H = index 7
+          const op = row[7];
           if (op && typeof op === "string" && op.trim() !== "") {
             ops.add(op.trim());
           }
@@ -230,14 +278,12 @@
       return Array.from(ops).sort();
     }
 
-    // --- فحص إذا كان "مبيع $" عدد غير صفري (موجب أو سالب)، ولا يقبل 0 أو فارغ ---
     function isValidAmount(val) {
       if (val == null || val === "") return false;
-      const num = parseFloat(val);
+      const num = parseFloat(String(val).replace(/,/g, ""));
       return !isNaN(num) && num !== 0;
     }
 
-    // --- جلب البيانات المفلترة من ورقة واحدة ---
     function getFilteredRows(workbook, sheetName, operation, descriptionFilter, amountFilter) {
       const ws = workbook.Sheets[sheetName];
       const data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" });
@@ -247,31 +293,21 @@
 
       for (let i = 0; i < data.length; i++) {
         const row = data[i];
-        const op = row[7];      // H = index 7
-        const desc = String(row[8] || "").trim(); // I = index 8
-        const amount = row[11]; // L = index 11
+        const op = row[7];
+        const desc = String(row[8] || "").trim();
+        const amount = parseFloat(String(row[11] || "").replace(/,/g, ""));
 
-        // استبعاد الصف الذي يحتوي "حركة الصندوق" في العمود I
         if (desc === "حركة الصندوق") continue;
-
-        // تجاهل إذا كان "المبيع $" = 0 أو فارغ
-        if (!isValidAmount(amount)) continue;
+        if (isNaN(amount) || amount === 0) continue;
 
         if (!operation || op === operation) {
-          // فلتر نصي للبيان
-          if (descriptionFilter && !desc.includes(descriptionFilter)) {
-            continue;
-          }
-          // فلتر نصي للسعر
-          const amountStr = amount.toString();
-          if (amountFilter && !amountStr.includes(amountFilter)) {
-            continue;
-          }
+          if (descriptionFilter && !desc.includes(descriptionFilter)) continue;
+          if (!matchesNumericFilter(amount, amountFilter)) continue;
 
           rows.push({
             date: dateStr,
             desc: desc,
-            amount: parseFloat(amount)
+            amount: amount
           });
         }
       }
@@ -279,17 +315,15 @@
       return rows;
     }
 
-    // --- ملء الجدول في HTML ---
     function renderTable(rows) {
       const tbody = document.getElementById("tableBody");
-
       tbody.innerHTML = "";
 
       if (rows.length === 0) {
         const tr = document.createElement("tr");
         tr.innerHTML = '<td colspan="3">لا توجد بيانات مطابقة للبحث.</td>';
         tbody.appendChild(tr);
-        document.getElementById("totalAmount").textContent = "0";
+        document.getElementById("totalAmount").textContent = formatNumber(0);
         return;
       }
 
@@ -299,16 +333,15 @@
         tr.innerHTML = `
           <td>${row.date}</td>
           <td>${row.desc}</td>
-          <td>${row.amount.toFixed(2)}</td>
+          <td>${formatNumber(row.amount)}</td>
         `;
         tbody.appendChild(tr);
         total += row.amount;
       });
 
-      document.getElementById("totalAmount").textContent = total.toFixed(2);
+      document.getElementById("totalAmount").textContent = formatNumber(total);
     }
 
-    // --- الأحداث عند التغيير ---
     async function refreshPage() {
       const workbook = await loadWorkbook();
       if (!workbook) return;
@@ -318,7 +351,6 @@
       const filterDescription = document.getElementById("filterDescription");
       const filterAmount = document.getElementById("filterAmount");
 
-      // --- 1. ملء خيار "التاريخ" ---
       const validSheets = getValidSheets(workbook);
       selectDate.innerHTML = '<option value="">الكل</option>';
       validSheets.forEach(sheet => {
@@ -328,7 +360,6 @@
         selectDate.appendChild(opt);
       });
 
-      // --- 2. ملء خيار "العملية" ---
       const operations = getOperationList(workbook);
       selectOperation.innerHTML = '<option value="">الكل</option>';
       operations.forEach(op => {
@@ -338,9 +369,8 @@
         selectOperation.appendChild(opt);
       });
 
-      // --- 3. عند الضغط على زر الإظهار ---
       const btnShow = document.getElementById("btnShow");
-      btnShow.onclick = () => {
+      const runFilter = () => {
         const selectedDate = selectDate.value;
         const selectedOperation = selectOperation.value;
         const descFilter = filterDescription.value.trim();
@@ -349,9 +379,7 @@
         let allRows = [];
         let targetSheets = validSheets;
 
-        if (selectedDate) {
-          targetSheets = [selectedDate];
-        }
+        if (selectedDate) targetSheets = [selectedDate];
 
         targetSheets.forEach(sheet => {
           const rowsInSheet = getFilteredRows(
@@ -367,19 +395,15 @@
         renderTable(allRows);
       };
 
-      // --- 4. تصفية فورية أثناء الكتابة ---
-      filterDescription.addEventListener("input", () => {
-        btnShow.click();
-      });
-      filterAmount.addEventListener("input", () => {
-        btnShow.click();
-      });
+      btnShow.onclick = runFilter;
+      filterDescription.oninput = runFilter;
+      filterAmount.oninput = runFilter;
+      selectDate.onchange = runFilter;
+      selectOperation.onchange = runFilter;
 
-      // تحميل بيانات "الكل" عند فتح الصفحة
-      btnShow.click();
+      runFilter();
     }
 
-    // --- تشغيل المنطق عند تحميل الصفحة ---
     window.addEventListener("load", refreshPage);
   </script>
 </body>
