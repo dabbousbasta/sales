@@ -144,21 +144,23 @@
       color: white;
     }
 
-    tbody tr.row-positive {
-      background-color: #d9e8ff !important;
+    tbody tr:nth-child(odd) {
+      background-color: #fff8cc;
     }
 
-    tbody tr.row-negative {
-      background-color: #ffd9d9 !important;
+    tbody tr:nth-child(even) {
+      background-color: #dff5d8;
     }
 
-    td.amount-positive {
-      color: #003399;
+    tbody tr.row-positive,
+    tbody tr.row-positive td {
+      color: #003399 !important;
       font-weight: bold;
     }
 
-    td.amount-negative {
-      color: #ff0000;
+    tbody tr.row-negative,
+    tbody tr.row-negative td {
+      color: #ff0000 !important;
       font-weight: bold;
     }
 
@@ -389,12 +391,11 @@
       rows.forEach(row => {
         const tr = document.createElement("tr");
         const rowClass = row.amount > 0 ? "row-positive" : "row-negative";
-        const amountClass = row.amount > 0 ? "amount-positive" : "amount-negative";
         tr.className = rowClass;
         tr.innerHTML = `
           <td>${row.date}</td>
           <td>${row.desc}</td>
-          <td class="${amountClass}">${formatNumber(row.amount)}</td>
+          <td>${formatNumber(row.amount)}</td>
         `;
         tbody.appendChild(tr);
         total += row.amount;
@@ -428,9 +429,7 @@
 
           if (colIndex > 0 && rowIndex > 0 && value !== "" && value != null) {
             const num = parseFloat(String(value).replace(/,/g, ""));
-            if (!isNaN(num)) {
-              value = formatNumber(num);
-            }
+            if (!isNaN(num)) value = formatNumber(num);
           }
 
           td.textContent = value;
