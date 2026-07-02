@@ -376,25 +376,23 @@
     }
 
     function sheetNameToFullDate(sheetName) {
-      const m = sheetName.trim().match(/^(\d{2})-(\d{2})$/);
-      if (!m) return sheetName;
+  const m = sheetName.trim().match(/^(\d{2})-(\d{2})$/);
+  if (!m) return sheetName;
 
-      const day = parseInt(m[1], 10);
-      const month = parseInt(m[2], 10);
-      const year = 2026;
+  const day = parseInt(m[1], 10);
+  const month = parseInt(m[2], 10);
+  const year = 2026; // غيّرها لو تغيرت السنة في الملف
 
-      const date = new Date(year, month - 1, day);
+  const date = new Date(year, month - 1, day);
 
-      const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-      const dayName = days[date.getDay()];
+  const daysAr = ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+  const dayName = daysAr[date.getDay()];
 
-      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-      const monthName = months[date.getMonth()];
+  const d = String(date.getDate()).padStart(2, "0");
+  const m2 = String(date.getMonth() + 1).padStart(2, "0");
 
-      return `${dayName}-${day.toString().padStart(2, "0")}-${monthName}-${year}`;
-    }
-
+  return `${dayName} ${d}-${m2}-${year}`;
+}
     function isDateSheetName(sheetName) {
       return /^\d{2}-\d{2}$/.test(sheetName.trim());
     }
