@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>مبيعات دبوس البسطة</title>
+  <!-- SheetJS -->
   <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   <style>
     body {
@@ -20,41 +21,6 @@
       }
     }
 
-    .summary-box {
-      margin: 10px 0 15px;
-      background: #fff;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      padding: 10px;
-      overflow-x: auto;
-    }
-
-    .summary-box h3 {
-      margin: 0 0 10px;
-      font-size: 1.05rem;
-      color: #333;
-    }
-
-    .monthly-table {
-      border-collapse: collapse;
-      width: 100%;
-      min-width: 900px;
-      font-size: 0.95rem;
-    }
-
-    .monthly-table th,
-    .monthly-table td {
-      border: 1px solid #ccc;
-      padding: 6px 8px;
-      text-align: center;
-      white-space: nowrap;
-    }
-
-    .monthly-table th {
-      background: #007cba;
-      color: #fff;
-    }
-
     .controls {
       display: flex;
       flex-wrap: wrap;
@@ -65,11 +31,9 @@
       border-radius: 6px;
       border: 1px solid #ddd;
     }
-
     .controls label {
       white-space: nowrap;
     }
-
     .controls input,
     .controls select {
       padding: 8px 10px;
@@ -77,7 +41,6 @@
       border-radius: 4px;
       min-width: 120px;
     }
-
     @media (max-width: 480px) {
       .controls input,
       .controls select {
@@ -85,7 +48,6 @@
         font-size: 0.95rem;
       }
     }
-
     .controls button {
       padding: 9px 14px;
       font-size: 1rem;
@@ -95,7 +57,6 @@
       border-radius: 4px;
       cursor: pointer;
     }
-
     .controls button:hover {
       background-color: #005a87;
     }
@@ -144,40 +105,79 @@
       color: white;
     }
 
-    tbody tr:nth-child(odd) {
+    label {
+      font-size: 0.95rem;
+    }
+
+    /* صندوق الملخص من ورقة ملخص */
+    .summary-box {
+      margin: 10px 0 15px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 10px;
+    }
+
+    .summary-box h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+      color: #007cba;
+      text-align: center;
+    }
+
+    .summary-scroll {
+      max-height: 260px; /* تقريبًا 10 سم */
+      overflow-y: auto;
+      overflow-x: auto;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .summary-table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 450px;
+      font-size: 0.95rem;
+    }
+
+    .summary-table th,
+    .summary-table td {
+      border: 1px solid #ccc;
+      padding: 4px 6px;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .summary-table th {
+      background-color: #007cba;
+      color: #fff;
+      font-size: 0.9rem;
+    }
+
+    .summary-table tbody tr:nth-child(odd) {
       background-color: #fff8cc;
     }
 
-    tbody tr:nth-child(even) {
+    .summary-table tbody tr:nth-child(even) {
       background-color: #dff5d8;
     }
 
-    tbody tr.row-positive,
-    tbody tr.row-positive td {
-      color: #003399 !important;
+    .summary-table tbody tr.row-positive,
+    .summary-table tbody tr.row-positive td {
+      color: #003399;
       font-weight: bold;
     }
 
-    tbody tr.row-negative,
-    tbody tr.row-negative td {
-      color: #ff0000 !important;
+    .summary-table tbody tr.row-negative,
+    .summary-table tbody tr.row-negative td {
+      color: #ff0000;
       font-weight: bold;
-    }
-
-    label {
-      font-size: 0.95rem;
     }
   </style>
 </head>
 <body>
 
-  <div class="summary-box">
-    <h3>الملخص الشهري</h3>
-    <table class="monthly-table" id="monthlyTable">
-      <tbody id="monthlyBody"></tbody>
-    </table>
-  </div>
-
+  <!-- رأس الصفحة: مجموعات واختيارات -->
   <div class="controls">
     <div>
       <label>التاريخ:</label>
@@ -197,7 +197,7 @@
     </div>
     <div>
       <label>فلتر السعر:</label>
-      <input type="text" id="filterAmount" placeholder="مثال: 1000 أو >= 500" />
+      <input type="text" id="filterAmount" placeholder="بحث في السعر" />
     </div>
     <button id="btnShow">إظهار البيانات</button>
   </div>
@@ -207,6 +207,33 @@
     <span id="totalAmount">0,000.00</span>
   </div>
 
+  <!-- الملخص الشهري الذي أضفناه سابقًا -->
+  <div class="summary-box">
+    <h3>الملخص الشهري</h3>
+    <table class="summary-table" id="monthlyTable">
+      <tbody id="monthlyBody"></tbody>
+    </table>
+  </div>
+
+  <!-- الملخص اليومي من ورقة ملخص -->
+  <div class="summary-box">
+    <h3>ملخص الأيام (من ورقة ملخص)</h3>
+    <div class="summary-scroll">
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th>التاريخ</th>
+            <th>بيع</th>
+            <th>مصاريف</th>
+            <th>جملة</th>
+          </tr>
+        </thead>
+        <tbody id="summaryBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- جدول العرض القديم كما هو -->
   <div id="tableContainer">
     <table id="dataTable">
       <thead>
@@ -230,65 +257,13 @@
       }).format(value);
     }
 
-    function parseNumericFilter(input) {
-      const text = String(input || "").trim();
-      if (!text) return null;
-
-      const cleaned = text.replace(/,/g, "");
-
-      let m = cleaned.match(/^>=\s*(-?\d+(?:\.\d+)?)$/);
-      if (m) return { type: "gte", value: parseFloat(m[1]) };
-
-      m = cleaned.match(/^<=\s*(-?\d+(?:\.\d+)?)$/);
-      if (m) return { type: "lte", value: parseFloat(m[1]) };
-
-      m = cleaned.match(/^>\s*(-?\d+(?:\.\d+)?)$/);
-      if (m) return { type: "gt", value: parseFloat(m[1]) };
-
-      m = cleaned.match(/^<\s*(-?\d+(?:\.\d+)?)$/);
-      if (m) return { type: "lt", value: parseFloat(m[1]) };
-
-      m = cleaned.match(/^(-?\d+(?:\.\d+)?)\s*-\s*(-?\d+(?:\.\d+)?)$/);
-      if (m) return { type: "range", min: parseFloat(m[1]), max: parseFloat(m[2]) };
-
-      const num = parseFloat(cleaned);
-      if (!isNaN(num)) return { type: "exact", value: num };
-
-      return { type: "text", value: cleaned };
-    }
-
-    function matchesNumericFilter(amount, filterText) {
-      if (!filterText) return true;
-
-      const filter = parseNumericFilter(filterText);
-      if (!filter) return true;
-
-      if (filter.type === "text") {
-        return formatNumber(amount).includes(filter.value) || String(amount).includes(filter.value);
-      }
-
-      if (filter.type === "exact") {
-        return Math.abs(amount - filter.value) < 0.000001;
-      }
-
-      if (filter.type === "gte") return amount >= filter.value;
-      if (filter.type === "lte") return amount <= filter.value;
-      if (filter.type === "gt") return amount > filter.value;
-      if (filter.type === "lt") return amount < filter.value;
-      if (filter.type === "range") {
-        const min = Math.min(filter.min, filter.max);
-        const max = Math.max(filter.min, filter.max);
-        return amount >= min && amount <= max;
-      }
-
-      return true;
-    }
-
     async function loadWorkbook() {
+      let workbook;
       try {
         const response = await fetch(EXCEL_FILE_NAME);
         const data = await response.arrayBuffer();
-        return XLSX.read(data, { type: "array" });
+        workbook = XLSX.read(data, { type: "array" });
+        return workbook;
       } catch (e) {
         alert("خطأ في قراءة ملف صندوق دبوس.xlsx:\n" + e.message);
         console.error(e);
@@ -344,6 +319,12 @@
       return Array.from(ops).sort();
     }
 
+    function isValidAmount(val) {
+      if (val == null || val === "") return false;
+      const num = parseFloat(val);
+      return !isNaN(num) && num !== 0;
+    }
+
     function getFilteredRows(workbook, sheetName, operation, descriptionFilter, amountFilter) {
       const ws = workbook.Sheets[sheetName];
       const data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" });
@@ -355,19 +336,25 @@
         const row = data[i];
         const op = row[7];
         const desc = String(row[8] || "").trim();
-        const amount = parseFloat(String(row[11] || "").replace(/,/g, ""));
+        const amount = row[11];
 
         if (desc === "حركة الصندوق") continue;
-        if (isNaN(amount) || amount === 0) continue;
+        if (!isValidAmount(amount)) continue;
 
         if (!operation || op === operation) {
-          if (descriptionFilter && !desc.includes(descriptionFilter)) continue;
-          if (!matchesNumericFilter(amount, amountFilter)) continue;
+          if (descriptionFilter && !desc.includes(descriptionFilter)) {
+            continue;
+          }
+
+          const amountStr = amount.toString();
+          if (amountFilter && !amountStr.includes(amountFilter)) {
+            continue;
+          }
 
           rows.push({
             date: dateStr,
             desc: desc,
-            amount: amount
+            amount: parseFloat(amount)
           });
         }
       }
@@ -390,8 +377,6 @@
       let total = 0;
       rows.forEach(row => {
         const tr = document.createElement("tr");
-        const rowClass = row.amount > 0 ? "row-positive" : "row-negative";
-        tr.className = rowClass;
         tr.innerHTML = `
           <td>${row.date}</td>
           <td>${row.desc}</td>
@@ -429,7 +414,9 @@
 
           if (colIndex > 0 && rowIndex > 0 && value !== "" && value != null) {
             const num = parseFloat(String(value).replace(/,/g, ""));
-            if (!isNaN(num)) value = formatNumber(num);
+            if (!isNaN(num)) {
+              value = formatNumber(num);
+            }
           }
 
           td.textContent = value;
@@ -439,11 +426,69 @@
       });
     }
 
+    function renderSummarySheet(workbook) {
+      const ws = workbook.Sheets["ملخص"];
+      const tbody = document.getElementById("summaryBody");
+      tbody.innerHTML = "";
+
+      if (!ws) {
+        tbody.innerHTML = '<tr><td colspan="4">لا توجد ورقة باسم "ملخص".</td></tr>';
+        return;
+      }
+
+      const data = XLSX.utils.sheet_to_json(ws, {
+        header: 1,
+        defval: "",
+        blankrows: false
+      });
+
+      for (let r = 2; r < data.length; r++) { // من الصف 3 (index 2) حتى النهاية
+        const row = data[r];
+        const rawDate = row[0];
+        const rawSell = row[1];
+        const rawExpenses = row[2];
+        const rawWholesale = row[3];
+
+        if (!rawDate && !rawSell && !rawExpenses && !rawWholesale) continue;
+
+        const tr = document.createElement("tr");
+        const net = (parseFloat(String(rawSell).replace(/,/g, "")) || 0) +
+                    (parseFloat(String(rawWholesale).replace(/,/g, "")) || 0) -
+                    (parseFloat(String(rawExpenses).replace(/,/g, "")) || 0);
+
+        const rowClass = net >= 0 ? "row-positive" : "row-negative";
+        tr.className = rowClass;
+
+        const dateText = rawDate instanceof Date
+          ? rawDate.toISOString().slice(0,10)
+          : String(rawDate);
+
+        const sellNum = parseFloat(String(rawSell).replace(/,/g, "")) || 0;
+        const expensesNum = parseFloat(String(rawExpenses).replace(/,/g, "")) || 0;
+        const wholesaleNum = parseFloat(String(rawWholesale).replace(/,/g, "")) || 0;
+
+        tr.innerHTML = `
+          <td>${dateText}</td>
+          <td>${formatNumber(sellNum)}</td>
+          <td>${formatNumber(expensesNum)}</td>
+          <td>${formatNumber(wholesaleNum)}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+
+      if (!tbody.children.length) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = '<td colspan="4">لا توجد بيانات في ورقة الملخص.</td>';
+        tbody.appendChild(tr);
+      }
+    }
+
     async function refreshPage() {
       const workbook = await loadWorkbook();
       if (!workbook) return;
 
       renderMonthlySummary(workbook);
+      renderSummarySheet(workbook);
 
       const selectDate = document.getElementById("selectDate");
       const selectOperation = document.getElementById("selectOperation");
@@ -469,7 +514,7 @@
       });
 
       const btnShow = document.getElementById("btnShow");
-      const runFilter = () => {
+      btnShow.onclick = () => {
         const selectedDate = selectDate.value;
         const selectedOperation = selectOperation.value;
         const descFilter = filterDescription.value.trim();
@@ -478,7 +523,9 @@
         let allRows = [];
         let targetSheets = validSheets;
 
-        if (selectedDate) targetSheets = [selectedDate];
+        if (selectedDate) {
+          targetSheets = [selectedDate];
+        }
 
         targetSheets.forEach(sheet => {
           const rowsInSheet = getFilteredRows(
@@ -494,13 +541,14 @@
         renderTable(allRows);
       };
 
-      btnShow.onclick = runFilter;
-      filterDescription.oninput = runFilter;
-      filterAmount.oninput = runFilter;
-      selectDate.onchange = runFilter;
-      selectOperation.onchange = runFilter;
+      filterDescription.addEventListener("input", () => {
+        btnShow.click();
+      });
+      filterAmount.addEventListener("input", () => {
+        btnShow.click();
+      });
 
-      runFilter();
+      btnShow.click();
     }
 
     window.addEventListener("load", refreshPage);
