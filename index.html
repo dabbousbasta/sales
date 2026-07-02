@@ -3,205 +3,133 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard ملخص دبوس البسطة</title>
-
-  <!-- SheetJS -->
+  <title>مبيعات دبوس البسطة</title>
   <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
   <style>
-    :root {
-      --card-bg: #ffffff;
-      --card-border: #ddd;
-      --card-shadow: 0 1px 3px rgba(0,0,0,0.08);
-      --blue-dark: #003399;
-      --red-bright: #ff0000;
-      --green-soft: #dff5d8;
-      --yellow-soft: #fff8cc;
-    }
-
     body {
       font-family: Arial, sans-serif;
-      margin: 0;
+      margin: 10px;
       padding: 0;
-      background-color: #f5f5f5;
-      color: #333;
-      direction: rtl;
+      background-color: #f7f7f7;
+      font-size: 1rem;
     }
 
-    .page-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 10px;
+    @media (max-width: 768px) {
+      body {
+        font-size: 1.1rem;
+      }
     }
 
-    h1 {
-      font-size: 1.6rem;
+    .summary-box {
       margin: 10px 0 15px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 10px;
+      overflow-x: auto;
+    }
+
+    .summary-box h3 {
+      margin: 0 0 10px;
+      font-size: 1.05rem;
+      color: #333;
+    }
+
+    .monthly-table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 900px;
+      font-size: 0.95rem;
+    }
+
+    .monthly-table th,
+    .monthly-table td {
+      border: 1px solid #ccc;
+      padding: 6px 8px;
       text-align: center;
-      color: #007cba;
+      white-space: nowrap;
     }
 
-    /* بطاقات الملخص */
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 10px;
-      margin-bottom: 15px;
+    .monthly-table th {
+      background: #007cba;
+      color: #fff;
     }
 
-    @media (max-width: 900px) {
-      .cards {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 500px) {
-      .cards {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 8px;
-      padding: 10px 12px;
-      box-shadow: var(--card-shadow);
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .card-title {
-      font-size: 0.9rem;
-      color: #555;
-    }
-
-    .card-value {
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: #222;
-    }
-
-    .card-sub {
-      font-size: 0.8rem;
-      color: #777;
-    }
-
-    .card.blue .card-value { color: #007cba; }
-    .card.green .card-value { color: #2e7d32; }
-    .card.red .card-value { color: #c62828; }
-    .card.purple .card-value { color: #6a1b9a; }
-
-    /* منطقة الفلاتر */
-    .filters {
+    .controls {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-bottom: 15px;
-      padding: 8px;
+      margin: 10px 0 15px;
+      padding: 8px 0;
       background: #fff;
-      border-radius: 8px;
+      border-radius: 6px;
       border: 1px solid #ddd;
     }
 
-    .filters-group {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
+    .controls label {
+      white-space: nowrap;
+    }
+
+    .controls input,
+    .controls select {
+      padding: 8px 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
       min-width: 120px;
     }
 
-    .filters label {
-      font-size: 0.8rem;
-      color: #555;
-    }
-
-    .filters input,
-    .filters select {
-      padding: 6px 8px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      font-size: 0.9rem;
-    }
-
-    .filters button {
-      padding: 8px 12px;
-      border-radius: 4px;
-      border: none;
-      background-color: #007cba;
-      color: #fff;
-      font-size: 0.9rem;
-      cursor: pointer;
-    }
-
-    .filters button:hover {
-      background-color: #005a87;
-    }
-
-    /* منطقة الرسوم البيانية */
-    .charts {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-      margin-bottom: 15px;
-    }
-
-    @media (min-width: 900px) {
-      .charts {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+    @media (max-width: 480px) {
+      .controls input,
+      .controls select {
+        min-width: 100px;
+        font-size: 0.95rem;
       }
     }
 
-    .chart-card {
-      background: #fff;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      box-shadow: var(--card-shadow);
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      min-height: 220px;
+    .controls button {
+      padding: 9px 14px;
+      font-size: 1rem;
+      background-color: #007cba;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
     }
 
-    .chart-title {
-      font-size: 0.95rem;
+    .controls button:hover {
+      background-color: #005a87;
+    }
+
+    .summary {
+      margin: 10px 0;
+      padding: 10px 12px;
+      background-color: #e0f7fa;
+      border-radius: 6px;
       font-weight: bold;
-      color: #333;
       text-align: center;
+      font-size: 1.15rem;
+      border: 1px solid #bbeeff;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
 
-    .chart-subtitle {
-      font-size: 0.8rem;
-      color: #777;
-      text-align: center;
-    }
-
-    .chart-wrapper {
-      position: relative;
-      width: 100%;
-      height: 160px;
-    }
-
-    /* جدول التفاصيل */
     #tableContainer {
       margin-top: 10px;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
-      background: #fff;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      padding: 8px;
     }
 
     table {
       border-collapse: collapse;
       width: 100%;
-      min-width: 500px;
-      font-size: 0.95rem;
+      min-width: 600px;
+      font-size: 1rem;
+    }
+
+    @media (max-width: 480px) {
+      table {
+        min-width: 500px;
+        font-size: 0.95rem;
+      }
     }
 
     th, td {
@@ -214,144 +142,86 @@
     th {
       background-color: #007cba;
       color: white;
-      font-size: 0.9rem;
     }
 
     tbody tr:nth-child(odd) {
-      background-color: var(--yellow-soft);
+      background-color: #fff8cc;
     }
 
     tbody tr:nth-child(even) {
-      background-color: var(--green-soft);
+      background-color: #dff5d8;
     }
 
     tbody tr.row-positive,
     tbody tr.row-positive td {
-      color: var(--blue-dark);
+      color: #003399 !important;
       font-weight: bold;
     }
 
     tbody tr.row-negative,
     tbody tr.row-negative td {
-      color: var(--red-bright);
+      color: #ff0000 !important;
       font-weight: bold;
+    }
+
+    label {
+      font-size: 0.95rem;
     }
   </style>
 </head>
 <body>
-  <div class="page-container">
-    <h1>Dashboard ملخص دبوس البسطة</h1>
 
-    <!-- بطاقات الملخص -->
-    <div class="cards">
-      <div class="card blue">
-        <div class="card-title">إجمالي بيع المحل</div>
-        <div class="card-value" id="totalSell">0,000.00</div>
-        <div class="card-sub">من ورقة الملخص</div>
-      </div>
-      <div class="card green">
-        <div class="card-title">إجمالي الجملة</div>
-        <div class="card-value" id="totalWholesale">0,000.00</div>
-        <div class="card-sub">مبيعات الجملة اليومية</div>
-      </div>
-      <div class="card red">
-        <div class="card-title">إجمالي المصاريف</div>
-        <div class="card-value" id="totalExpenses">0,000.00</div>
-        <div class="card-sub">تشمل الإيجابي والمرتجع</div>
-      </div>
-      <div class="card purple">
-        <div class="card-title">الصافي (بيع + جملة - مصاريف)</div>
-        <div class="card-value" id="totalNet">0,000.00</div>
-        <div class="card-sub">إجمالي فترة الملخص</div>
-      </div>
+  <div class="summary-box">
+    <h3>الملخص الشهري</h3>
+    <table class="monthly-table" id="monthlyTable">
+      <tbody id="monthlyBody"></tbody>
+    </table>
+  </div>
+
+  <div class="controls">
+    <div>
+      <label>التاريخ:</label>
+      <select id="selectDate">
+        <option value="">الكل</option>
+      </select>
     </div>
-
-    <!-- فلاتر -->
-    <div class="filters">
-      <div class="filters-group">
-        <label for="filterFromDate">من تاريخ</label>
-        <input type="date" id="filterFromDate">
-      </div>
-      <div class="filters-group">
-        <label for="filterToDate">إلى تاريخ</label>
-        <input type="date" id="filterToDate">
-      </div>
-      <div class="filters-group">
-        <label for="filterMonth">الشهر</label>
-        <select id="filterMonth">
-          <option value="">الكل</option>
-          <option value="1">يناير</option>
-          <option value="2">فبراير</option>
-          <option value="3">مارس</option>
-          <option value="4">أبريل</option>
-          <option value="5">مايو</option>
-          <option value="6">يونيو</option>
-          <option value="7">يوليو</option>
-          <option value="8">أغسطس</option>
-          <option value="9">سبتمبر</option>
-          <option value="10">أكتوبر</option>
-          <option value="11">نوفمبر</option>
-          <option value="12">ديسمبر</option>
-        </select>
-      </div>
-      <div class="filters-group">
-        <label for="filterText">بحث نصي في التاريخ</label>
-        <input type="text" id="filterText" placeholder="مثال: 2026-04 أو 01-04">
-      </div>
-      <div class="filters-group" style="align-self:flex-end;">
-        <button id="btnApplyFilters">تطبيق الفلاتر</button>
-      </div>
+    <div>
+      <label>العملية:</label>
+      <select id="selectOperation">
+        <option value="">الكل</option>
+      </select>
     </div>
-
-    <!-- الرسوم البيانية -->
-    <div class="charts">
-      <div class="chart-card">
-        <div class="chart-title">المبيعات اليومية</div>
-        <div class="chart-subtitle" id="sellMonthlySummary">ملخص شهري للمبيعات</div>
-        <div class="chart-wrapper">
-          <canvas id="sellChart"></canvas>
-        </div>
-      </div>
-
-      <div class="chart-card">
-        <div class="chart-title">مبيعات الجملة اليومية</div>
-        <div class="chart-subtitle" id="wholesaleMonthlySummary">ملخص شهري للجملة</div>
-        <div class="chart-wrapper">
-          <canvas id="wholesaleChart"></canvas>
-        </div>
-      </div>
-
-      <div class="chart-card">
-        <div class="chart-title">المصاريف اليومية</div>
-        <div class="chart-subtitle" id="expensesMonthlySummary">ملخص شهري للمصاريف</div>
-        <div class="chart-wrapper">
-          <canvas id="expensesChart"></canvas>
-        </div>
-      </div>
+    <div>
+      <label>فلتر البيان:</label>
+      <input type="text" id="filterDescription" placeholder="بحث في البيانات" />
     </div>
-
-    <!-- جدول التفاصيل -->
-    <div id="tableContainer">
-      <table>
-        <thead>
-          <tr>
-            <th>التاريخ</th>
-            <th>بيع</th>
-            <th>مصاريف</th>
-            <th>جملة</th>
-          </tr>
-        </thead>
-        <tbody id="tableBody"></tbody>
-      </table>
+    <div>
+      <label>فلتر السعر:</label>
+      <input type="text" id="filterAmount" placeholder="مثال: 1000 أو >= 500" />
     </div>
+    <button id="btnShow">إظهار البيانات</button>
+  </div>
+
+  <div class="summary">
+    <span>إجمالي المبيع $: </span>
+    <span id="totalAmount">0,000.00</span>
+  </div>
+
+  <div id="tableContainer">
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>التاريخ</th>
+          <th>البيان</th>
+          <th>المبيع $</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
   </div>
 
   <script>
     const EXCEL_FILE_NAME = "صندوق دبوس.xlsx";
-
-    let allRows = [];  // {date: Date, dateLabel: string, sell: number, expenses: number, wholesale: number}
-    let filteredRows = [];
-    let sellChart, wholesaleChart, expensesChart;
 
     function formatNumber(value) {
       return new Intl.NumberFormat('en-US', {
@@ -360,42 +230,58 @@
       }).format(value);
     }
 
-    function parseDateFromExcelCell(cellValue) {
-      if (!cellValue) return null;
-      if (cellValue instanceof Date) return cellValue;
+    function parseNumericFilter(input) {
+      const text = String(input || "").trim();
+      if (!text) return null;
 
-      const s = String(cellValue).trim();
-      // محاولات بسيطة: 2026-04-01 أو 01-04-2026 أو 01/04/2026
-      let d = new Date(s);
-      if (!isNaN(d.getTime())) return d;
+      const cleaned = text.replace(/,/g, "");
 
-      // شكل 01-04-2026
-      const m1 = s.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);
-      if (m1) {
-        const day = parseInt(m1[1], 10);
-        const month = parseInt(m1[2], 10);
-        const year = parseInt(m1[3], 10);
-        return new Date(year, month - 1, day);
-      }
+      let m = cleaned.match(/^>=\s*(-?\d+(?:\.\d+)?)$/);
+      if (m) return { type: "gte", value: parseFloat(m[1]) };
 
-      // شكل 2026-04-01
-      const m2 = s.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})$/);
-      if (m2) {
-        const year = parseInt(m2[1], 10);
-        const month = parseInt(m2[2], 10);
-        const day = parseInt(m2[3], 10);
-        return new Date(year, month - 1, day);
-      }
+      m = cleaned.match(/^<=\s*(-?\d+(?:\.\d+)?)$/);
+      if (m) return { type: "lte", value: parseFloat(m[1]) };
 
-      return null;
+      m = cleaned.match(/^>\s*(-?\d+(?:\.\d+)?)$/);
+      if (m) return { type: "gt", value: parseFloat(m[1]) };
+
+      m = cleaned.match(/^<\s*(-?\d+(?:\.\d+)?)$/);
+      if (m) return { type: "lt", value: parseFloat(m[1]) };
+
+      m = cleaned.match(/^(-?\d+(?:\.\d+)?)\s*-\s*(-?\d+(?:\.\d+)?)$/);
+      if (m) return { type: "range", min: parseFloat(m[1]), max: parseFloat(m[2]) };
+
+      const num = parseFloat(cleaned);
+      if (!isNaN(num)) return { type: "exact", value: num };
+
+      return { type: "text", value: cleaned };
     }
 
-    function formatDateLabel(d) {
-      if (!d) return "";
-      const y = d.getFullYear();
-      const m = String(d.getMonth() + 1).padStart(2, "0");
-      const day = String(d.getDate()).padStart(2, "0");
-      return `${y}-${m}-${day}`;
+    function matchesNumericFilter(amount, filterText) {
+      if (!filterText) return true;
+
+      const filter = parseNumericFilter(filterText);
+      if (!filter) return true;
+
+      if (filter.type === "text") {
+        return formatNumber(amount).includes(filter.value) || String(amount).includes(filter.value);
+      }
+
+      if (filter.type === "exact") {
+        return Math.abs(amount - filter.value) < 0.000001;
+      }
+
+      if (filter.type === "gte") return amount >= filter.value;
+      if (filter.type === "lte") return amount <= filter.value;
+      if (filter.type === "gt") return amount > filter.value;
+      if (filter.type === "lt") return amount < filter.value;
+      if (filter.type === "range") {
+        const min = Math.min(filter.min, filter.max);
+        const max = Math.max(filter.min, filter.max);
+        return amount >= min && amount <= max;
+      }
+
+      return true;
     }
 
     async function loadWorkbook() {
@@ -410,249 +296,214 @@
       }
     }
 
-    function loadSummarySheet(workbook) {
-      const ws = workbook.Sheets["ملخص"];
+    function sheetNameToFullDate(sheetName) {
+      const m = sheetName.trim().match(/^(\d{2})-(\d{2})$/);
+      if (!m) return sheetName;
+
+      const day = parseInt(m[1], 10);
+      const month = parseInt(m[2], 10);
+      const year = 2026;
+
+      const date = new Date(year, month - 1, day);
+
+      const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      const dayName = days[date.getDay()];
+
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const monthName = months[date.getMonth()];
+
+      return `${dayName}-${day.toString().padStart(2, "0")}-${monthName}-${year}`;
+    }
+
+    function isDateSheetName(sheetName) {
+      return /^\d{2}-\d{2}$/.test(sheetName.trim());
+    }
+
+    function getValidSheets(workbook) {
+      return workbook.SheetNames.filter(isDateSheetName);
+    }
+
+    function getOperationList(workbook) {
+      const ops = new Set();
+      const sheets = workbook.SheetNames.filter(isDateSheetName);
+
+      sheets.forEach(sheetName => {
+        const ws = workbook.Sheets[sheetName];
+        const data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "", blankrows: false });
+
+        for (let i = 0; i < data.length; i++) {
+          const row = data[i];
+          const op = row[7];
+          if (op && typeof op === "string" && op.trim() !== "") {
+            ops.add(op.trim());
+          }
+        }
+      });
+
+      return Array.from(ops).sort();
+    }
+
+    function getFilteredRows(workbook, sheetName, operation, descriptionFilter, amountFilter) {
+      const ws = workbook.Sheets[sheetName];
+      const data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" });
+
+      const rows = [];
+      const dateStr = sheetNameToFullDate(sheetName);
+
+      for (let i = 0; i < data.length; i++) {
+        const row = data[i];
+        const op = row[7];
+        const desc = String(row[8] || "").trim();
+        const amount = parseFloat(String(row[11] || "").replace(/,/g, ""));
+
+        if (desc === "حركة الصندوق") continue;
+        if (isNaN(amount) || amount === 0) continue;
+
+        if (!operation || op === operation) {
+          if (descriptionFilter && !desc.includes(descriptionFilter)) continue;
+          if (!matchesNumericFilter(amount, amountFilter)) continue;
+
+          rows.push({
+            date: dateStr,
+            desc: desc,
+            amount: amount
+          });
+        }
+      }
+
+      return rows;
+    }
+
+    function renderTable(rows) {
+      const tbody = document.getElementById("tableBody");
+      tbody.innerHTML = "";
+
+      if (rows.length === 0) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = '<td colspan="3">لا توجد بيانات مطابقة للبحث.</td>';
+        tbody.appendChild(tr);
+        document.getElementById("totalAmount").textContent = formatNumber(0);
+        return;
+      }
+
+      let total = 0;
+      rows.forEach(row => {
+        const tr = document.createElement("tr");
+        const rowClass = row.amount > 0 ? "row-positive" : "row-negative";
+        tr.className = rowClass;
+        tr.innerHTML = `
+          <td>${row.date}</td>
+          <td>${row.desc}</td>
+          <td>${formatNumber(row.amount)}</td>
+        `;
+        tbody.appendChild(tr);
+        total += row.amount;
+      });
+
+      document.getElementById("totalAmount").textContent = formatNumber(total);
+    }
+
+    function renderMonthlySummary(workbook) {
+      const ws = workbook.Sheets["شهري"];
+      const tbody = document.getElementById("monthlyBody");
+      tbody.innerHTML = "";
+
       if (!ws) {
-        alert('لا توجد ورقة باسم "ملخص" في الملف.');
+        tbody.innerHTML = '<tr><td>لا توجد ورقة باسم "شهري".</td></tr>';
         return;
       }
 
       const data = XLSX.utils.sheet_to_json(ws, {
         header: 1,
         defval: "",
-        blankrows: false
+        blankrows: false,
+        range: "A1:K6"
       });
 
-      allRows = [];
-      for (let r = 2; r < data.length; r++) { // بدءًا من الصف 3 (index 2)
-        const row = data[r];
-        const rawDate = row[0];
-        const rawSell = row[1];
-        const rawExpenses = row[2];
-        const rawWholesale = row[3];
-
-        const dateObj = parseDateFromExcelCell(rawDate);
-        if (!dateObj) continue;
-
-        const sell = parseFloat(String(rawSell).replace(/,/g, "")) || 0;
-        const expenses = parseFloat(String(rawExpenses).replace(/,/g, "")) || 0;
-        const wholesale = parseFloat(String(rawWholesale).replace(/,/g, "")) || 0;
-
-        allRows.push({
-          date: dateObj,
-          dateLabel: formatDateLabel(dateObj),
-          sell,
-          expenses,
-          wholesale
-        });
-      }
-
-      allRows.sort((a, b) => a.date - b.date);
-    }
-
-    function applyFilters() {
-      const fromDateInput = document.getElementById("filterFromDate").value;
-      const toDateInput = document.getElementById("filterToDate").value;
-      const monthInput = document.getElementById("filterMonth").value;
-      const textFilter = document.getElementById("filterText").value.trim();
-
-      let fromDate = fromDateInput ? new Date(fromDateInput) : null;
-      let toDate = toDateInput ? new Date(toDateInput) : null;
-
-      filteredRows = allRows.filter(row => {
-        if (fromDate && row.date < fromDate) return false;
-        if (toDate && row.date > toDate) return false;
-        if (monthInput) {
-          const m = parseInt(monthInput, 10);
-          if (row.date.getMonth() + 1 !== m) return false;
-        }
-        if (textFilter) {
-          if (!row.dateLabel.includes(textFilter)) return false;
-        }
-        return true;
-      });
-    }
-
-    function updateCards() {
-      let totalSell = 0;
-      let totalWholesale = 0;
-      let totalExpenses = 0;
-
-      filteredRows.forEach(row => {
-        totalSell += row.sell;
-        totalWholesale += row.wholesale;
-        totalExpenses += row.expenses;
-      });
-
-      const totalNet = totalSell + totalWholesale - totalExpenses;
-
-      document.getElementById("totalSell").textContent = formatNumber(totalSell);
-      document.getElementById("totalWholesale").textContent = formatNumber(totalWholesale);
-      document.getElementById("totalExpenses").textContent = formatNumber(totalExpenses);
-      document.getElementById("totalNet").textContent = formatNumber(totalNet);
-    }
-
-    function computeMonthlySummary() {
-      const monthly = {}; // { 'YYYY-MM': { sell, wholesale, expenses } }
-
-      filteredRows.forEach(row => {
-        const y = row.date.getFullYear();
-        const m = String(row.date.getMonth() + 1).padStart(2, "0");
-        const key = `${y}-${m}`;
-        if (!monthly[key]) {
-          monthly[key] = { sell: 0, wholesale: 0, expenses: 0 };
-        }
-        monthly[key].sell += row.sell;
-        monthly[key].wholesale += row.wholesale;
-        monthly[key].expenses += row.expenses;
-      });
-
-      return monthly;
-    }
-
-    function updateMonthlySummaryText(monthly) {
-      const keys = Object.keys(monthly).sort();
-      const sellTextParts = [];
-      const wholesaleTextParts = [];
-      const expensesTextParts = [];
-
-      keys.forEach(k => {
-        const s = monthly[k].sell;
-        const w = monthly[k].wholesale;
-        const e = monthly[k].expenses;
-        sellTextParts.push(`${k}: ${formatNumber(s)}`);
-        wholesaleTextParts.push(`${k}: ${formatNumber(w)}`);
-        expensesTextParts.push(`${k}: ${formatNumber(e)}`);
-      });
-
-      document.getElementById("sellMonthlySummary").textContent =
-        sellTextParts.length ? sellTextParts.join(" | ") : "لا يوجد ملخص شهري متاح للفلاتر الحالية";
-
-      document.getElementById("wholesaleMonthlySummary").textContent =
-        wholesaleTextParts.length ? wholesaleTextParts.join(" | ") : "لا يوجد ملخص شهري متاح للفلاتر الحالية";
-
-      document.getElementById("expensesMonthlySummary").textContent =
-        expensesTextParts.length ? expensesTextParts.join(" | ") : "لا يوجد ملخص شهري متاح للفلاتر الحالية";
-    }
-
-    function updateTable() {
-      const tbody = document.getElementById("tableBody");
-      tbody.innerHTML = "";
-
-      if (!filteredRows.length) {
+      data.forEach((row, rowIndex) => {
         const tr = document.createElement("tr");
-        tr.innerHTML = '<td colspan="4">لا توجد بيانات مطابقة للفلاتر.</td>';
-        tbody.appendChild(tr);
-        return;
-      }
+        row.forEach((cell, colIndex) => {
+          const td = document.createElement(rowIndex === 0 ? "th" : "td");
+          let value = cell;
 
-      filteredRows.forEach(row => {
-        const tr = document.createElement("tr");
-        const netForRow = row.sell + row.wholesale - row.expenses;
-        const rowClass = netForRow >= 0 ? "row-positive" : "row-negative";
-        tr.className = rowClass;
-        tr.innerHTML = `
-          <td>${row.dateLabel}</td>
-          <td>${formatNumber(row.sell)}</td>
-          <td>${formatNumber(row.expenses)}</td>
-          <td>${formatNumber(row.wholesale)}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function createOrUpdateChart(chartRef, canvasId, labels, dataValues, color, labelText) {
-      const ctx = document.getElementById(canvasId).getContext("2d");
-
-      if (chartRef && chartRef.destroy) {
-        chartRef.destroy();
-      }
-
-      const cfg = {
-        type: "line",
-        data: {
-          labels: labels,
-          datasets: [{
-            label: labelText,
-            data: dataValues,
-            borderColor: color,
-            backgroundColor: color + "33",
-            tension: 0.2,
-            fill: false,
-            pointRadius: 2
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              display: false
-            },
-            tooltip: {
-              mode: "index",
-              intersect: false
-            }
-          },
-          scales: {
-            x: {
-              ticks: { maxTicksLimit: 6 }
-            },
-            y: {
-              beginAtZero: false,
-              ticks: {
-                callback: function(value) {
-                  return formatNumber(value);
-                }
-              }
-            }
+          if (colIndex > 0 && rowIndex > 0 && value !== "" && value != null) {
+            const num = parseFloat(String(value).replace(/,/g, ""));
+            if (!isNaN(num)) value = formatNumber(num);
           }
-        }
-      };
 
-      return new Chart(ctx, cfg);
+          td.textContent = value;
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
     }
 
-    function updateCharts() {
-      const labels = filteredRows.map(r => r.dateLabel);
-      const sellValues = filteredRows.map(r => r.sell);
-      const wholesaleValues = filteredRows.map(r => r.wholesale);
-      const expensesValues = filteredRows.map(r => r.expenses);
-
-      sellChart = createOrUpdateChart(sellChart, "sellChart", labels, sellValues, "#007cba", "بيع المحل");
-      wholesaleChart = createOrUpdateChart(wholesaleChart, "wholesaleChart", labels, wholesaleValues, "#2e7d32", "جملة");
-      expensesChart = createOrUpdateChart(expensesChart, "expensesChart", labels, expensesValues, "#c62828", "مصاريف");
-    }
-
-    async function initDashboard() {
+    async function refreshPage() {
       const workbook = await loadWorkbook();
       if (!workbook) return;
 
-      loadSummarySheet(workbook);
+      renderMonthlySummary(workbook);
 
-      if (!allRows.length) {
-        alert("لا توجد بيانات في ورقة الملخص.");
-        return;
-      }
+      const selectDate = document.getElementById("selectDate");
+      const selectOperation = document.getElementById("selectOperation");
+      const filterDescription = document.getElementById("filterDescription");
+      const filterAmount = document.getElementById("filterAmount");
 
-      applyFilters();
-      updateCards();
-      const monthly = computeMonthlySummary();
-      updateMonthlySummaryText(monthly);
-      updateCharts();
-      updateTable();
-
-      document.getElementById("btnApplyFilters").addEventListener("click", () => {
-        applyFilters();
-        updateCards();
-        const monthly2 = computeMonthlySummary();
-        updateMonthlySummaryText(monthly2);
-        updateCharts();
-        updateTable();
+      const validSheets = getValidSheets(workbook);
+      selectDate.innerHTML = '<option value="">الكل</option>';
+      validSheets.forEach(sheet => {
+        const opt = document.createElement("option");
+        opt.value = sheet;
+        opt.textContent = sheet;
+        selectDate.appendChild(opt);
       });
+
+      const operations = getOperationList(workbook);
+      selectOperation.innerHTML = '<option value="">الكل</option>';
+      operations.forEach(op => {
+        const opt = document.createElement("option");
+        opt.value = op;
+        opt.textContent = op;
+        selectOperation.appendChild(opt);
+      });
+
+      const btnShow = document.getElementById("btnShow");
+      const runFilter = () => {
+        const selectedDate = selectDate.value;
+        const selectedOperation = selectOperation.value;
+        const descFilter = filterDescription.value.trim();
+        const amountFilter = filterAmount.value.trim();
+
+        let allRows = [];
+        let targetSheets = validSheets;
+
+        if (selectedDate) targetSheets = [selectedDate];
+
+        targetSheets.forEach(sheet => {
+          const rowsInSheet = getFilteredRows(
+            workbook,
+            sheet,
+            selectedOperation,
+            descFilter,
+            amountFilter
+          );
+          allRows = allRows.concat(rowsInSheet);
+        });
+
+        renderTable(allRows);
+      };
+
+      btnShow.onclick = runFilter;
+      filterDescription.oninput = runFilter;
+      filterAmount.oninput = runFilter;
+      selectDate.onchange = runFilter;
+      selectOperation.onchange = runFilter;
+
+      runFilter();
     }
 
-    window.addEventListener("load", initDashboard);
+    window.addEventListener("load", refreshPage);
   </script>
 </body>
 </html>
