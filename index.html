@@ -214,7 +214,7 @@
 </head>
 <body>
 
-  <!-- الملخص الشهري كما كان -->
+  <!-- الملخص الشهري -->
   <div class="summary-box">
     <h3>الملخص الشهري</h3>
     <table class="monthly-table" id="monthlyTable">
@@ -222,7 +222,26 @@
     </table>
   </div>
 
-  <!-- مربع ملخص الأيام من ورقة ملخص -->
+  <!-- الملخص الأسبوعي الجديد -->
+  <div class="summary-box">
+    <h3>الملخص الأسبوعي (من الاثنين إلى الأحد)</h3>
+    <div class="summary-scroll">
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th>من تاريخ</th>
+            <th>إلى تاريخ</th>
+            <th>مجموع بيع</th>
+            <th>مجموع مصاريف</th>
+            <th>مجموع جملة</th>
+          </tr>
+        </thead>
+        <tbody id="weeklyBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ملخص الأيام من ورقة ملخص -->
   <div class="summary-box">
     <h3>ملخص الأيام (من ورقة ملخص)</h3>
     <div class="summary-scroll">
@@ -293,13 +312,14 @@
       }).format(value);
     }
 
-    // تحويل رقم تاريخ Excel إلى كائن Date ثم نص عربي
+    // تحويل رقم تاريخ Excel إلى Date
     function excelSerialToDate(serial) {
       const d = new Date(1899, 11, 30);
       d.setDate(d.getDate() + serial);
       return d;
     }
 
+    // تنسيق عربي مع اسم اليوم
     function formatArabicDate(d) {
       const daysAr = ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
       const dayName = daysAr[d.getDay()];
@@ -376,23 +396,17 @@
     }
 
     function sheetNameToFullDate(sheetName) {
-  const m = sheetName.trim().match(/^(\d{2})-(\d{2})$/);
-  if (!m) return sheetName;
+      const m = sheetName.trim().match(/^(\d{2})-(\d{2})$/);
+      if (!m) return sheetName;
 
-  const day = parseInt(m[1], 10);
-  const month = parseInt(m[2], 10);
-  const year = 2026; // غيّرها لو تغيرت السنة في الملف
+      const day = parseInt(m[1], 10);
+      const month = parseInt(m[2], 10);
+      const year = 2026; // عدّلها إذا تغيرت السنة
 
-  const date = new Date(year, month - 1, day);
+      const date = new Date(year, month - 1, day);
+      return formatArabicDate(date);
+    }
 
-  const daysAr = ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
-  const dayName = daysAr[date.getDay()];
-
-  const d = String(date.getDate()).padStart(2, "0");
-  const m2 = String(date.getMonth() + 1).padStart(2, "0");
-
-  return `${dayName} ${d}-${m2}-${year}`;
-}
     function isDateSheetName(sheetName) {
       return /^\d{2}-\d{2}$/.test(sheetName.trim());
     }
@@ -586,11 +600,137 @@
       }
     }
 
+    // الملخص الأسبوعي من ورقة ملخص
+    function renderWeeklySummary(workbook) {
+      const ws = workbook.Sheets["ملخص"];
+      const tbody = document.getElementById("weeklyBody");
+      tbody.innerHTML = "";
+
+      if (!ws) {
+        tbody.innerHTML = '<tr><td colspan="5">لا توجد ورقة باسم "ملخص".</td></tr>';
+        return;
+      }
+
+      const data = XLSX.utils.sheet_to_json(ws, {
+        header: 1,
+        defval: "",
+        blankrows: false
+      });
+
+      const rows = [];
+      for (let r = 2; r < data.length; r++) {
+        const row = data[r];
+        const rawDate = row[0];
+
+        if (!rawDate) continue;
+
+        let d;
+        if (typeof rawDate === "number") {
+          d = excelSerialToDate(rawDate);
+        } else if (rawDate instanceof Date) {
+          d = rawDate;
+        } else {
+          const tryDate = new Date(String(rawDate));
+          if (isNaN(tryDate.getTime())) continue;
+          d = tryDate;
+        }
+
+        const sellNum = parseFloat(String(row[1]).replace(/,/g, "")) || 0;
+        const expensesNum = parseFloat(String(row[2]).replace(/,/g, "")) || 0;
+        const wholesaleNum = parseFloat(String(row[3]).replace(/,/g, "")) || 0;
+
+        rows.push({
+          date: d,
+          sell: sellNum,
+          expenses: expensesNum,
+          wholesale: wholesaleNum
+        });
+      }
+
+      if (!rows.length) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = '<td colspan="5">لا توجد بيانات أسبوعية (ملخص فارغ).</td>';
+        tbody.appendChild(tr);
+        return;
+      }
+
+      rows.sort((a, b) => a.date - b.date);
+
+      const weeklyMap = new Map();
+
+      rows.forEach(r => {
+        const d = new Date(r.date);
+        const currentDay = d.getDay(); // 0 الأحد .. 1 الاثنين .. 6 السبت
+        const diffToMonday = (currentDay === 0) ? -6 : (1 - currentDay);
+        const monday = new Date(d);
+        monday.setDate(d.getDate() + diffToMonday);
+
+        const mondayKey = monday.toISOString().slice(0,10);
+
+        const sunday = new Date(monday);
+        sunday.setDate(monday.getDate() + 6);
+
+        let week = weeklyMap.get(mondayKey);
+        if (!week) {
+          week = {
+            from: new Date(monday),
+            to: new Date(sunday),
+            sell: 0,
+            expenses: 0,
+            wholesale: 0
+          };
+          weeklyMap.set(mondayKey, week);
+        }
+
+        week.sell += r.sell;
+        week.expenses += r.expenses;
+        week.wholesale += r.wholesale;
+      });
+
+      const weeks = Array.from(weeklyMap.values()).sort((a, b) => a.from - b.from);
+
+      weeks.forEach(w => {
+        const tr = document.createElement("tr");
+
+        const tdFrom = document.createElement("td");
+        tdFrom.textContent = formatArabicDate(w.from);
+        tr.appendChild(tdFrom);
+
+        const tdTo = document.createElement("td");
+        tdTo.textContent = formatArabicDate(w.to);
+        tr.appendChild(tdTo);
+
+        const tdSell = document.createElement("td");
+        tdSell.textContent = formatNumber(w.sell);
+        if (w.sell < 0) tdSell.classList.add("negative");
+        tr.appendChild(tdSell);
+
+        const tdExpenses = document.createElement("td");
+        tdExpenses.textContent = formatNumber(w.expenses);
+        if (w.expenses < 0) tdExpenses.classList.add("negative");
+        tr.appendChild(tdExpenses);
+
+        const tdWholesale = document.createElement("td");
+        tdWholesale.textContent = formatNumber(w.wholesale);
+        if (w.wholesale < 0) tdWholesale.classList.add("negative");
+        tr.appendChild(tdWholesale);
+
+        tbody.appendChild(tr);
+      });
+
+      if (!tbody.children.length) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = '<td colspan="5">لا توجد بيانات أسبوعية بعد التجميع.</td>';
+        tbody.appendChild(tr);
+      }
+    }
+
     async function refreshPage() {
       const workbook = await loadWorkbook();
       if (!workbook) return;
 
       renderMonthlySummary(workbook);
+      renderWeeklySummary(workbook);
       renderSummarySheet(workbook);
 
       const selectDate = document.getElementById("selectDate");
