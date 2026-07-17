@@ -246,9 +246,9 @@
     </div>
   </div>
 
-  <!-- ملخص الأيام  -->
+  <!-- ملخص الأيام من ورقة ملخص -->
   <div class="summary-box">
-    <h3>ملخص الأيام</h3>
+    <h3>ملخص الأيام (من ورقة ملخص)</h3>
     <div class="summary-scroll">
       <table class="summary-table">
         <thead>
@@ -264,47 +264,54 @@
     </div>
   </div>
 
-  <!-- الفلاتر والجدول القديم كما هو -->
-  <div class="controls">
-    <div>
-      <label>التاريخ:</label>
-      <select id="selectDate">
-        <option value="">الكل</option>
-      </select>
+  <!-- القسم الرابع: الفلاتر + إجمالي المبيع + الجدول -->
+  <div class="summary-box" style="height: 400px; display: flex; flex-direction: column;">
+    <h3>البيانات التفصيلية</h3>
+    
+    <!-- الفلاتر -->
+    <div class="controls">
+      <div>
+        <label>التاريخ:</label>
+        <select id="selectDate">
+          <option value="">الكل</option>
+        </select>
+      </div>
+      <div>
+        <label>العملية:</label>
+        <select id="selectOperation">
+          <option value="">الكل</option>
+        </select>
+      </div>
+      <div>
+        <label>فلتر البيان:</label>
+        <input type="text" id="filterDescription" placeholder="بحث في البيانات" />
+      </div>
+      <div>
+        <label>فلتر السعر:</label>
+        <input type="text" id="filterAmount" placeholder="مثال: 1000 أو >= 500" />
+      </div>
+      <button id="btnShow">إظهار البيانات</button>
     </div>
-    <div>
-      <label>العملية:</label>
-      <select id="selectOperation">
-        <option value="">الكل</option>
-      </select>
-    </div>
-    <div>
-      <label>فلتر البيان:</label>
-      <input type="text" id="filterDescription" placeholder="بحث في البيانات" />
-    </div>
-    <div>
-      <label>فلتر السعر:</label>
-      <input type="text" id="filterAmount" placeholder="مثال: 1000 أو >= 500" />
-    </div>
-    <button id="btnShow">إظهار البيانات</button>
-  </div>
 
-  <div class="summary">
-    <span>إجمالي المبيع $: </span>
-    <span id="totalAmount">0,000.00</span>
-  </div>
+    <!-- إجمالي المبيع -->
+    <div class="summary">
+      <span>إجمالي المبيع $: </span>
+      <span id="totalAmount">0,000.00</span>
+    </div>
 
-  <div id="tableContainer">
-    <table id="dataTable">
-      <thead>
-        <tr>
-          <th>التاريخ</th>
-          <th>البيان</th>
-          <th>المبيع $</th>
-        </tr>
-      </thead>
-      <tbody id="tableBody"></tbody>
-    </table>
+    <!-- الجدول مع شريط التمرير -->
+    <div class="summary-scroll" style="flex: 1; overflow-y: auto; min-height: 0;">
+      <table id="dataTable">
+        <thead>
+          <tr>
+            <th>التاريخ</th>
+            <th>البيان</th>
+            <th>المبيع $</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
   </div>
 
   <script>
