@@ -359,7 +359,7 @@
     if(!m) return null;
     const day = parseInt(m[1],10);
     const month = parseInt(m[2],10);
-    const year = 2026; // عدّلها إذا تغيرت السنة
+    const year = 2026;
     return new Date(year, month-1, day);
   }
   function sheetNameToFullDate(sheetName){
@@ -419,7 +419,6 @@
       return;
     }
 
-    // الأحدث أولاً لتسهيل القراءة
     rows.sort((a,b) => (b.dateObj || 0) - (a.dateObj || 0));
 
     let total = 0;
@@ -474,7 +473,7 @@
       div.className = "kpi-card " + c.cls;
       div.innerHTML = `
         <div class="label">${c.label}</div>
-        <div class="value num">${c.plain ? formatNumberNoDecimals(c.value) : formatNumber(c.value)}</div>
+        <div class="value num">${c.plain ? formatNumberNoDecimals(c.value) : formatNumberNoDecimals(c.value)}</div>
       `;
       container.appendChild(div);
     });
@@ -497,10 +496,28 @@
     }
 
     const headers = data[0];
+    let hasData = false;
+    
     for(let r=1; r<data.length; r++){
       const row = data[r];
       if(row.every(c => c === "" || c == null)) continue;
 
+      // Check if all values are zero or empty
+      let hasNonZeroValue = false;
+      for(let c=1; c<row.length; c++){
+        const raw = row[c];
+        if(raw === "" || raw == null) continue;
+        const num = parseFloat(String(raw).replace(/,/g,""));
+        if(!isNaN(num) && num !== 0){
+          hasNonZeroValue = true;
+          break;
+        }
+      }
+
+      // Skip this month if all values are zero
+      if(!hasNonZeroValue) continue;
+
+      hasData = true;
       const card = document.createElement("div");
       card.className = "ticket-card";
       let rowsHtml = "";
@@ -520,7 +537,7 @@
       container.appendChild(card);
     }
 
-    if(!container.children.length){
+    if(!hasData){
       container.innerHTML = '<div class="empty-note">لا توجد بيانات شهرية.</div>';
     }
   }
@@ -583,7 +600,15 @@
       week.wholesale += r.wholesale;
     });
 
-    const weeks = Array.from(weeklyMap.values()).sort((a,b) => b.from - a.from);
+    // Sort descending (newest first) and filter out weeks with all zeros
+    const weeks = Array.from(weeklyMap.values())
+      .filter(w => w.sell !== 0 || w.expenses !== 0 || w.wholesale !== 0)
+      .sort((a,b) => b.from - a.from);
+
+    if(!weeks.length){
+      container.innerHTML = '<div class="empty-note">لا توجد بيانات أسبوعية.</div>';
+      return;
+    }
 
     weeks.forEach(w => {
       const card = document.createElement("div");
@@ -624,12 +649,19 @@
       else if(rawDate instanceof Date){ d = rawDate; dateText = formatArabicDate(d); }
       else{ dateText = String(rawDate); }
 
+      const sell = parseFloat(String(rawSell).replace(/,/g,"")) || 0;
+      const expenses = parseFloat(String(rawExpenses).replace(/,/g,"")) || 0;
+      const wholesale = parseFloat(String(rawWholesale).replace(/,/g,"")) || 0;
+
+      // Skip days where all values are zero
+      if(sell === 0 && expenses === 0 && wholesale === 0) continue;
+
       rows.push({
         dateObj:d,
         dateText:dateText,
-        sell: parseFloat(String(rawSell).replace(/,/g,"")) || 0,
-        expenses: parseFloat(String(rawExpenses).replace(/,/g,"")) || 0,
-        wholesale: parseFloat(String(rawWholesale).replace(/,/g,"")) || 0
+        sell: sell,
+        expenses: expenses,
+        wholesale: wholesale
       });
     }
 
@@ -638,6 +670,7 @@
       return;
     }
 
+    // Sort descending (newest first)
     rows.sort((a,b) => (b.dateObj||0) - (a.dateObj||0));
 
     rows.forEach(r => {
