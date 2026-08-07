@@ -1,821 +1,765 @@
+
 <!DOCTYPE html>
-<html dir="rtl" lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>بحث فواتير الشراء</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
-  <style>
-    :root {
-      --primary: #5e35b1;
-      --primary-dark: #4527a0;
-      --bg: #f5f7fb;
-      --text: #222;
-      --card: #fff;
-      --border: #ddd;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>صندوق دبوس البسطة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<style>
+:root{
+--bg:#F2F6F4;
+--surface:#FFFFFF;
+--surface-alt:#EAF0EC;
+--ink:#17241F;
+--ink-soft:#5B6B64;
+--line:#DCE4E0;
+--teal:#0E6B5C;
+--teal-dark:#0A4A40;
+--teal-tint:#E3F3EE;
+--coral:#C6483C;
+--coral-tint:#FBEAE7;
+--amber:#B8801C;
+--amber-tint:#FBF1DE;
+--radius:14px;
+--shadow:0 1px 2px rgba(23,36,31,.06), 0 6px 18px rgba(23,36,31,.06);
+}
+*{box-sizing:border-box;}
+body{
+margin:0;
+background:var(--bg);
+color:var(--ink);
+font-family:'Tajawal', sans-serif;
+-webkit-font-smoothing:antialiased;
+padding-bottom:40px;
+}
+.num{ font-family:'IBM Plex Mono', monospace; unicode-bidi:plaintext; }
 
-    * { box-sizing: border-box; }
+/* ---------- header ---------- */
+header.app-header{
+position:sticky; top:0; z-index:20;
+background:var(--teal-dark);
+color:#fff;
+padding:16px 18px 14px;
+box-shadow:0 4px 14px rgba(10,74,64,.25);
+}
+header.app-header h1{
+margin:0; font-size:1.15rem; font-weight:900; letter-spacing:.2px;
+}
+header.app-header p{
+margin:4px 0 0; font-size:.82rem; color:#CFE9E1; font-weight:500;
+}
 
-    body {
-      margin: 0;
-      font-family: 'Cairo', system-ui, -apple-system, "Segoe UI", sans-serif;
-      direction: rtl;
-      background: var(--bg);
-      color: var(--text);
-    }
+/* ---------- tabs ---------- */
+nav.tabs{
+position:sticky; top:64px; z-index:19;
+display:flex; gap:6px;
+padding:10px 12px;
+background:var(--bg);
+border-bottom:1px solid var(--line);
+overflow-x:auto;
+}
+nav.tabs button{
+flex:0 0 auto;
+border:1px solid var(--line);
+background:var(--surface);
+color:var(--ink-soft);
+font-family:inherit;
+font-weight:700;
+font-size:.88rem;
+padding:9px 16px;
+border-radius:999px;
+cursor:pointer;
+transition:.15s ease;
+}
+nav.tabs button.active{
+background:var(--teal);
+border-color:var(--teal);
+color:#fff;
+}
 
-    main {
-      max-width: 1300px;
-      margin: 0 auto;
-      padding: 14px;
-    }
+main{ padding:14px 12px 0; max-width:900px; margin:0 auto; }
+.panel{ display:none; }
+.panel.active{ display:block; animation:fade .18s ease; }
+@keyframes fade{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;} }
 
-    .card {
-      background: var(--card);
-      border-radius: 10px;
-      padding: 14px;
-      box-shadow: 0 2px 4px rgba(0,0,0,.05);
-      margin-bottom: 14px;
-    }
+.section-title{
+font-size:.95rem; font-weight:900; color:var(--teal-dark);
+margin:18px 2px 10px; display:flex; align-items:center; gap:8px;
+}
+.section-title::before{
+content:""; width:6px; height:6px; border-radius:50%; background:var(--teal);
+}
 
-    .title {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 10px;
-    }
+/* ---------- KPI hero row ---------- */
+.kpi-row{
+display:grid; grid-template-columns:repeat(2,1fr); gap:10px;
+}
+@media(min-width:560px){ .kpi-row{ grid-template-columns:repeat(4,1fr);} }
+.kpi-card{
+background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow);
+padding:14px 12px; border-inline-start:4px solid var(--line);
+}
+.kpi-card .label{ font-size:.76rem; color:var(--ink-soft); font-weight:700; }
+.kpi-card .value{ font-size:1.25rem; font-weight:700; margin-top:6px; }
+.kpi-card.teal{ border-inline-start-color:var(--teal); }
+.kpi-card.teal .value{ color:var(--teal-dark); }
+.kpi-card.coral{ border-inline-start-color:var(--coral); }
+.kpi-card.coral .value{ color:var(--coral); }
+.kpi-card.amber{ border-inline-start-color:var(--amber); }
+.kpi-card.amber .value{ color:var(--amber); }
+.kpi-card.ink .value{ color:var(--ink); }
 
-    .filters-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-      margin-bottom: 8px;
-    }
+/* ---------- ticket-style cards (weekly / daily) ---------- */
+.card-grid{
+display:grid; grid-template-columns:1fr; gap:12px;
+}
+@media(min-width:640px){ .card-grid{ grid-template-columns:repeat(2,1fr);} }
 
-    .filters-grid.extra {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
+.ticket-card{
+position:relative;
+background:var(--surface);
+border-radius:var(--radius);
+box-shadow:var(--shadow);
+padding:14px 16px 12px;
+border-top:2px dashed var(--line);
+}
+.ticket-card::before, .ticket-card::after{
+content:""; position:absolute; top:-9px; width:18px; height:18px;
+background:var(--bg); border-radius:50%;
+}
+.ticket-card::before{ inset-inline-start:12px; }
+.ticket-card::after{ inset-inline-end:12px; }
 
-    .field label {
-      display: block;
-      font-size: 12px;
-      margin-bottom: 4px;
-      color: #555;
-    }
+.ticket-card .t-title{
+font-weight:900; font-size:.95rem; color:var(--ink); margin-bottom:2px;
+}
+.ticket-card .t-sub{
+font-size:.76rem; color:var(--ink-soft); margin-bottom:10px;
+}
+.metric-grid{
+display:grid; grid-template-columns:repeat(3,1fr); gap:8px;
+}
+.metric{
+background:var(--surface-alt); border-radius:10px; padding:8px 6px; text-align:center;
+}
+.metric .m-label{ font-size:.7rem; color:var(--ink-soft); font-weight:700; }
+.metric .m-value{ font-size:.92rem; font-weight:700; margin-top:3px; }
+.metric.neg .m-value{ color:var(--coral); }
+.metric.pos .m-value{ color:var(--teal-dark); }
 
-    .field input,
-    .field select {
-      width: 100%;
-      padding: 10px 12px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      outline: none;
-      font-family: inherit;
-      background: #fff;
-    }
+/* generic metric list (monthly cards, variable columns) */
+.metric-list{ display:flex; flex-direction:column; gap:6px; }
+.metric-list .row{
+display:flex; justify-content:space-between; align-items:center;
+padding:6px 4px; border-bottom:1px dashed var(--line); font-size:.85rem;
+}
+.metric-list .row:last-child{ border-bottom:none; }
+.metric-list .row .m-label{ color:var(--ink-soft); font-weight:600; }
+.metric-list .row .m-value{ font-weight:700; }
+.metric-list .row .m-value.neg{ color:var(--coral); }
 
-    .field input:focus,
-    .field select:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 2px rgba(94,53,177,.12);
-    }
+.empty-note{
+background:var(--surface); border:1px dashed var(--line); border-radius:var(--radius);
+padding:22px; text-align:center; color:var(--ink-soft); font-size:.88rem;
+}
 
-    .actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 8px;
-    }
+/* ---------- filters ---------- */
+.filters-card{
+background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow);
+padding:14px; display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end;
+}
+.field{ display:flex; flex-direction:column; gap:5px; flex:1 1 140px; min-width:130px; }
+.field label{ font-size:.76rem; color:var(--ink-soft); font-weight:700; }
+.field input, .field select{
+padding:10px 10px; border:1px solid var(--line); border-radius:10px;
+font-family:inherit; font-size:.9rem; background:var(--surface-alt); color:var(--ink);
+}
+.field input:focus, .field select:focus{ outline:2px solid var(--teal); outline-offset:1px; }
+.btn-primary{
+padding:11px 18px; border:none; border-radius:10px; background:var(--teal); color:#fff;
+font-family:inherit; font-weight:700; font-size:.9rem; cursor:pointer; flex:0 0 auto;
+}
+.btn-primary:hover{ background:var(--teal-dark); }
 
-    .actions-left {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
+/* ---------- sticky total ---------- */
+.sticky-total{
+position:sticky; top:112px; z-index:15;
+margin:12px 0; padding:12px 16px; border-radius:var(--radius);
+background:var(--teal-tint); border:1px solid var(--teal);
+display:flex; justify-content:space-between; align-items:center;
+}
+.sticky-total .label{ font-weight:700; color:var(--teal-dark); font-size:.88rem; }
+.sticky-total .amount{ font-size:1.15rem; font-weight:700; color:var(--teal-dark); }
 
-    button {
-      border: none;
-      border-radius: 999px;
-      padding: 10px 16px;
-      font-size: 14px;
-      cursor: pointer;
-      font-weight: 600;
-      font-family: inherit;
-    }
+/* ---------- transaction list ---------- */
+.txn-list{ display:flex; flex-direction:column; gap:8px; }
+.txn-row{
+display:flex; align-items:center; gap:10px;
+background:var(--surface); border-radius:12px; box-shadow:var(--shadow);
+padding:10px 12px; border-inline-start:4px solid var(--line);
+}
+.txn-row.pos{ border-inline-start-color:var(--teal); }
+.txn-row.neg{ border-inline-start-color:var(--coral); }
+.txn-row .txn-main{ flex:1; min-width:0; }
+.txn-row .txn-desc{ font-weight:700; font-size:.9rem; color:var(--ink); overflow-wrap:anywhere; }
+.txn-row .txn-date{ font-size:.74rem; color:var(--ink-soft); margin-top:2px; }
+.txn-row .txn-amount{ font-weight:700; font-size:.95rem; white-space:nowrap; }
+.txn-row.pos .txn-amount{ color:var(--teal-dark); }
+.txn-row.neg .txn-amount{ color:var(--coral); }
 
-    .btn-primary {
-      background: #5e35b1;
-      color: #fff;
-    }
-
-    .btn-secondary {
-      background: #ffe0b2;
-      color: #5d4037;
-    }
-
-    .btn-primary:active,
-    .btn-secondary:active {
-      transform: translateY(1px);
-    }
-
-    button:disabled {
-      opacity: .5;
-      cursor: not-allowed;
-    }
-
-    .status {
-      font-size: 13px;
-      margin-top: 8px;
-      padding: 8px 12px;
-      border-radius: 8px;
-      display: none;
-    }
-
-    .status.ok {
-      display: block;
-      color: #155724;
-      background: #d4edda;
-      border: 1px solid #c3e6cb;
-    }
-
-    .status.err {
-      display: block;
-      color: #721c24;
-      background: #f8d7da;
-      border: 1px solid #f5c6cb;
-    }
-
-    .summary-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      margin-top: 10px;
-      font-size: 13px;
-      color: #444;
-    }
-
-    .summary-bar b {
-      color: var(--primary);
-    }
-
-    .table-wrap {
-      width: 100%;
-      max-height: 65vh;
-      overflow-x: auto;
-      overflow-y: auto;
-      position: relative;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    table {
-      border-collapse: collapse;
-      margin-top: 8px;
-      width: auto;
-      background-color: #fff;
-    }
-
-    th, td {
-      border: 1px solid var(--border);
-      padding: 8px 10px;
-      font-size: 13px;
-      vertical-align: top;
-      white-space: nowrap;
-      width: 1%;
-    }
-
-    th {
-      background: #6a1b9a;
-      color: #fff;
-      position: sticky;
-      top: 0;
-      z-index: 1;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    th .arrow {
-      font-size: 11px;
-      opacity: .8;
-      margin-inline-start: 4px;
-    }
-
-    tbody tr:nth-child(odd) {
-      background: #fff3e0;
-    }
-
-    tbody tr:nth-child(even) {
-      background: #f3e5f5;
-    }
-
-    tbody tr:hover {
-      outline: 2px solid rgba(94,53,177,.25);
-      outline-offset: -2px;
-    }
-
-    .no-results {
-      text-align: center;
-      color: #c00;
-      padding: 16px;
-    }
-
-    .small {
-      font-size: 12px;
-      color: #666;
-      margin-top: 6px;
-    }
-
-    .skeleton-row td {
-      background: linear-gradient(90deg, #f0f0f0 25%, #e6e6e6 37%, #f0f0f0 63%);
-      background-size: 400% 100%;
-      animation: shimmer 1.4s ease infinite;
-      color: transparent;
-    }
-
-    @keyframes shimmer {
-      0% { background-position: 100% 0; }
-      100% { background-position: 0 0; }
-    }
-
-    .filters-toggle {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      width: 100%;
-      background: #ede7f6;
-      color: var(--primary-dark);
-      padding: 9px 12px;
-      margin-bottom: 4px;
-      border-radius: 8px;
-    }
-
-    .filters-toggle .arrow {
-      font-size: 11px;
-      transition: transform .15s ease;
-    }
-
-    .filters-toggle[aria-expanded="true"] .arrow {
-      transform: rotate(180deg);
-    }
-
-    .extra-filters {
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px dashed var(--border);
-    }
-
-    .extra-filters .filters-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .extra-filters .filters-grid.extra {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      margin-top: 10px;
-    }
-
-    .last-updated {
-      font-size: 11px;
-      color: #888;
-      margin-top: 2px;
-    }
-
-    @media (max-width: 900px) {
-      .filters-grid, .filters-grid.extra {
-        grid-template-columns: 1fr 1fr;
-      }
-      .extra-filters .filters-grid.extra {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-
-    @media (max-width: 768px) {
-      main { padding: 10px; }
-      th, td {
-        font-size: 12px;
-        padding: 6px 8px;
-      }
-      .table-wrap {
-        max-height: 60vh;
-      }
-      .filters-grid, .filters-grid.extra {
-        grid-template-columns: 1fr;
-      }
-      .actions {
-        flex-direction: column;
-        align-items: stretch;
-      }
-    }
-  </style>
+.load-msg{ text-align:center; color:var(--ink-soft); padding:30px 10px; font-size:.9rem; }
+</style>
 </head>
 <body>
-  <main>
-    <section class="card">
-      <div class="title">بحث فواتير الشراء</div>
-
-      <div class="field">
-        <label for="searchItem">بحث عن الصنف</label>
-        <input type="text" id="searchItem" placeholder="مثال: قسطل 25 تلحيم (كل كلمة تفصلها مسافة)" />
-      </div>
-
-      <button type="button" class="filters-toggle" id="toggleFiltersBtn" aria-expanded="false">
-        <span id="toggleFiltersText">فلاتر إضافية</span>
-        <span class="arrow">▾</span>
-      </button>
-
-      <div class="extra-filters" id="extraFiltersWrap" hidden>
-        <div class="filters-grid">
-          <div class="field">
-            <label for="searchInvoice">كلمات بحث عن الفاتورة</label>
-            <input type="text" id="searchInvoice" placeholder="مثال: 796 أو PI 796" />
-          </div>
-          <div class="field">
-            <label for="searchSupplier">كلمات بحث عن المورد</label>
-            <input type="text" id="searchSupplier" placeholder="مثال: الحنون 204160" />
-          </div>
-        </div>
-
-        <div class="filters-grid extra">
-          <div class="field">
-            <label for="dateFrom">من تاريخ</label>
-            <input type="date" id="dateFrom" />
-          </div>
-          <div class="field">
-            <label for="dateTo">إلى تاريخ</label>
-            <input type="date" id="dateTo" />
-          </div>
-          <div class="field">
-            <label for="currencyFilter">العملة</label>
-            <select id="currencyFilter">
-              <option value="">الكل</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div class="actions">
-        <div class="actions-left">
-          <button class="btn-primary" id="exportExcel">تصدير Excel</button>
-          <button class="btn-secondary" id="clearSearch">مسح كل الفلاتر</button>
-        </div>
-      </div>
-
-      <div id="status" class="status"></div>
-      <div class="small" id="countInfo">... جاري تحميل البيانات</div>
-      <div class="last-updated" id="lastUpdated"></div>
-      <div class="summary-bar" id="summaryBar"></div>
-    </section>
-
-    <section class="card">
-      <div class="title">النتائج</div>
-      <div class="table-wrap">
-        <table id="resultsTable">
-          <thead>
-            <tr>
-              <th data-key="invoiceNo">الفاتورة<span class="arrow" data-arrow="invoiceNo"></span></th>
-              <th data-key="date">التاريخ<span class="arrow" data-arrow="date"></span></th>
-              <th data-key="qty">العدد<span class="arrow" data-arrow="qty"></span></th>
-              <th data-key="currency">العملة<span class="arrow" data-arrow="currency"></span></th>
-              <th data-key="uprice">السعر<span class="arrow" data-arrow="uprice"></span></th>
-              <th data-key="item">الصنف<span class="arrow" data-arrow="item"></span></th>
-              <th data-key="supplier">المورد<span class="arrow" data-arrow="supplier"></span></th>
-            </tr>
-          </thead>
-          <tbody id="resultsBody"></tbody>
-        </table>
-      </div>
-    </section>
-  </main>
-
-  <script>
-    let allData = [];
-    let currentResults = [];
-    let sortKey = null;       // null = الترتيب الافتراضي (تاريخ تنازلي)
-    let sortDir = 1;          // 1 = تصاعدي، -1 = تنازلي
-
-    const arabicDigits = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
-    const latinDigits  = ['0','1','2','3','4','5','6','7','8','9'];
-
-    // ---------- أدوات مساعدة ----------
-
-    function normalizeForSearch(str) {
-      let s = String(str ?? '').toLowerCase();
-      arabicDigits.forEach((ad, i) => {
-        s = s.split(ad).join(latinDigits[i]);
-      });
-      return s;
-    }
-
-    function esc(v) {
-      return String(v ?? '').replace(/[&<>"']/g, s => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-      })[s]);
-    }
-
-    // يقبل أرقام عادية أو فيها فواصل آلاف أو أرقام عربية أو بصيغة أسية (e/E)، ويتجاهل أي رمز غير رقمي زائد
-    function toNumber(v) {
-      if (v === null || v === undefined || v === '') return NaN;
-      let s = normalizeForSearch(v).replace(/,/g, '').trim();
-      // يسمح بالأرقام والفاصلة العشرية والإشارة السالبة والصيغة الأسية (e/E/+)
-      s = s.replace(/[^0-9.\-e+]/g, '');
-      if (s === '' || s === '-') return NaN;
-      const n = Number(s);
-      return Number.isNaN(n) ? NaN : n;
-    }
-
-    function numFmt(v) {
-      const n = toNumber(v);
-      if (Number.isNaN(n)) return v ? esc(v) : '';
-      return n.toLocaleString('en-US', { maximumFractionDigits: 2 });
-    }
-
-    // تنسيق خاص بالسعر: أقصى عرض 6 أرقام، وإذا كان الرقم أصغر من واحد يعرض رقمين عشريين فقط
-    function priceFmt(v) {
-      const n = toNumber(v);
-      if (Number.isNaN(n)) return v ? esc(v) : '';
-      if (n === 0) return '0';
-      if (Math.abs(n) < 1) {
-        return n.toFixed(2);
-      }
-      return n.toLocaleString('en-US', { maximumSignificantDigits: 6 });
-    }
-
-    // يحوّل التاريخ من صيغة day/month/year إلى رقم قابل للمقارنة YYYYMMDD
-    function parseDate(d) {
-      if (!d) return 0;
-      const parts = normalizeForSearch(d).split('/');
-      if (parts.length !== 3) return 0;
-      const day = parseInt(parts[0], 10);
-      const month = parseInt(parts[1], 10);
-      const year = parseInt(parts[2], 10);
-      if (Number.isNaN(day) || Number.isNaN(month) || Number.isNaN(year)) return 0;
-      return year * 10000 + month * 100 + day;
-    }
-
-    // تحويل قيمة input[type=date] (YYYY-MM-DD) لنفس صيغة parseDate
-    function isoToComparable(isoStr) {
-      if (!isoStr) return null;
-      const [y, m, d] = isoStr.split('-').map(Number);
-      if (!y || !m || !d) return null;
-      return y * 10000 + m * 100 + d;
-    }
-
-    function defaultSort(a, b) {
-      const da = parseDate(a.date);
-      const db = parseDate(b.date);
-      if (db !== da) return db - da;
-
-      const ia = String(a.invoiceNo || '');
-      const ib = String(b.invoiceNo || '');
-      return ib.localeCompare(ia, undefined, { numeric: true, sensitivity: 'base' });
-    }
-
-    function compareByKey(a, b, key) {
-      if (key === 'date') {
-        return (parseDate(a.date) - parseDate(b.date)) * sortDir;
-      }
-      if (key === 'qty' || key === 'uprice') {
-        const na = toNumber(a[key]);
-        const nb = toNumber(b[key]);
-        const va = Number.isNaN(na) ? -Infinity : na;
-        const vb = Number.isNaN(nb) ? -Infinity : nb;
-        return (va - vb) * sortDir;
-      }
-      // نصوص: الفاتورة، العملة، الصنف، المورد
-      const va = String(a[key] ?? '');
-      const vb = String(b[key] ?? '');
-      return va.localeCompare(vb, undefined, { numeric: true, sensitivity: 'base' }) * sortDir;
-    }
-
-    function applySort(rows) {
-      const sorted = [...rows];
-      if (sortKey) {
-        sorted.sort((a, b) => compareByKey(a, b, sortKey));
-      } else {
-        sorted.sort(defaultSort);
-      }
-      return sorted;
-    }
-
-    function debounce(fn, wait) {
-      let t = null;
-      return (...args) => {
-        clearTimeout(t);
-        t = setTimeout(() => fn(...args), wait);
-      };
-    }
-
-    function formatDateTime(d) {
-      const pad = n => String(n).padStart(2, '0');
-      return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-    }
-
-    // يجلب تاريخ آخر تعديل فعلي على ملف purchases.json من GitHub (آخر commit طال الملف)
-    async function showLastFileUpdate() {
-      const el = document.getElementById('lastUpdated');
-      try {
-        const res = await fetch(
-          'https://api.github.com/repos/dabbousbasta/purchases/commits?path=purchases-data/purchases.json&per_page=1'
-        );
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const commits = await res.json();
-        const dateStr = commits && commits[0] && commits[0].commit && commits[0].commit.committer
-          ? commits[0].commit.committer.date
-          : null;
-        if (!dateStr) throw new Error('no date');
-        el.textContent = 'آخر تحديث للملف: ' + formatDateTime(new Date(dateStr));
-      } catch (e) {
-        el.textContent = '';
-      }
-    }
-
-    // ---------- حفظ واستعادة حالة الفلاتر (localStorage) ----------
-
-    const STORAGE_KEY = 'purchaseFiltersState_v1';
-
-    function saveFiltersState() {
-      try {
-        const state = {
-          searchItem: document.getElementById('searchItem').value,
-          searchInvoice: document.getElementById('searchInvoice').value,
-          searchSupplier: document.getElementById('searchSupplier').value,
-          dateFrom: document.getElementById('dateFrom').value,
-          dateTo: document.getElementById('dateTo').value,
-          currency: document.getElementById('currencyFilter').value,
-          extraOpen: !document.getElementById('extraFiltersWrap').hidden
-        };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      } catch (e) {
-        // تجاهل أي خطأ بالتخزين المحلي (متصفح يمنعه مثلاً)
-      }
-    }
-
-    function restoreFiltersState() {
-      let state = null;
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) state = JSON.parse(raw);
-      } catch (e) {
-        state = null;
-      }
-      if (!state) return;
-
-      document.getElementById('searchItem').value = state.searchItem || '';
-      document.getElementById('searchInvoice').value = state.searchInvoice || '';
-      document.getElementById('searchSupplier').value = state.searchSupplier || '';
-      document.getElementById('dateFrom').value = state.dateFrom || '';
-      document.getElementById('dateTo').value = state.dateTo || '';
-      if (state.currency) document.getElementById('currencyFilter').value = state.currency;
-      if (state.extraOpen) setExtraFiltersOpen(true);
-    }
-
-    function setExtraFiltersOpen(open) {
-      const wrap = document.getElementById('extraFiltersWrap');
-      const btn = document.getElementById('toggleFiltersBtn');
-      const text = document.getElementById('toggleFiltersText');
-      wrap.hidden = !open;
-      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-      text.textContent = open ? 'إخفاء الفلاتر الإضافية' : 'فلاتر إضافية';
-    }
-
-    // ---------- تحميل البيانات ----------
-
-    function showSkeleton() {
-      const tbody = document.getElementById('resultsBody');
-      let html = '';
-      for (let i = 0; i < 8; i++) {
-        html += `<tr class="skeleton-row"><td colspan="7">جاري التحميل...</td></tr>`;
-      }
-      tbody.innerHTML = html;
-    }
-
-    function populateCurrencyOptions() {
-      const select = document.getElementById('currencyFilter');
-      const currencies = [...new Set(allData.map(r => (r.currency || '').trim()).filter(Boolean))]
-        .sort((a, b) => a.localeCompare(b));
-
-      // احتفظ بأي اختيار حالي
-      const current = select.value;
-      select.innerHTML = '<option value="">الكل</option>' +
-        currencies.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
-      if (currencies.includes(current)) select.value = current;
-    }
-
-    async function loadData() {
-      const status = document.getElementById('status');
-      showSkeleton();
-      try {
-        const res = await fetch('purchases-data/purchases.json?v=' + Date.now());
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-
-        const json = await res.json();
-
-        if (!Array.isArray(json)) {
-          throw new Error('صيغة البيانات غير صحيحة (متوقع مصفوفة)');
-        }
-
-        allData = json;
-        populateCurrencyOptions();
-
-        document.getElementById('countInfo').textContent =
-          `تم تحميل ${allData.length} سجل.`;
-
-        status.className = 'status ok';
-        status.textContent = '✅ تم تحميل البيانات بنجاح';
-        status.style.display = 'block';
-
-        showLastFileUpdate();
-
-        restoreFiltersState();
-        search();
-
-        document.getElementById('searchItem').focus();
-      } catch (e) {
-        status.className = 'status err';
-        status.textContent = '❌ خطأ في تحميل البيانات: ' + esc(e.message || e);
-        status.style.display = 'block';
-        document.getElementById('countInfo').textContent = 'فشل تحميل البيانات';
-        document.getElementById('resultsBody').innerHTML =
-          '<tr><td colspan="7" class="no-results">لم يتم تحميل البيانات. تحقق من مسار الملف purchases-data/purchases.json</td></tr>';
-      }
-    }
-
-    // ---------- العرض ----------
-
-    function updateArrows() {
-      document.querySelectorAll('.arrow').forEach(el => {
-        const key = el.getAttribute('data-arrow');
-        el.textContent = key === sortKey ? (sortDir === 1 ? '▲' : '▼') : '';
-      });
-    }
-
-    function renderSummary(rows) {
-      const bar = document.getElementById('summaryBar');
-      if (!rows.length) { bar.innerHTML = ''; return; }
-
-      const totalsByCurrency = {};
-      let totalQty = 0;
-
-      rows.forEach(r => {
-        const cur = (r.currency || 'بدون عملة').trim() || 'بدون عملة';
-        const qty = toNumber(r.qty);
-        const price = toNumber(r.uprice);
-        const lineTotal = (!Number.isNaN(qty) && !Number.isNaN(price)) ? qty * price : 0;
-        totalsByCurrency[cur] = (totalsByCurrency[cur] || 0) + lineTotal;
-        if (!Number.isNaN(qty)) totalQty += qty;
-      });
-
-      const parts = Object.entries(totalsByCurrency)
-        .map(([cur, sum]) => `<span>إجمالي ${esc(cur)}: <b>${sum.toLocaleString('en-US', {maximumFractionDigits: 2})}</b></span>`)
-        .join('');
-
-      bar.innerHTML =
-        `<span>عدد الأصناف الكلي: <b>${totalQty.toLocaleString('en-US', {maximumFractionDigits: 2})}</b></span>` + parts;
-    }
-
-    function render() {
-      const tbody = document.getElementById('resultsBody');
-      const total = currentResults.length;
-
-      if (!total) {
-        tbody.innerHTML = '<tr><td colspan="7" class="no-results">لا توجد نتائج مطابقة</td></tr>';
-      } else {
-        tbody.innerHTML = currentResults.map(row => `
-          <tr>
-            <td>${esc(row.invoiceNo)}</td>
-            <td>${esc(row.date)}</td>
-            <td>${numFmt(row.qty)}</td>
-            <td>${esc(row.currency)}</td>
-            <td>${priceFmt(row.uprice)}</td>
-            <td>${esc(row.item)}</td>
-            <td>${esc(row.supplier)}</td>
-          </tr>
-        `).join('');
-      }
-
-      document.getElementById('countInfo').textContent =
-        `عدد النتائج: ${total} (من إجمالي ${allData.length})`;
-
-      renderSummary(currentResults);
-      updateArrows();
-    }
-
-    // ---------- البحث والفلترة ----------
-
-    function search() {
-      const rawItem     = document.getElementById('searchItem').value.trim();
-      const rawInvoice  = document.getElementById('searchInvoice').value.trim();
-      const rawSupplier = document.getElementById('searchSupplier').value.trim();
-      const dateFrom    = isoToComparable(document.getElementById('dateFrom').value);
-      const dateTo      = isoToComparable(document.getElementById('dateTo').value);
-      const currency    = document.getElementById('currencyFilter').value;
-
-      const itemWords     = normalizeForSearch(rawItem).split(/\s+/).filter(Boolean);
-      const invoiceWords  = normalizeForSearch(rawInvoice).split(/\s+/).filter(Boolean);
-      const supplierWords = normalizeForSearch(rawSupplier).split(/\s+/).filter(Boolean);
-
-      currentResults = allData.filter(row => {
-        const nameItem     = normalizeForSearch(row.item || '');
-        const nameInvoice  = normalizeForSearch(row.invoiceNo || '');
-        const nameSupplier = normalizeForSearch(row.supplier || '');
-        const rowDate      = parseDate(row.date);
-
-        const matchItem = itemWords.length === 0 || itemWords.every(w => nameItem.includes(w));
-        const matchInvoice = invoiceWords.length === 0 || invoiceWords.every(w => nameInvoice.includes(w));
-        const matchSupplier = supplierWords.length === 0 || supplierWords.every(w => nameSupplier.includes(w));
-        const matchCurrency = !currency || (row.currency || '').trim() === currency;
-        const matchDateFrom = dateFrom === null || rowDate >= dateFrom;
-        const matchDateTo = dateTo === null || rowDate <= dateTo;
-
-        return matchItem && matchInvoice && matchSupplier && matchCurrency && matchDateFrom && matchDateTo;
-      });
-
-      currentResults = applySort(currentResults);
-      render();
-      saveFiltersState();
-    }
-
-    const debouncedSearch = debounce(search, 250);
-
-    // ---------- تصدير Excel ----------
-
-    function exportExcel() {
-      if (!currentResults.length) {
-        alert('لا توجد نتائج للتصدير');
-        return;
-      }
-
-      const rows = currentResults.map(r => ({
-        'الفاتورة': r.invoiceNo || '',
-        'التاريخ': r.date || '',
-        'العدد': r.qty || '',
-        'العملة': r.currency || '',
-        'السعر': r.uprice || '',
-        'الصنف': r.item || '',
-        'المورد': r.supplier || ''
-      }));
-
-      const ws = XLSX.utils.json_to_sheet(rows);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Results');
-      XLSX.writeFile(wb, 'purchase-results.xlsx');
-    }
-
-    // ---------- ربط الأحداث ----------
-
-    document.getElementById('searchItem').addEventListener('input', debouncedSearch);
-    document.getElementById('searchInvoice').addEventListener('input', debouncedSearch);
-    document.getElementById('searchSupplier').addEventListener('input', debouncedSearch);
-    document.getElementById('dateFrom').addEventListener('change', search);
-    document.getElementById('dateTo').addEventListener('change', search);
-    document.getElementById('currencyFilter').addEventListener('change', search);
-
-    document.getElementById('toggleFiltersBtn').addEventListener('click', () => {
-      const wrap = document.getElementById('extraFiltersWrap');
-      setExtraFiltersOpen(wrap.hidden);
-      saveFiltersState();
-    });
-
-    document.getElementById('clearSearch').addEventListener('click', () => {
-      document.getElementById('searchItem').value = '';
-      document.getElementById('searchInvoice').value = '';
-      document.getElementById('searchSupplier').value = '';
-      document.getElementById('dateFrom').value = '';
-      document.getElementById('dateTo').value = '';
-      document.getElementById('currencyFilter').value = '';
-      sortKey = null;
-      sortDir = 1;
-      search();
-      document.getElementById('searchItem').focus();
-    });
-
-    document.getElementById('exportExcel').addEventListener('click', exportExcel);
-
-    document.querySelectorAll('th[data-key]').forEach(th => {
-      th.addEventListener('click', () => {
-        const key = th.getAttribute('data-key');
-        if (sortKey === key) {
-          sortDir *= -1;
-        } else {
-          sortKey = key;
-          sortDir = 1;
-        }
-        currentResults = applySort(currentResults);
-        render();
-      });
-    });
-
-    loadData();
-  </script>
+
+<header class="app-header">
+<h1>صندوق دبوس البسطة</h1>
+<p>سجل المبيعات والمصاريف اليومي</p>
+</header>
+
+<nav class="tabs">
+<button class="tab-btn active" data-tab="overview">نظرة عامة</button>
+<button class="tab-btn" data-tab="days">الأيام</button>
+<button class="tab-btn" data-tab="txns">الحركات التفصيلية</button>
+</nav>
+
+<main>
+
+<!-- ===================== TAB 1: OVERVIEW ===================== -->
+<section class="panel active" id="panel-overview">
+<div class="section-title">الإجمالي العام</div>
+<div class="kpi-row" id="heroKpis"></div>
+
+<div class="section-title">الملخص الشهري</div>
+<div class="card-grid" id="monthlyCards"></div>
+
+<div class="section-title">الملخص الأسبوعي (اثنين - أحد)</div>
+<div class="card-grid" id="weeklyCards"></div>
+</section>
+
+<!-- ===================== TAB 2: DAYS ===================== -->
+<section class="panel" id="panel-days">
+<div class="section-title">ملخص كل يوم</div>
+<div class="card-grid" id="dailyCards"></div>
+</section>
+
+<!-- ===================== TAB 3: TRANSACTIONS ===================== -->
+<section class="panel" id="panel-txns">
+<div class="section-title">فلترة البيانات</div>
+<div class="filters-card">
+<div class="field">
+<label>التاريخ</label>
+<select id="selectDate"><option value="">الكل</option></select>
+</div>
+<div class="field">
+<label>العملية</label>
+<select id="selectOperation"><option value="">الكل</option></select>
+</div>
+<div class="field">
+<label>بحث في البيان</label>
+<input type="text" id="filterDescription" placeholder="مثال: شحن" />
+</div>
+<div class="field">
+<label>فلتر السعر</label>
+<input type="text" id="filterAmount" placeholder="مثال: >=500" />
+</div>
+<button class="btn-primary" id="btnShow">إظهار</button>
+</div>
+
+<div class="sticky-total">
+<span class="label">إجمالي المبيع $</span>
+<span class="amount num" id="totalAmount">0.00</span>
+</div>
+
+<div class="section-title">الحركات</div>
+<div class="txn-list" id="transactionCards"></div>
+</section>
+
+</main>
+
+<script>
+const EXCEL_FILE_NAME = "صندوق دبوس.xlsx";
+
+function formatNumber(value){
+return new Intl.NumberFormat('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 }).format(value);
+}
+function formatNumberNoDecimals(value){
+return new Intl.NumberFormat('en-US', { minimumFractionDigits:0, maximumFractionDigits:0 }).format(value);
+}
+
+function excelSerialToDate(serial){
+const d = new Date(1899, 11, 30);
+d.setDate(d.getDate() + serial);
+return d;
+}
+
+function formatArabicDate(d){
+const daysAr = ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+const dayName = daysAr[d.getDay()];
+const day = String(d.getDate()).padStart(2,"0");
+const month = String(d.getMonth()+1).padStart(2,"0");
+const year = d.getFullYear();
+return `${dayName} ${day}-${month}-${year}`;
+}
+
+function parseNumericFilter(input){
+const text = String(input || "").trim();
+if(!text) return null;
+const cleaned = text.replace(/,/g, "");
+let m = cleaned.match(/^>=\s*(-?\d+(?:\.\d+)?)$/);
+if(m) return { type:"gte", value:parseFloat(m[1]) };
+m = cleaned.match(/^<=\s*(-?\d+(?:\.\d+)?)$/);
+if(m) return { type:"lte", value:parseFloat(m[1]) };
+m = cleaned.match(/^>\s*(-?\d+(?:\.\d+)?)$/);
+if(m) return { type:"gt", value:parseFloat(m[1]) };
+m = cleaned.match(/^<\s*(-?\d+(?:\.\d+)?)$/);
+if(m) return { type:"lt", value:parseFloat(m[1]) };
+m = cleaned.match(/^(-?\d+(?:\.\d+)?)\s*-\s*(-?\d+(?:\.\d+)?)$/);
+if(m) return { type:"range", min:parseFloat(m[1]), max:parseFloat(m[2]) };
+const num = parseFloat(cleaned);
+if(!isNaN(num)) return { type:"exact", value:num };
+return { type:"text", value:cleaned };
+}
+
+function matchesNumericFilter(amount, filterText){
+if(!filterText) return true;
+const filter = parseNumericFilter(filterText);
+if(!filter) return true;
+if(filter.type === "text") return formatNumber(amount).includes(filter.value) || String(amount).includes(filter.value);
+if(filter.type === "exact") return Math.abs(amount - filter.value) < 0.000001;
+if(filter.type === "gte") return amount >= filter.value;
+if(filter.type === "lte") return amount <= filter.value;
+if(filter.type === "gt") return amount > filter.value;
+if(filter.type === "lt") return amount < filter.value;
+if(filter.type === "range"){
+const min = Math.min(filter.min, filter.max);
+const max = Math.max(filter.min, filter.max);
+return amount >= min && amount <= max;
+}
+return true;
+}
+
+async function loadWorkbook(){
+try{
+const response = await fetch(EXCEL_FILE_NAME);
+const data = await response.arrayBuffer();
+return XLSX.read(data, { type:"array" });
+}catch(e){
+alert("خطأ في قراءة ملف صندوق دبوس.xlsx:\n" + e.message);
+console.error(e);
+return null;
+}
+}
+
+function sheetNameToDate(sheetName){
+const m = sheetName.trim().match(/^(\d{2})-(\d{2})$/);
+if(!m) return null;
+const day = parseInt(m[1],10);
+const month = parseInt(m[2],10);
+const year = 2026;
+return new Date(year, month-1, day);
+}
+function sheetNameToFullDate(sheetName){
+const d = sheetNameToDate(sheetName);
+return d ? formatArabicDate(d) : sheetName;
+}
+
+function isDateSheetName(sheetName){ return /^\d{2}-\d{2}$/.test(sheetName.trim()); }
+function getValidSheets(workbook){ return workbook.SheetNames.filter(isDateSheetName); }
+
+function getOperationList(workbook){
+const ops = new Set();
+const sheets = workbook.SheetNames.filter(isDateSheetName);
+sheets.forEach(sheetName => {
+const ws = workbook.Sheets[sheetName];
+const data = XLSX.utils.sheet_to_json(ws, { header:1, defval:"", blankrows:false });
+for(let i=0;i<data.length;i++){
+const op = data[i][7];
+if(op && typeof op === "string" && op.trim() !== "") ops.add(op.trim());
+}
+});
+return Array.from(ops).sort();
+}
+
+function getFilteredRows(workbook, sheetName, operation, descriptionFilter, amountFilter){
+const ws = workbook.Sheets[sheetName];
+const data = XLSX.utils.sheet_to_json(ws, { header:1, defval:"" });
+const rows = [];
+const dateObj = sheetNameToDate(sheetName);
+const dateStr = sheetNameToFullDate(sheetName);
+
+for(let i=0;i<data.length;i++){
+const row = data[i];
+const op = row[7];
+const desc = String(row[8] || "").trim();
+const amount = parseFloat(String(row[11] || "").replace(/,/g, ""));
+
+if(desc === "حركة الصندوق") continue;
+if(isNaN(amount) || amount === 0) continue;
+
+if(!operation || op === operation){
+if(descriptionFilter && !desc.includes(descriptionFilter)) continue;
+if(!matchesNumericFilter(amount, amountFilter)) continue;
+rows.push({ date:dateStr, dateObj:dateObj, desc:desc, amount:amount });
+}
+}
+return rows;
+}
+
+function renderTransactionCards(rows){
+const container = document.getElementById("transactionCards");
+container.innerHTML = "";
+
+if(rows.length === 0){
+container.innerHTML = '<div class="empty-note">لا توجد بيانات مطابقة للبحث.</div>';
+document.getElementById("totalAmount").textContent = formatNumber(0);
+return;
+}
+
+rows.sort((a,b) => (b.dateObj || 0) - (a.dateObj || 0));
+
+let total = 0;
+rows.forEach(row => {
+const cls = row.amount > 0 ? "pos" : "neg";
+const div = document.createElement("div");
+div.className = "txn-row " + cls;
+div.innerHTML = `
+<div class="txn-main">
+<div class="txn-desc">${row.desc}</div>
+<div class="txn-date">${row.date}</div>
+</div>
+<div class="txn-amount num">${formatNumber(row.amount)}</div>
+`;
+container.appendChild(div);
+total += row.amount;
+});
+
+document.getElementById("totalAmount").textContent = formatNumber(total);
+}
+
+function renderHeroKpis(workbook){
+const ws = workbook.Sheets["ملخص"];
+const container = document.getElementById("heroKpis");
+container.innerHTML = "";
+
+if(!ws){
+container.innerHTML = '<div class="empty-note">لا توجد ورقة باسم "ملخص".</div>';
+return;
+}
+const data = XLSX.utils.sheet_to_json(ws, { header:1, defval:"", blankrows:false });
+
+let sellTotal=0, expensesTotal=0, wholesaleTotal=0, dayCount=0;
+for(let r=2;r<data.length;r++){
+const row = data[r];
+if(!row[0] && !row[1] && !row[2] && !row[3]) continue;
+sellTotal += parseFloat(String(row[1]).replace(/,/g,"")) || 0;
+expensesTotal += parseFloat(String(row[2]).replace(/,/g,"")) || 0;
+wholesaleTotal += parseFloat(String(row[3]).replace(/,/g,"")) || 0;
+dayCount++;
+}
+
+const cards = [
+{ label:"مجموع البيع", value:sellTotal, cls:"teal" },
+{ label:"مجموع المصاريف", value:expensesTotal, cls:"coral" },
+{ label:"مجموع الجملة", value:wholesaleTotal, cls:"amber" },
+{ label:"عدد الأيام المسجلة", value:dayCount, cls:"ink", plain:true }
+];
+
+cards.forEach(c => {
+const div = document.createElement("div");
+div.className = "kpi-card " + c.cls;
+div.innerHTML = `
+<div class="label">${c.label}</div>
+<div class="value num">${c.plain ? formatNumberNoDecimals(c.value) : formatNumberNoDecimals(c.value)}</div>
+`;
+container.appendChild(div);
+});
+}
+
+function renderMonthlyCards(workbook){
+const ws = workbook.Sheets["شهري"];
+const container = document.getElementById("monthlyCards");
+container.innerHTML = "";
+
+if(!ws){
+container.innerHTML = '<div class="empty-note">لا توجد ورقة باسم "شهري".</div>';
+return;
+}
+
+const data = XLSX.utils.sheet_to_json(ws, { header:1, defval:"", blankrows:false, range:"A1:K6" });
+if(data.length < 2){
+container.innerHTML = '<div class="empty-note">لا توجد بيانات شهرية.</div>';
+return;
+}
+
+const headers = data[0];
+let hasData = false;
+
+for(let r=1; r<data.length; r++){
+const row = data[r];
+if(row.every(c => c === "" || c == null)) continue;
+
+// Check if all values are zero or empty
+let hasNonZeroValue = false;
+for(let c=1; c<row.length; c++){
+const raw = row[c];
+if(raw === "" || raw == null) continue;
+const num = parseFloat(String(raw).replace(/,/g,""));
+if(!isNaN(num) && num !== 0){
+hasNonZeroValue = true;
+break;
+}
+}
+
+// Skip this month if all values are zero
+if(!hasNonZeroValue) continue;
+
+hasData = true;
+const card = document.createElement("div");
+card.className = "ticket-card";
+let rowsHtml = "";
+for(let c=1; c<row.length; c++){
+const raw = row[c];
+if(raw === "" || raw == null) continue;
+const num = parseFloat(String(raw).replace(/,/g,""));
+const isNum = !isNaN(num);
+const displayVal = isNum ? formatNumberNoDecimals(num) : raw;
+const negCls = isNum && num < 0 ? "neg" : "";
+rowsHtml += `<div class="row"><span class="m-label">${headers[c] || ""}</span><span class="m-value num ${negCls}">${displayVal}</span></div>`;
+}
+card.innerHTML = `
+<div class="t-title">${row[0]}</div>
+<div class="metric-list">${rowsHtml}</div>
+`;
+container.appendChild(card);
+}
+
+if(!hasData){
+container.innerHTML = '<div class="empty-note">لا توجد بيانات شهرية.</div>';
+}
+}
+
+function renderWeeklyCards(workbook){
+const ws = workbook.Sheets["ملخص"];
+const container = document.getElementById("weeklyCards");
+container.innerHTML = "";
+
+if(!ws){
+container.innerHTML = '<div class="empty-note">لا توجد ورقة باسم "ملخص".</div>';
+return;
+}
+
+const data = XLSX.utils.sheet_to_json(ws, { header:1, defval:"", blankrows:false });
+const rows = [];
+for(let r=2;r<data.length;r++){
+const row = data[r];
+const rawDate = row[0];
+if(!rawDate) continue;
+let d;
+if(typeof rawDate === "number") d = excelSerialToDate(rawDate);
+else if(rawDate instanceof Date) d = rawDate;
+else{
+const tryDate = new Date(String(rawDate));
+if(isNaN(tryDate.getTime())) continue;
+d = tryDate;
+}
+rows.push({
+date:d,
+sell: parseFloat(String(row[1]).replace(/,/g,"")) || 0,
+expenses: parseFloat(String(row[2]).replace(/,/g,"")) || 0,
+wholesale: parseFloat(String(row[3]).replace(/,/g,"")) || 0
+});
+}
+
+if(!rows.length){
+container.innerHTML = '<div class="empty-note">لا توجد بيانات أسبوعية (ملخص فارغ).</div>';
+return;
+}
+
+const weeklyMap = new Map();
+rows.forEach(r => {
+const d = new Date(r.date);
+const currentDay = d.getDay();
+const diffToMonday = (currentDay === 0) ? -6 : (1 - currentDay);
+const monday = new Date(d);
+monday.setDate(d.getDate() + diffToMonday);
+const mondayKey = monday.toISOString().slice(0,10);
+const sunday = new Date(monday);
+sunday.setDate(monday.getDate() + 6);
+
+let week = weeklyMap.get(mondayKey);
+if(!week){
+week = { from:new Date(monday), to:new Date(sunday), sell:0, expenses:0, wholesale:0 };
+weeklyMap.set(mondayKey, week);
+}
+week.sell += r.sell;
+week.expenses += r.expenses;
+week.wholesale += r.wholesale;
+});
+
+// Sort descending (newest first) and filter out weeks with all zeros
+const weeks = Array.from(weeklyMap.values())
+.filter(w => w.sell !== 0 || w.expenses !== 0 || w.wholesale !== 0)
+.sort((a,b) => b.from - a.from);
+
+if(!weeks.length){
+container.innerHTML = '<div class="empty-note">لا توجد بيانات أسبوعية.</div>';
+return;
+}
+
+weeks.forEach(w => {
+const card = document.createElement("div");
+card.className = "ticket-card";
+card.innerHTML = `
+<div class="t-title">أسبوع ${formatArabicDate(w.from)}</div>
+<div class="t-sub">إلى ${formatArabicDate(w.to)}</div>
+<div class="metric-grid">
+<div class="metric ${w.sell<0?'neg':'pos'}"><div class="m-label">بيع</div><div class="m-value num">${formatNumberNoDecimals(w.sell)}</div></div>
+<div class="metric ${w.expenses<0?'neg':'pos'}"><div class="m-label">مصاريف</div><div class="m-value num">${formatNumberNoDecimals(w.expenses)}</div></div>
+<div class="metric ${w.wholesale<0?'neg':'pos'}"><div class="m-label">جملة</div><div class="m-value num">${formatNumberNoDecimals(w.wholesale)}</div></div>
+</div>
+`;
+container.appendChild(card);
+});
+}
+
+function renderDailyCards(workbook){
+const ws = workbook.Sheets["ملخص"];
+const container = document.getElementById("dailyCards");
+container.innerHTML = "";
+
+if(!ws){
+container.innerHTML = '<div class="empty-note">لا توجد ورقة باسم "ملخص".</div>';
+return;
+}
+
+const data = XLSX.utils.sheet_to_json(ws, { header:1, defval:"", blankrows:false });
+const rows = [];
+for(let r=2;r<data.length;r++){
+const row = data[r];
+const rawDate = row[0];
+const rawSell = row[1], rawExpenses = row[2], rawWholesale = row[3];
+if(!rawDate && !rawSell && !rawExpenses && !rawWholesale) continue;
+
+let d = null, dateText;
+if(typeof rawDate === "number"){ d = excelSerialToDate(rawDate); dateText = formatArabicDate(d); }
+else if(rawDate instanceof Date){ d = rawDate; dateText = formatArabicDate(d); }
+else{ dateText = String(rawDate); }
+
+const sell = parseFloat(String(rawSell).replace(/,/g,"")) || 0;
+const expenses = parseFloat(String(rawExpenses).replace(/,/g,"")) || 0;
+const wholesale = parseFloat(String(rawWholesale).replace(/,/g,"")) || 0;
+
+// Skip days where all values are zero
+if(sell === 0 && expenses === 0 && wholesale === 0) continue;
+
+rows.push({
+dateObj:d,
+dateText:dateText,
+sell: sell,
+expenses: expenses,
+wholesale: wholesale
+});
+}
+
+if(!rows.length){
+container.innerHTML = '<div class="empty-note">لا توجد بيانات في ورقة الملخص.</div>';
+return;
+}
+
+// Sort descending (newest first)
+rows.sort((a,b) => (b.dateObj||0) - (a.dateObj||0));
+
+rows.forEach(r => {
+const card = document.createElement("div");
+card.className = "ticket-card";
+card.innerHTML = `
+<div class="t-title">${r.dateText}</div>
+<div class="metric-grid">
+<div class="metric ${r.sell<0?'neg':'pos'}"><div class="m-label">بيع</div><div class="m-value num">${formatNumberNoDecimals(r.sell)}</div></div>
+<div class="metric ${r.expenses<0?'neg':'pos'}"><div class="m-label">مصاريف</div><div class="m-value num">${formatNumberNoDecimals(r.expenses)}</div></div>
+<div class="metric ${r.wholesale<0?'neg':'pos'}"><div class="m-label">جملة</div><div class="m-value num">${formatNumberNoDecimals(r.wholesale)}</div></div>
+</div>
+`;
+container.appendChild(card);
+});
+}
+
+function setupTabs(){
+const buttons = document.querySelectorAll(".tab-btn");
+buttons.forEach(btn => {
+btn.addEventListener("click", () => {
+buttons.forEach(b => b.classList.remove("active"));
+document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+btn.classList.add("active");
+document.getElementById("panel-" + btn.dataset.tab).classList.add("active");
+});
+});
+}
+
+async function refreshPage(){
+setupTabs();
+
+const workbook = await loadWorkbook();
+if(!workbook) return;
+
+renderHeroKpis(workbook);
+renderMonthlyCards(workbook);
+renderWeeklyCards(workbook);
+renderDailyCards(workbook);
+
+const selectDate = document.getElementById("selectDate");
+const selectOperation = document.getElementById("selectOperation");
+const filterDescription = document.getElementById("filterDescription");
+const filterAmount = document.getElementById("filterAmount");
+
+const validSheets = getValidSheets(workbook);
+selectDate.innerHTML = '<option value="">الكل</option>';
+validSheets.forEach(sheet => {
+const opt = document.createElement("option");
+opt.value = sheet; opt.textContent = sheet;
+selectDate.appendChild(opt);
+});
+
+const operations = getOperationList(workbook);
+selectOperation.innerHTML = '<option value="">الكل</option>';
+operations.forEach(op => {
+const opt = document.createElement("option");
+opt.value = op; opt.textContent = op;
+selectOperation.appendChild(opt);
+});
+
+const btnShow = document.getElementById("btnShow");
+const runFilter = () => {
+const selectedDate = selectDate.value;
+const selectedOperation = selectOperation.value;
+const descFilter = filterDescription.value.trim();
+const amountFilter = filterAmount.value.trim();
+
+let allRows = [];
+let targetSheets = selectedDate ? [selectedDate] : validSheets;
+
+targetSheets.forEach(sheet => {
+allRows = allRows.concat(getFilteredRows(workbook, sheet, selectedOperation, descFilter, amountFilter));
+});
+
+renderTransactionCards(allRows);
+};
+
+btnShow.onclick = runFilter;
+filterDescription.oninput = runFilter;
+filterAmount.oninput = runFilter;
+selectDate.onchange = runFilter;
+selectOperation.onchange = runFilter;
+
+runFilter();
+}
+
+window.addEventListener("load", refreshPage);
+</script>
 </body>
 </html>
