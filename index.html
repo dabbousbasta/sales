@@ -6,7 +6,7 @@
   <title>بحث فواتير الشراء</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   <style>
     :root {
@@ -22,8 +22,7 @@
 
     body {
       margin: 0;
-      font-family: 'Tajawal', sans-serif;
-      -webkit-font-smoothing: antialiased;
+      font-family: 'Cairo', system-ui, -apple-system, "Segoe UI", sans-serif;
       direction: rtl;
       background: var(--bg);
       color: var(--text);
@@ -44,11 +43,10 @@
     }
 
     .title {
-      font-size: 1.15rem;
-      font-weight: 900;
+      font-size: 16px;
+      font-weight: 700;
       color: var(--primary);
       margin-bottom: 10px;
-      letter-spacing: 0.2px;
     }
 
     .filters-grid {
@@ -64,17 +62,16 @@
 
     .field label {
       display: block;
-      font-size: 0.76rem;
+      font-size: 12px;
       margin-bottom: 4px;
       color: #555;
-      font-weight: 700;
     }
 
     .field input,
     .field select {
       width: 100%;
-      padding: 10px 10px;
-      font-size: 0.9rem;
+      padding: 10px 12px;
+      font-size: 14px;
       border: 1px solid #ccc;
       border-radius: 8px;
       outline: none;
@@ -105,11 +102,11 @@
 
     button {
       border: none;
-      border-radius: 10px;
-      padding: 11px 16px;
-      font-size: 0.9rem;
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-size: 14px;
       cursor: pointer;
-      font-weight: 700;
+      font-weight: 600;
       font-family: inherit;
     }
 
@@ -186,8 +183,8 @@
 
     th, td {
       border: 1px solid var(--border);
-      padding: 9px 11px;
-      font-size: 14px;
+      padding: 8px 10px;
+      font-size: 13px;
       vertical-align: top;
       white-space: nowrap;
       width: 1%;
@@ -201,8 +198,6 @@
       z-index: 1;
       cursor: pointer;
       user-select: none;
-      font-weight: 700;
-      letter-spacing: 0.2px;
     }
 
     th .arrow {
@@ -259,8 +254,6 @@
       padding: 9px 12px;
       margin-bottom: 4px;
       border-radius: 8px;
-      font-weight: 700;
-      font-size: 0.9rem;
     }
 
     .filters-toggle .arrow {
@@ -305,8 +298,8 @@
     @media (max-width: 768px) {
       main { padding: 10px; }
       th, td {
-        font-size: 13px;
-        padding: 8px 9px;
+        font-size: 12px;
+        padding: 6px 8px;
       }
       .table-wrap {
         max-height: 60vh;
@@ -403,11 +396,13 @@
   <script>
     let allData = [];
     let currentResults = [];
-    let sortKey = null;
-    let sortDir = 1;
+    let sortKey = null;       // null = الترتيب الافتراضي (تاريخ تنازلي)
+    let sortDir = 1;          // 1 = تصاعدي، -1 = تنازلي
 
     const arabicDigits = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
     const latinDigits  = ['0','1','2','3','4','5','6','7','8','9'];
+
+    // ---------- أدوات مساعدة ----------
 
     function normalizeForSearch(str) {
       let s = String(str ?? '').toLowerCase();
@@ -427,9 +422,11 @@
       })[s]);
     }
 
+    // يقبل أرقام عادية أو فيها فواصل آلاف أو أرقام عربية أو بصيغة أسية (e/E)، ويتجاهل أي رمز غير رقمي زائد
     function toNumber(v) {
       if (v === null || v === undefined || v === '') return NaN;
       let s = normalizeForSearch(v).replace(/,/g, '').trim();
+      // يسمح بالأرقام والفاصلة العشرية والإشارة السالبة والصيغة الأسية (e/E/+)
       s = s.replace(/[^0-9.\-e+]/g, '');
       if (s === '' || s === '-') return NaN;
       const n = Number(s);
@@ -442,6 +439,7 @@
       return n.toLocaleString('en-US', { maximumFractionDigits: 2 });
     }
 
+    // تنسيق خاص بالسعر: أقصى عرض 6 أرقام، وإذا كان الرقم أصغر من واحد يعرض رقمين عشريين فقط
     function priceFmt(v) {
       const n = toNumber(v);
       if (Number.isNaN(n)) return v ? esc(v) : '';
@@ -452,6 +450,7 @@
       return n.toLocaleString('en-US', { maximumSignificantDigits: 6 });
     }
 
+    // يحوّل التاريخ من صيغة day/month/year إلى رقم قابل للمقارنة YYYYMMDD
     function parseDate(d) {
       if (!d) return 0;
       const parts = normalizeForSearch(d).split('/');
@@ -463,6 +462,7 @@
       return year * 10000 + month * 100 + day;
     }
 
+    // تحويل قيمة input[type=date] (YYYY-MM-DD) لنفس صيغة parseDate
     function isoToComparable(isoStr) {
       if (!isoStr) return null;
       const [y, m, d] = isoStr.split('-').map(Number);
@@ -491,6 +491,7 @@
         const vb = Number.isNaN(nb) ? -Infinity : nb;
         return (va - vb) * sortDir;
       }
+      // نصوص: الفاتورة، العملة، الصنف، المورد
       const va = String(a[key] ?? '');
       const vb = String(b[key] ?? '');
       return va.localeCompare(vb, undefined, { numeric: true, sensitivity: 'base' }) * sortDir;
@@ -519,6 +520,7 @@
       return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
     }
 
+    // يجلب تاريخ آخر تعديل فعلي على ملف purchases.json من GitHub (آخر commit طال الملف)
     async function showLastFileUpdate() {
       const el = document.getElementById('lastUpdated');
       try {
@@ -537,6 +539,8 @@
       }
     }
 
+    // ---------- حفظ واستعادة حالة الفلاتر (localStorage) ----------
+
     const STORAGE_KEY = 'purchaseFiltersState_v1';
 
     function saveFiltersState() {
@@ -552,7 +556,7 @@
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       } catch (e) {
-        // تجاهل
+        // تجاهل أي خطأ بالتخزين المحلي (متصفح يمنعه مثلاً)
       }
     }
 
@@ -584,6 +588,8 @@
       text.textContent = open ? 'إخفاء الفلاتر الإضافية' : 'فلاتر إضافية';
     }
 
+    // ---------- تحميل البيانات ----------
+
     function showSkeleton() {
       const tbody = document.getElementById('resultsBody');
       let html = '';
@@ -598,6 +604,7 @@
       const currencies = [...new Set(allData.map(r => (r.currency || '').trim()).filter(Boolean))]
         .sort((a, b) => a.localeCompare(b));
 
+      // احتفظ بأي اختيار حالي
       const current = select.value;
       select.innerHTML = '<option value="">الكل</option>' +
         currencies.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
@@ -642,6 +649,8 @@
           '<tr><td colspan="7" class="no-results">لم يتم تحميل البيانات. تحقق من مسار الملف purchases-data/purchases.json</td></tr>';
       }
     }
+
+    // ---------- العرض ----------
 
     function updateArrows() {
       document.querySelectorAll('.arrow').forEach(el => {
@@ -701,6 +710,8 @@
       updateArrows();
     }
 
+    // ---------- البحث والفلترة ----------
+
     function search() {
       const rawItem     = document.getElementById('searchItem').value.trim();
       const rawInvoice  = document.getElementById('searchInvoice').value.trim();
@@ -736,6 +747,8 @@
 
     const debouncedSearch = debounce(search, 250);
 
+    // ---------- تصدير Excel ----------
+
     function exportExcel() {
       if (!currentResults.length) {
         alert('لا توجد نتائج للتصدير');
@@ -757,6 +770,8 @@
       XLSX.utils.book_append_sheet(wb, ws, 'Results');
       XLSX.writeFile(wb, 'purchase-results.xlsx');
     }
+
+    // ---------- ربط الأحداث ----------
 
     document.getElementById('searchItem').addEventListener('input', debouncedSearch);
     document.getElementById('searchInvoice').addEventListener('input', debouncedSearch);
