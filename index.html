@@ -3,12 +3,17 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
 <title>صندوق دبوس البسطة</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
 :root{
 --bg:#F2F6F4;
@@ -21,47 +26,66 @@
 --teal-dark:#0A4A40;
 --teal-tint:#E3F3EE;
 --coral:#C6483C;
---coral-tint:#FBEAE7;
 --amber:#B8801C;
---amber-tint:#FBF1DE;
 --radius:14px;
---shadow:0 1px 2px rgba(23,36,31,.06), 0 6px 18px rgba(23,36,31,.06);
+--shadow:0 1px 2px rgba(23,36,31,.06),0 6px 18px rgba(23,36,31,.06);
 }
-*{box-sizing:border-box;}
+
+*{
+box-sizing:border-box;
+}
+
 body{
 margin:0;
 background:var(--bg);
 color:var(--ink);
-font-family:'Tajawal', sans-serif;
+font-family:'Tajawal',sans-serif;
 -webkit-font-smoothing:antialiased;
 padding-bottom:40px;
 }
-.num{ font-family:'IBM Plex Mono', monospace; unicode-bidi:plaintext; }
 
-/* ---------- header ---------- */
+.num{
+font-family:'IBM Plex Mono',monospace;
+unicode-bidi:plaintext;
+}
+
+/* Header */
 header.app-header{
-position:sticky; top:0; z-index:20;
+position:sticky;
+top:0;
+z-index:20;
 background:var(--teal-dark);
 color:#fff;
 padding:16px 18px 14px;
 box-shadow:0 4px 14px rgba(10,74,64,.25);
 }
+
 header.app-header h1{
-margin:0; font-size:1.15rem; font-weight:900; letter-spacing:.2px;
-}
-header.app-header p{
-margin:4px 0 0; font-size:.82rem; color:#CFE9E1; font-weight:500;
+margin:0;
+font-size:1.15rem;
+font-weight:900;
 }
 
-/* ---------- tabs ---------- */
+header.app-header p{
+margin:4px 0 0;
+font-size:.82rem;
+color:#CFE9E1;
+font-weight:500;
+}
+
+/* Main tabs */
 nav.tabs{
-position:sticky; top:64px; z-index:19;
-display:flex; gap:6px;
+position:sticky;
+top:64px;
+z-index:19;
+display:flex;
+gap:6px;
 padding:10px 12px;
 background:var(--bg);
 border-bottom:1px solid var(--line);
 overflow-x:auto;
 }
+
 nav.tabs button{
 flex:0 0 auto;
 border:1px solid var(--line);
@@ -75,49 +99,130 @@ border-radius:999px;
 cursor:pointer;
 transition:.15s ease;
 }
+
 nav.tabs button.active{
 background:var(--teal);
 border-color:var(--teal);
 color:#fff;
 }
 
-main{ padding:14px 12px 0; max-width:900px; margin:0 auto; }
-.panel{ display:none; }
-.panel.active{ display:block; animation:fade .18s ease; }
-@keyframes fade{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;} }
+main{
+padding:14px 12px 0;
+max-width:900px;
+margin:0 auto;
+}
+
+.panel{
+display:none;
+}
+
+.panel.active{
+display:block;
+animation:fade .18s ease;
+}
+
+@keyframes fade{
+from{
+opacity:0;
+transform:translateY(4px);
+}
+to{
+opacity:1;
+transform:none;
+}
+}
 
 .section-title{
-font-size:.95rem; font-weight:900; color:var(--teal-dark);
-margin:18px 2px 10px; display:flex; align-items:center; gap:8px;
+font-size:.95rem;
+font-weight:900;
+color:var(--teal-dark);
+margin:18px 2px 10px;
+display:flex;
+align-items:center;
+gap:8px;
 }
+
 .section-title::before{
-content:""; width:6px; height:6px; border-radius:50%; background:var(--teal);
+content:"";
+width:6px;
+height:6px;
+border-radius:50%;
+background:var(--teal);
 }
 
-/* ---------- KPI hero row ---------- */
+/* KPI */
 .kpi-row{
-display:grid; grid-template-columns:repeat(2,1fr); gap:10px;
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
 }
-@media(min-width:560px){ .kpi-row{ grid-template-columns:repeat(4,1fr);} }
-.kpi-card{
-background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow);
-padding:14px 12px; border-inline-start:4px solid var(--line);
-}
-.kpi-card .label{ font-size:.76rem; color:var(--ink-soft); font-weight:700; }
-.kpi-card .value{ font-size:1.25rem; font-weight:700; margin-top:6px; }
-.kpi-card.teal{ border-inline-start-color:var(--teal); }
-.kpi-card.teal .value{ color:var(--teal-dark); }
-.kpi-card.coral{ border-inline-start-color:var(--coral); }
-.kpi-card.coral .value{ color:var(--coral); }
-.kpi-card.amber{ border-inline-start-color:var(--amber); }
-.kpi-card.amber .value{ color:var(--amber); }
-.kpi-card.ink .value{ color:var(--ink); }
 
-/* ---------- ticket-style cards (weekly / daily) ---------- */
-.card-grid{
-display:grid; grid-template-columns:1fr; gap:12px;
+@media(min-width:560px){
+.kpi-row{
+grid-template-columns:repeat(4,1fr);
 }
-@media(min-width:640px){ .card-grid{ grid-template-columns:repeat(2,1fr);} }
+}
+
+.kpi-card{
+background:var(--surface);
+border-radius:var(--radius);
+box-shadow:var(--shadow);
+padding:14px 12px;
+border-inline-start:4px solid var(--line);
+}
+
+.kpi-card .label{
+font-size:.76rem;
+color:var(--ink-soft);
+font-weight:700;
+}
+
+.kpi-card .value{
+font-size:1.25rem;
+font-weight:700;
+margin-top:6px;
+}
+
+.kpi-card.teal{
+border-inline-start-color:var(--teal);
+}
+
+.kpi-card.teal .value{
+color:var(--teal-dark);
+}
+
+.kpi-card.coral{
+border-inline-start-color:var(--coral);
+}
+
+.kpi-card.coral .value{
+color:var(--coral);
+}
+
+.kpi-card.amber{
+border-inline-start-color:var(--amber);
+}
+
+.kpi-card.amber .value{
+color:var(--amber);
+}
+
+.kpi-card.ink .value{
+color:var(--ink);
+}
+
+/* Cards */
+.card-grid{
+display:grid;
+grid-template-columns:1fr;
+gap:12px;
+}
+
+@media(min-width:640px){
+.card-grid{
+grid-template-columns:repeat(2,1fr);
+}
+}
 
 .ticket-card{
 position:relative;
@@ -127,135 +232,384 @@ box-shadow:var(--shadow);
 padding:14px 16px 12px;
 border-top:2px dashed var(--line);
 }
-.ticket-card::before, .ticket-card::after{
-content:""; position:absolute; top:-9px; width:18px; height:18px;
-background:var(--bg); border-radius:50%;
+
+.ticket-card::before,
+.ticket-card::after{
+content:"";
+position:absolute;
+top:-9px;
+width:18px;
+height:18px;
+background:var(--bg);
+border-radius:50%;
 }
-.ticket-card::before{ inset-inline-start:12px; }
-.ticket-card::after{ inset-inline-end:12px; }
+
+.ticket-card::before{
+inset-inline-start:12px;
+}
+
+.ticket-card::after{
+inset-inline-end:12px;
+}
 
 .ticket-card .t-title{
-font-weight:900; font-size:.95rem; color:var(--ink); margin-bottom:2px;
+font-weight:900;
+font-size:.95rem;
+color:var(--ink);
+margin-bottom:2px;
 }
-.ticket-card .t-sub{
-font-size:.76rem; color:var(--ink-soft); margin-bottom:10px;
-}
-.metric-grid{
-display:grid; grid-template-columns:repeat(3,1fr); gap:8px;
-}
-.metric{
-background:var(--surface-alt); border-radius:10px; padding:8px 6px; text-align:center;
-}
-.metric .m-label{ font-size:.7rem; color:var(--ink-soft); font-weight:700; }
-.metric .m-value{ font-size:.92rem; font-weight:700; margin-top:3px; }
-.metric.neg .m-value{ color:var(--coral); }
-.metric.pos .m-value{ color:var(--teal-dark); }
 
-/* generic metric list (monthly cards, variable columns) */
-.metric-list{ display:flex; flex-direction:column; gap:6px; }
-.metric-list .row{
-display:flex; justify-content:space-between; align-items:center;
-padding:6px 4px; border-bottom:1px dashed var(--line); font-size:.85rem;
+.ticket-card .t-sub{
+font-size:.76rem;
+color:var(--ink-soft);
+margin-bottom:10px;
 }
-.metric-list .row:last-child{ border-bottom:none; }
-.metric-list .row .m-label{ color:var(--ink-soft); font-weight:600; }
-.metric-list .row .m-value{ font-weight:700; }
-.metric-list .row .m-value.neg{ color:var(--coral); }
+
+.metric-grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:8px;
+}
+
+.metric{
+background:var(--surface-alt);
+border-radius:10px;
+padding:8px 6px;
+text-align:center;
+}
+
+.metric .m-label{
+font-size:.7rem;
+color:var(--ink-soft);
+font-weight:700;
+}
+
+.metric .m-value{
+font-size:.92rem;
+font-weight:700;
+margin-top:3px;
+}
+
+.metric.neg .m-value{
+color:var(--coral);
+}
+
+.metric.pos .m-value{
+color:var(--teal-dark);
+}
+
+.metric-list{
+display:flex;
+flex-direction:column;
+gap:6px;
+}
+
+.metric-list .row{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:6px 4px;
+border-bottom:1px dashed var(--line);
+font-size:.85rem;
+}
+
+.metric-list .row:last-child{
+border-bottom:none;
+}
+
+.metric-list .row .m-label{
+color:var(--ink-soft);
+font-weight:600;
+}
+
+.metric-list .row .m-value{
+font-weight:700;
+}
+
+.metric-list .row .m-value.neg{
+color:var(--coral);
+}
 
 .empty-note{
-background:var(--surface); border:1px dashed var(--line); border-radius:var(--radius);
-padding:22px; text-align:center; color:var(--ink-soft); font-size:.88rem;
+background:var(--surface);
+border:1px dashed var(--line);
+border-radius:var(--radius);
+padding:22px;
+text-align:center;
+color:var(--ink-soft);
+font-size:.88rem;
 }
 
-/* ---------- filters ---------- */
-.filters-card{
-background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow);
-padding:14px; display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end;
+/* Charts */
+.chart-box{
+background:var(--surface);
+border-radius:var(--radius);
+box-shadow:var(--shadow);
+padding:14px;
+margin-bottom:18px;
 }
-.field{ display:flex; flex-direction:column; gap:5px; flex:1 1 140px; min-width:130px; }
-.field label{ font-size:.76rem; color:var(--ink-soft); font-weight:700; }
-.field input, .field select{
-padding:10px 10px; border:1px solid var(--line); border-radius:10px;
-font-family:inherit; font-size:.9rem; background:var(--surface-alt); color:var(--ink);
-}
-.field input:focus, .field select:focus{ outline:2px solid var(--teal); outline-offset:1px; }
-.btn-primary{
-padding:11px 18px; border:none; border-radius:10px; background:var(--teal); color:#fff;
-font-family:inherit; font-weight:700; font-size:.9rem; cursor:pointer; flex:0 0 auto;
-}
-.btn-primary:hover{ background:var(--teal-dark); }
 
-/* ---------- sticky total ---------- */
-.sticky-total{
-position:sticky; top:112px; z-index:15;
-margin:12px 0; padding:12px 16px; border-radius:var(--radius);
-background:var(--teal-tint); border:1px solid var(--teal);
-display:flex; justify-content:space-between; align-items:center;
+.chart-layout{
+display:grid;
+grid-template-columns:115px minmax(0,1fr);
+gap:12px;
+align-items:stretch;
+direction:ltr;
 }
-.sticky-total .label{ font-weight:700; color:var(--teal-dark); font-size:.88rem; }
-.sticky-total .amount{ font-size:1.15rem; font-weight:700; color:var(--teal-dark); }
 
-/* ---------- transaction list ---------- */
-.txn-list{ display:flex; flex-direction:column; gap:8px; }
-.txn-row{
-display:flex; align-items:center; gap:10px;
-background:var(--surface); border-radius:12px; box-shadow:var(--shadow);
-padding:10px 12px; border-inline-start:4px solid var(--line);
+.month-list{
+display:flex;
+flex-direction:column;
+gap:6px;
+direction:rtl;
+max-height:360px;
+overflow-y:auto;
+padding-left:2px;
 }
-.txn-row.pos{ border-inline-start-color:var(--teal); }
-.txn-row.neg{ border-inline-start-color:var(--coral); }
-.txn-row .txn-main{ flex:1; min-width:0; }
-.txn-row .txn-desc{ font-weight:700; font-size:.9rem; color:var(--ink); overflow-wrap:anywhere; }
-.txn-row .txn-date{ font-size:.74rem; color:var(--ink-soft); margin-top:2px; }
-.txn-row .txn-amount{ font-weight:700; font-size:.95rem; white-space:nowrap; }
-.txn-row.pos .txn-amount{ color:var(--teal-dark); }
-.txn-row.neg .txn-amount{ color:var(--coral); }
 
-.load-msg{ text-align:center; color:var(--ink-soft); padding:30px 10px; font-size:.9rem; }
-
-/* ---------- chart widgets (monthly navigator) ---------- */
-.chart-widget{
-background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow);
-padding:14px; display:flex; flex-direction:column; gap:12px;
-}
-@media(min-width:680px){
-.chart-widget{ flex-direction:row; }
-}
-.chart-month-list{
-display:flex; flex-direction:row; gap:6px; overflow-x:auto; padding-bottom:4px;
-scrollbar-width:thin;
-}
-@media(min-width:680px){
-.chart-month-list{
-flex-direction:column; overflow-x:visible; overflow-y:auto;
-flex:0 0 150px; max-height:320px; padding-bottom:0; padding-inline-end:4px;
-}
-}
-.chart-month-list button{
-flex:0 0 auto;
-border:1px solid var(--line); background:var(--surface-alt); color:var(--ink-soft);
-font-family:inherit; font-weight:700; font-size:.82rem;
-padding:9px 14px; border-radius:10px; cursor:pointer; white-space:nowrap;
+.month-btn{
+border:1px solid var(--line);
+background:var(--surface-alt);
+color:var(--ink-soft);
+font-family:inherit;
+font-weight:700;
+font-size:.78rem;
+padding:8px 5px;
+border-radius:9px;
+cursor:pointer;
 transition:.15s ease;
+white-space:nowrap;
 }
-@media(min-width:680px){
-.chart-month-list button{ text-align:start; white-space:normal; }
+
+.month-btn:hover{
+border-color:var(--teal);
+color:var(--teal-dark);
 }
-.chart-month-list button.active{
-background:var(--teal); border-color:var(--teal); color:#fff;
+
+.month-btn.active{
+background:var(--teal);
+border-color:var(--teal);
+color:#fff;
 }
-.chart-main{ flex:1; min-width:0; }
-.chart-tabs{ display:flex; gap:6px; margin-bottom:10px; }
-.chart-tab-btn{
-flex:1; border:1px solid var(--line); background:var(--surface-alt); color:var(--ink-soft);
-font-family:inherit; font-weight:700; font-size:.82rem;
-padding:9px 6px; border-radius:10px; cursor:pointer; transition:.15s ease;
+
+.chart-content{
+min-width:0;
+direction:rtl;
 }
-.chart-tab-btn.active{ background:var(--teal-dark); border-color:var(--teal-dark); color:#fff; }
-.chart-canvas-wrap{ position:relative; height:250px; }
-.chart-canvas-wrap canvas{ width:100% !important; height:100% !important; }
+
+.chart-tabs{
+display:flex;
+gap:6px;
+margin-bottom:12px;
+overflow-x:auto;
+}
+
+.chart-tab{
+border:1px solid var(--line);
+background:var(--surface-alt);
+color:var(--ink-soft);
+font-family:inherit;
+font-size:.78rem;
+font-weight:700;
+padding:8px 13px;
+border-radius:999px;
+cursor:pointer;
+white-space:nowrap;
+}
+
+.chart-tab.active{
+background:var(--teal);
+border-color:var(--teal);
+color:#fff;
+}
+
+.chart-title{
+font-weight:900;
+font-size:.92rem;
+color:var(--teal-dark);
+margin:0 0 8px;
+}
+
+.chart-canvas-wrap{
+position:relative;
+height:300px;
+width:100%;
+}
+
+.chart-empty{
+display:flex;
+align-items:center;
+justify-content:center;
+height:300px;
+color:var(--ink-soft);
+font-size:.85rem;
+text-align:center;
+}
+
+/* Filters */
+.filters-card{
+background:var(--surface);
+border-radius:var(--radius);
+box-shadow:var(--shadow);
+padding:14px;
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+align-items:flex-end;
+}
+
+.field{
+display:flex;
+flex-direction:column;
+gap:5px;
+flex:1 1 140px;
+min-width:130px;
+}
+
+.field label{
+font-size:.76rem;
+color:var(--ink-soft);
+font-weight:700;
+}
+
+.field input,
+.field select{
+padding:10px;
+border:1px solid var(--line);
+border-radius:10px;
+font-family:inherit;
+font-size:.9rem;
+background:var(--surface-alt);
+color:var(--ink);
+}
+
+.field input:focus,
+.field select:focus{
+outline:2px solid var(--teal);
+outline-offset:1px;
+}
+
+.btn-primary{
+padding:11px 18px;
+border:none;
+border-radius:10px;
+background:var(--teal);
+color:#fff;
+font-family:inherit;
+font-weight:700;
+font-size:.9rem;
+cursor:pointer;
+flex:0 0 auto;
+}
+
+.btn-primary:hover{
+background:var(--teal-dark);
+}
+
+/* Sticky total */
+.sticky-total{
+position:sticky;
+top:112px;
+z-index:15;
+margin:12px 0;
+padding:12px 16px;
+border-radius:var(--radius);
+background:var(--teal-tint);
+border:1px solid var(--teal);
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.sticky-total .label{
+font-weight:700;
+color:var(--teal-dark);
+font-size:.88rem;
+}
+
+.sticky-total .amount{
+font-size:1.15rem;
+font-weight:700;
+color:var(--teal-dark);
+}
+
+/* Transactions */
+.txn-list{
+display:flex;
+flex-direction:column;
+gap:8px;
+}
+
+.txn-row{
+display:flex;
+align-items:center;
+gap:10px;
+background:var(--surface);
+border-radius:12px;
+box-shadow:var(--shadow);
+padding:10px 12px;
+border-inline-start:4px solid var(--line);
+}
+
+.txn-row.pos{
+border-inline-start-color:var(--teal);
+}
+
+.txn-row.neg{
+border-inline-start-color:var(--coral);
+}
+
+.txn-row .txn-main{
+flex:1;
+min-width:0;
+}
+
+.txn-row .txn-desc{
+font-weight:700;
+font-size:.9rem;
+color:var(--ink);
+overflow-wrap:anywhere;
+}
+
+.txn-row .txn-date{
+font-size:.74rem;
+color:var(--ink-soft);
+margin-top:2px;
+}
+
+.txn-row .txn-amount{
+font-weight:700;
+font-size:.95rem;
+white-space:nowrap;
+}
+
+.txn-row.pos .txn-amount{
+color:var(--teal-dark);
+}
+
+.txn-row.neg .txn-amount{
+color:var(--coral);
+}
+
+@media(max-width:560px){
+.chart-layout{
+grid-template-columns:88px minmax(0,1fr);
+gap:8px;
+}
+
+.chart-canvas-wrap,
+.chart-empty{
+height:260px;
+}
+
+.month-btn{
+font-size:.7rem;
+padding:7px 3px;
+}
+}
 </style>
 </head>
+
 <body>
 
 <header class="app-header">
@@ -271,77 +625,119 @@ padding:9px 6px; border-radius:10px; cursor:pointer; transition:.15s ease;
 
 <main>
 
-<!-- ===================== TAB 1: OVERVIEW ===================== -->
+<!-- ===================== نظرة عامة ===================== -->
 <section class="panel active" id="panel-overview">
+
 <div class="section-title">الإجمالي العام</div>
 <div class="kpi-row" id="heroKpis"></div>
 
 <div class="section-title">الملخص الشهري</div>
 <div class="card-grid" id="monthlyCards"></div>
 
-<div class="section-title">تحليل الأسابيع حسب الشهر</div>
-<div class="chart-widget">
-<div class="chart-month-list" id="overviewMonthList"></div>
-<div class="chart-main">
-<div class="chart-tabs" id="overviewChartTabs">
-<button class="chart-tab-btn active" data-metric="sell">المبيع</button>
-<button class="chart-tab-btn" data-metric="wholesale">الجملة</button>
-<button class="chart-tab-btn" data-metric="expenses">المصاريف</button>
+<div class="section-title">الرسم الأسبوعي حسب الشهر</div>
+
+<div class="chart-box">
+<div class="chart-layout">
+
+<div class="month-list" id="weeklyMonthList"></div>
+
+<div class="chart-content">
+
+<div class="chart-tabs">
+<button class="chart-tab active" data-chart="sell">المبيع</button>
+<button class="chart-tab" data-chart="wholesale">الجملة</button>
+<button class="chart-tab" data-chart="expenses">المصاريف</button>
 </div>
+
+<div class="chart-title" id="weeklyChartTitle"></div>
+
 <div class="chart-canvas-wrap">
-<canvas id="overviewChartCanvas"></canvas>
+<canvas id="weeklyChart"></canvas>
+
+<div class="chart-empty" id="weeklyChartEmpty" style="display:none;">
+لا توجد بيانات لهذا الشهر
 </div>
-<div class="empty-note" id="overviewChartEmpty" style="display:none;">اختر شهراً لعرض بيانات الأسابيع.</div>
+</div>
+
+</div>
 </div>
 </div>
 
 <div class="section-title">الملخص الأسبوعي (اثنين - أحد)</div>
 <div class="card-grid" id="weeklyCards"></div>
+
 </section>
 
-<!-- ===================== TAB 2: DAYS ===================== -->
+<!-- ===================== الأيام ===================== -->
 <section class="panel" id="panel-days">
-<div class="section-title">تحليل الأيام حسب الشهر</div>
-<div class="chart-widget">
-<div class="chart-month-list" id="daysMonthList"></div>
-<div class="chart-main">
-<div class="chart-tabs" id="daysChartTabs">
-<button class="chart-tab-btn active" data-metric="sell">المبيع</button>
-<button class="chart-tab-btn" data-metric="wholesale">الجملة</button>
-<button class="chart-tab-btn" data-metric="expenses">المصاريف</button>
+
+<div class="section-title">الرسم اليومي حسب الشهر</div>
+
+<div class="chart-box">
+<div class="chart-layout">
+
+<div class="month-list" id="dailyMonthList"></div>
+
+<div class="chart-content">
+
+<div class="chart-tabs">
+<button class="chart-tab active" data-chart="sell">سعر المبيع</button>
+<button class="chart-tab" data-chart="wholesale">الجملة</button>
+<button class="chart-tab" data-chart="expenses">المصاريف</button>
 </div>
+
+<div class="chart-title" id="dailyChartTitle"></div>
+
 <div class="chart-canvas-wrap">
-<canvas id="daysChartCanvas"></canvas>
+<canvas id="dailyChart"></canvas>
+
+<div class="chart-empty" id="dailyChartEmpty" style="display:none;">
+لا توجد بيانات لهذا الشهر
 </div>
-<div class="empty-note" id="daysChartEmpty" style="display:none;">اختر شهراً لعرض بيانات الأيام.</div>
+</div>
+
+</div>
 </div>
 </div>
 
 <div class="section-title">ملخص كل يوم</div>
 <div class="card-grid" id="dailyCards"></div>
+
 </section>
 
-<!-- ===================== TAB 3: TRANSACTIONS ===================== -->
+<!-- ===================== الحركات التفصيلية ===================== -->
 <section class="panel" id="panel-txns">
+
 <div class="section-title">فلترة البيانات</div>
+
 <div class="filters-card">
+
 <div class="field">
 <label>التاريخ</label>
-<select id="selectDate"><option value="">الكل</option></select>
+<select id="selectDate">
+<option value="">الكل</option>
+</select>
 </div>
+
 <div class="field">
 <label>العملية</label>
-<select id="selectOperation"><option value="">الكل</option></select>
+<select id="selectOperation">
+<option value="">الكل</option>
+</select>
 </div>
+
 <div class="field">
 <label>بحث في البيان</label>
 <input type="text" id="filterDescription" placeholder="مثال: شحن" />
 </div>
+
 <div class="field">
 <label>فلتر السعر</label>
 <input type="text" id="filterAmount" placeholder="مثال: >=500" />
 </div>
+
 <button class="btn-primary" id="btnShow">إظهار</button>
+
 </div>
 
 <div class="sticky-total">
@@ -351,6 +747,7 @@ padding:9px 6px; border-radius:10px; cursor:pointer; transition:.15s ease;
 
 <div class="section-title">الحركات</div>
 <div class="txn-list" id="transactionCards"></div>
+
 </section>
 
 </main>
@@ -358,712 +755,1350 @@ padding:9px 6px; border-radius:10px; cursor:pointer; transition:.15s ease;
 <script>
 const EXCEL_FILE_NAME = "صندوق دبوس.xlsx";
 
-const monthNamesAr = ["كانون الثاني","شباط","آذار","نيسان","أيار","حزيران","تموز","آب","أيلول","تشرين الأول","تشرين الثاني","كانون الأول"];
-const chartMetricColors = { sell:"#0E6B5C", wholesale:"#B8801C", expenses:"#C6483C" };
+let weeklyChartInstance = null;
+let dailyChartInstance = null;
 
-let monthBuckets = [];
-let overviewSelectedMonth = null;
-let overviewSelectedMetric = "sell";
-let overviewChart = null;
-let daysSelectedMonth = null;
-let daysSelectedMetric = "sell";
-let daysChart = null;
+let weeklyChartData = [];
+let dailyChartData = [];
+
+let selectedWeeklyMonth = "";
+let selectedDailyMonth = "";
+
+let weeklyChartType = "sell";
+let dailyChartType = "sell";
+
+const monthNamesAr = [
+"كانون الثاني",
+"شباط",
+"آذار",
+"نيسان",
+"أيار",
+"حزيران",
+"تموز",
+"آب",
+"أيلول",
+"تشرين الأول",
+"تشرين الثاني",
+"كانون الأول"
+];
 
 function formatNumber(value){
-return new Intl.NumberFormat('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 }).format(value);
+return new Intl.NumberFormat("en-US",{
+minimumFractionDigits:2,
+maximumFractionDigits:2
+}).format(Number(value) || 0);
 }
+
 function formatNumberNoDecimals(value){
-return new Intl.NumberFormat('en-US', { minimumFractionDigits:0, maximumFractionDigits:0 }).format(value);
+return new Intl.NumberFormat("en-US",{
+minimumFractionDigits:0,
+maximumFractionDigits:0
+}).format(Number(value) || 0);
+}
+
+function numberValue(value){
+const number = parseFloat(
+String(value ?? "").replace(/,/g,"")
+);
+
+return isNaN(number) ? 0 : number;
 }
 
 function excelSerialToDate(serial){
-const d = new Date(1899, 11, 30);
-d.setDate(d.getDate() + serial);
+const d = new Date(1899,11,30);
+d.setDate(d.getDate() + Number(serial));
 return d;
 }
 
 function formatArabicDate(d){
-const daysAr = ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+const daysAr = [
+"الأحد",
+"الاثنين",
+"الثلاثاء",
+"الأربعاء",
+"الخميس",
+"الجمعة",
+"السبت"
+];
+
 const dayName = daysAr[d.getDay()];
 const day = String(d.getDate()).padStart(2,"0");
 const month = String(d.getMonth()+1).padStart(2,"0");
 const year = d.getFullYear();
+
 return `${dayName} ${day}-${month}-${year}`;
 }
 
-function shortDate(d){
-return `${String(d.getDate()).padStart(2,"0")}-${String(d.getMonth()+1).padStart(2,"0")}`;
+function dateKeyLocal(d){
+return [
+d.getFullYear(),
+String(d.getMonth()+1).padStart(2,"0"),
+String(d.getDate()).padStart(2,"0")
+].join("-");
 }
 
-function parseNumericFilter(input){
-const text = String(input || "").trim();
-if(!text) return null;
-const cleaned = text.replace(/,/g, "");
-let m = cleaned.match(/^>=\s*(-?\d+(?:\.\d+)?)$/);
-if(m) return { type:"gte", value:parseFloat(m[1]) };
-m = cleaned.match(/^<=\s*(-?\d+(?:\.\d+)?)$/);
-if(m) return { type:"lte", value:parseFloat(m[1]) };
-m = cleaned.match(/^>\s*(-?\d+(?:\.\d+)?)$/);
-if(m) return { type:"gt", value:parseFloat(m[1]) };
-m = cleaned.match(/^<\s*(-?\d+(?:\.\d+)?)$/);
-if(m) return { type:"lt", value:parseFloat(m[1]) };
-m = cleaned.match(/^(-?\d+(?:\.\d+)?)\s*-\s*(-?\d+(?:\.\d+)?)$/);
-if(m) return { type:"range", min:parseFloat(m[1]), max:parseFloat(m[2]) };
-const num = parseFloat(cleaned);
-if(!isNaN(num)) return { type:"exact", value:num };
-return { type:"text", value:cleaned };
+function getMonthKey(dateObj){
+return `${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2,"0")}`;
 }
 
-function matchesNumericFilter(amount, filterText){
-if(!filterText) return true;
-const filter = parseNumericFilter(filterText);
-if(!filter) return true;
-if(filter.type === "text") return formatNumber(amount).includes(filter.value) || String(amount).includes(filter.value);
-if(filter.type === "exact") return Math.abs(amount - filter.value) < 0.000001;
-if(filter.type === "gte") return amount >= filter.value;
-if(filter.type === "lte") return amount <= filter.value;
-if(filter.type === "gt") return amount > filter.value;
-if(filter.type === "lt") return amount < filter.value;
-if(filter.type === "range"){
-const min = Math.min(filter.min, filter.max);
-const max = Math.max(filter.min, filter.max);
-return amount >= min && amount <= max;
-}
-return true;
+function getMonthLabel(monthKey){
+const parts = monthKey.split("-");
+const year = parts[0];
+const monthIndex = parseInt(parts[1],10) - 1;
+
+return `${monthNamesAr[monthIndex]} ${year}`;
 }
 
+function getAvailableMonths(rows){
+const monthSet = new Set();
+
+rows.forEach(row => {
+if(row.date){
+monthSet.add(getMonthKey(row.date));
+}
+});
+
+return Array.from(monthSet).sort().reverse();
+}
+
+/* قراءة ملف Excel */
 async function loadWorkbook(){
 try{
 const response = await fetch(EXCEL_FILE_NAME);
+
+if(!response.ok){
+throw new Error("لم يتم العثور على ملف Excel");
+}
+
 const data = await response.arrayBuffer();
-return XLSX.read(data, { type:"array" });
-}catch(e){
-alert("خطأ في قراءة ملف صندوق دبوس.xlsx:\n" + e.message);
-console.error(e);
+
+return XLSX.read(data,{
+type:"array",
+cellDates:true
+});
+
+}catch(error){
+alert("خطأ في قراءة ملف صندوق دبوس.xlsx:\n" + error.message);
+console.error(error);
 return null;
 }
 }
 
+/* قراءة تاريخ اسم الورقة */
 function sheetNameToDate(sheetName){
-const m = sheetName.trim().match(/^(\d{2})-(\d{2})$/);
-if(!m) return null;
-const day = parseInt(m[1],10);
-const month = parseInt(m[2],10);
+const match = sheetName.trim().match(/^(\d{2})-(\d{2})$/);
+
+if(!match) return null;
+
+const day = parseInt(match[1],10);
+const month = parseInt(match[2],10);
 const year = 2026;
-return new Date(year, month-1, day);
+
+return new Date(year,month-1,day);
 }
+
 function sheetNameToFullDate(sheetName){
 const d = sheetNameToDate(sheetName);
 return d ? formatArabicDate(d) : sheetName;
 }
 
-function isDateSheetName(sheetName){ return /^\d{2}-\d{2}$/.test(sheetName.trim()); }
-function getValidSheets(workbook){ return workbook.SheetNames.filter(isDateSheetName); }
-
-function getOperationList(workbook){
-const ops = new Set();
-const sheets = workbook.SheetNames.filter(isDateSheetName);
-sheets.forEach(sheetName => {
-const ws = workbook.Sheets[sheetName];
-const data = XLSX.utils.sheet_to_json(ws, { header:1, defval:"", blankrows:false });
-for(let i=0;i<data.length;i++){
-const op = data[i][7];
-if(op && typeof op === "string" && op.trim() !== "") ops.add(op.trim());
+function isDateSheetName(sheetName){
+return /^\d{2}-\d{2}$/.test(sheetName.trim());
 }
+
+function getValidSheets(workbook){
+return workbook.SheetNames.filter(isDateSheetName);
+}
+
+/* قراءة بيانات ورقة الملخص */
+function getRowsFromSummary(workbook){
+const ws = workbook.Sheets["ملخص"];
+
+if(!ws) return [];
+
+const data = XLSX.utils.sheet_to_json(ws,{
+header:1,
+defval:"",
+blankrows:false
 });
-return Array.from(ops).sort();
-}
 
-function getFilteredRows(workbook, sheetName, operation, descriptionFilter, amountFilter){
-const ws = workbook.Sheets[sheetName];
-const data = XLSX.utils.sheet_to_json(ws, { header:1, defval:"" });
 const rows = [];
-const dateObj = sheetNameToDate(sheetName);
-const dateStr = sheetNameToFullDate(sheetName);
 
-for(let i=0;i<data.length;i++){
-const row = data[i];
-const op = row[7];
-const desc = String(row[8] || "").trim();
-const amount = parseFloat(String(row[11] || "").replace(/,/g, ""));
+for(let r=2;r<data.length;r++){
 
-if(desc === "حركة الصندوق") continue;
-if(isNaN(amount) || amount === 0) continue;
+const row = data[r];
+const rawDate = row[0];
 
-if(!operation || op === operation){
-if(descriptionFilter && !desc.includes(descriptionFilter)) continue;
-if(!matchesNumericFilter(amount, amountFilter)) continue;
-rows.push({ date:dateStr, dateObj:dateObj, desc:desc, amount:amount });
+if(!rawDate) continue;
+
+let dateObj = null;
+
+if(typeof rawDate === "number"){
+dateObj = excelSerialToDate(rawDate);
+}else if(rawDate instanceof Date){
+dateObj = new Date(rawDate);
+}else{
+const parsed = new Date(String(rawDate));
+
+if(!isNaN(parsed.getTime())){
+dateObj = parsed;
 }
 }
+
+if(!dateObj || isNaN(dateObj.getTime())) continue;
+
+rows.push({
+date:dateObj,
+sell:numberValue(row[1]),
+expenses:numberValue(row[2]),
+wholesale:numberValue(row[3])
+});
+}
+
 return rows;
 }
 
-function renderTransactionCards(rows){
-const container = document.getElementById("transactionCards");
-container.innerHTML = "";
-
-if(rows.length === 0){
-container.innerHTML = '<div class="empty-note">لا توجد بيانات مطابقة للبحث.</div>';
-document.getElementById("totalAmount").textContent = formatNumber(0);
-return;
-}
-
-rows.sort((a,b) => (b.dateObj || 0) - (a.dateObj || 0));
-
-let total = 0;
-rows.forEach(row => {
-const cls = row.amount > 0 ? "pos" : "neg";
-const div = document.createElement("div");
-div.className = "txn-row " + cls;
-div.innerHTML = `
-<div class="txn-main">
-<div class="txn-desc">${row.desc}</div>
-<div class="txn-date">${row.date}</div>
-</div>
-<div class="txn-amount num">${formatNumber(row.amount)}</div>
-`;
-container.appendChild(div);
-total += row.amount;
-});
-
-document.getElementById("totalAmount").textContent = formatNumber(total);
-}
-
+/* الإجمالي العام */
 function renderHeroKpis(workbook){
 const ws = workbook.Sheets["ملخص"];
 const container = document.getElementById("heroKpis");
+
 container.innerHTML = "";
 
 if(!ws){
-container.innerHTML = '<div class="empty-note">لا توجد ورقة باسم "ملخص".</div>';
+container.innerHTML =
+'<div class="empty-note">لا توجد ورقة باسم "ملخص".</div>';
 return;
 }
-const data = XLSX.utils.sheet_to_json(ws, { header:1, defval:"", blankrows:false });
 
-let sellTotal=0, expensesTotal=0, wholesaleTotal=0, dayCount=0;
-for(let r=2;r<data.length;r++){
-const row = data[r];
-if(!row[0] && !row[1] && !row[2] && !row[3]) continue;
-sellTotal += parseFloat(String(row[1]).replace(/,/g,"")) || 0;
-expensesTotal += parseFloat(String(row[2]).replace(/,/g,"")) || 0;
-wholesaleTotal += parseFloat(String(row[3]).replace(/,/g,"")) || 0;
-dayCount++;
-}
+const rows = getRowsFromSummary(workbook);
+
+let sellTotal = 0;
+let expensesTotal = 0;
+let wholesaleTotal = 0;
+
+rows.forEach(row => {
+sellTotal += row.sell;
+expensesTotal += row.expenses;
+wholesaleTotal += row.wholesale;
+});
 
 const cards = [
-{ label:"مجموع البيع", value:sellTotal, cls:"teal" },
-{ label:"مجموع المصاريف", value:expensesTotal, cls:"coral" },
-{ label:"مجموع الجملة", value:wholesaleTotal, cls:"amber" },
-{ label:"عدد الأيام المسجلة", value:dayCount, cls:"ink", plain:true }
+{
+label:"مجموع البيع",
+value:sellTotal,
+cls:"teal"
+},
+{
+label:"مجموع المصاريف",
+value:expensesTotal,
+cls:"coral"
+},
+{
+label:"مجموع الجملة",
+value:wholesaleTotal,
+cls:"amber"
+},
+{
+label:"عدد الأيام المسجلة",
+value:rows.length,
+cls:"ink",
+plain:true
+}
 ];
 
-cards.forEach(c => {
+cards.forEach(cardData => {
 const div = document.createElement("div");
-div.className = "kpi-card " + c.cls;
+
+div.className = "kpi-card " + cardData.cls;
+
 div.innerHTML = `
-<div class="label">${c.label}</div>
-<div class="value num">${c.plain ? formatNumberNoDecimals(c.value) : formatNumberNoDecimals(c.value)}</div>
+<div class="label">${cardData.label}</div>
+<div class="value num">
+${cardData.plain
+? formatNumberNoDecimals(cardData.value)
+: formatNumberNoDecimals(cardData.value)}
+</div>
 `;
+
 container.appendChild(div);
 });
 }
 
+/* الملخص الشهري */
 function renderMonthlyCards(workbook){
 const ws = workbook.Sheets["شهري"];
 const container = document.getElementById("monthlyCards");
+
 container.innerHTML = "";
 
 if(!ws){
-container.innerHTML = '<div class="empty-note">لا توجد ورقة باسم "شهري".</div>';
+container.innerHTML =
+'<div class="empty-note">لا توجد ورقة باسم "شهري".</div>';
 return;
 }
 
-const data = XLSX.utils.sheet_to_json(ws, { header:1, defval:"", blankrows:false, range:"A1:K6" });
+const data = XLSX.utils.sheet_to_json(ws,{
+header:1,
+defval:"",
+blankrows:false,
+range:"A1:K20"
+});
+
 if(data.length < 2){
-container.innerHTML = '<div class="empty-note">لا توجد بيانات شهرية.</div>';
+container.innerHTML =
+'<div class="empty-note">لا توجد بيانات شهرية.</div>';
 return;
 }
 
 const headers = data[0];
 let hasData = false;
 
-for(let r=1; r<data.length; r++){
-const row = data[r];
-if(row.every(c => c === "" || c == null)) continue;
+for(let r=1;r<data.length;r++){
 
-// Check if all values are zero or empty
+const row = data[r];
+
+if(row.every(value => value === "" || value == null)){
+continue;
+}
+
 let hasNonZeroValue = false;
-for(let c=1; c<row.length; c++){
-const raw = row[c];
-if(raw === "" || raw == null) continue;
-const num = parseFloat(String(raw).replace(/,/g,""));
-if(!isNaN(num) && num !== 0){
+
+for(let c=1;c<row.length;c++){
+const value = numberValue(row[c]);
+
+if(value !== 0){
 hasNonZeroValue = true;
 break;
 }
 }
 
-// Skip this month if all values are zero
 if(!hasNonZeroValue) continue;
 
 hasData = true;
+
 const card = document.createElement("div");
 card.className = "ticket-card";
+
 let rowsHtml = "";
-for(let c=1; c<row.length; c++){
+
+for(let c=1;c<row.length;c++){
+
 const raw = row[c];
+
 if(raw === "" || raw == null) continue;
-const num = parseFloat(String(raw).replace(/,/g,""));
-const isNum = !isNaN(num);
-const displayVal = isNum ? formatNumberNoDecimals(num) : raw;
-const negCls = isNum && num < 0 ? "neg" : "";
-rowsHtml += `<div class="row"><span class="m-label">${headers[c] || ""}</span><span class="m-value num ${negCls}">${displayVal}</span></div>`;
+
+const numeric = numberValue(raw);
+const isNumeric = !isNaN(parseFloat(String(raw).replace(/,/g,"")));
+const displayValue = isNumeric
+? formatNumberNoDecimals(numeric)
+: raw;
+
+const negativeClass = isNumeric && numeric < 0 ? "neg" : "";
+
+rowsHtml += `
+<div class="row">
+<span class="m-label">${headers[c] || ""}</span>
+<span class="m-value num ${negativeClass}">
+${displayValue}
+</span>
+</div>
+`;
 }
+
 card.innerHTML = `
-<div class="t-title">${row[0]}</div>
+<div class="t-title">${row[0] || ""}</div>
 <div class="metric-list">${rowsHtml}</div>
 `;
+
 container.appendChild(card);
 }
 
 if(!hasData){
-container.innerHTML = '<div class="empty-note">لا توجد بيانات شهرية.</div>';
+container.innerHTML =
+'<div class="empty-note">لا توجد بيانات شهرية.</div>';
 }
 }
 
-function renderWeeklyCards(workbook){
-const ws = workbook.Sheets["ملخص"];
-const container = document.getElementById("weeklyCards");
-container.innerHTML = "";
+/* حساب بداية الأسبوع: الاثنين */
+function getWeekStartMonday(dateObj){
+const d = new Date(dateObj);
+const day = d.getDay();
 
-if(!ws){
-container.innerHTML = '<div class="empty-note">لا توجد ورقة باسم "ملخص".</div>';
-return;
+const difference = day === 0 ? -6 : 1 - day;
+
+d.setDate(d.getDate() + difference);
+d.setHours(0,0,0,0);
+
+return d;
 }
 
-const data = XLSX.utils.sheet_to_json(ws, { header:1, defval:"", blankrows:false });
-const rows = [];
-for(let r=2;r<data.length;r++){
-const row = data[r];
-const rawDate = row[0];
-if(!rawDate) continue;
-let d;
-if(typeof rawDate === "number") d = excelSerialToDate(rawDate);
-else if(rawDate instanceof Date) d = rawDate;
-else{
-const tryDate = new Date(String(rawDate));
-if(isNaN(tryDate.getTime())) continue;
-d = tryDate;
-}
-rows.push({
-date:d,
-sell: parseFloat(String(row[1]).replace(/,/g,"")) || 0,
-expenses: parseFloat(String(row[2]).replace(/,/g,"")) || 0,
-wholesale: parseFloat(String(row[3]).replace(/,/g,"")) || 0
-});
-}
-
-if(!rows.length){
-container.innerHTML = '<div class="empty-note">لا توجد بيانات أسبوعية (ملخص فارغ).</div>';
-return;
-}
-
-const weeklyMap = new Map();
-rows.forEach(r => {
-const d = new Date(r.date);
-const currentDay = d.getDay();
-const diffToMonday = (currentDay === 0) ? -6 : (1 - currentDay);
-const monday = new Date(d);
-monday.setDate(d.getDate() + diffToMonday);
-const mondayKey = monday.toISOString().slice(0,10);
+/* حساب نهاية الأسبوع: الأحد */
+function getWeekEndSunday(monday){
 const sunday = new Date(monday);
-sunday.setDate(monday.getDate() + 6);
 
-let week = weeklyMap.get(mondayKey);
-if(!week){
-week = { from:new Date(monday), to:new Date(sunday), sell:0, expenses:0, wholesale:0 };
-weeklyMap.set(mondayKey, week);
-}
-week.sell += r.sell;
-week.expenses += r.expenses;
-week.wholesale += r.wholesale;
-});
+sunday.setDate(sunday.getDate() + 6);
+sunday.setHours(0,0,0,0);
 
-// Sort descending (newest first) and filter out weeks with all zeros
-const weeks = Array.from(weeklyMap.values())
-.filter(w => w.sell !== 0 || w.expenses !== 0 || w.wholesale !== 0)
-.sort((a,b) => b.from - a.from);
-
-if(!weeks.length){
-container.innerHTML = '<div class="empty-note">لا توجد بيانات أسبوعية.</div>';
-return;
+return sunday;
 }
 
-weeks.forEach(w => {
-const card = document.createElement("div");
-card.className = "ticket-card";
-card.innerHTML = `
-<div class="t-title">أسبوع ${formatArabicDate(w.from)}</div>
-<div class="t-sub">إلى ${formatArabicDate(w.to)}</div>
-<div class="metric-grid">
-<div class="metric ${w.sell<0?'neg':'pos'}"><div class="m-label">بيع</div><div class="m-value num">${formatNumberNoDecimals(w.sell)}</div></div>
-<div class="metric ${w.expenses<0?'neg':'pos'}"><div class="m-label">مصاريف</div><div class="m-value num">${formatNumberNoDecimals(w.expenses)}</div></div>
-<div class="metric ${w.wholesale<0?'neg':'pos'}"><div class="m-label">جملة</div><div class="m-value num">${formatNumberNoDecimals(w.wholesale)}</div></div>
-</div>
-`;
-container.appendChild(card);
-});
-}
-
-function renderDailyCards(workbook){
-const ws = workbook.Sheets["ملخص"];
-const container = document.getElementById("dailyCards");
-container.innerHTML = "";
-
-if(!ws){
-container.innerHTML = '<div class="empty-note">لا توجد ورقة باسم "ملخص".</div>';
-return;
-}
-
-const data = XLSX.utils.sheet_to_json(ws, { header:1, defval:"", blankrows:false });
-const rows = [];
-for(let r=2;r<data.length;r++){
-const row = data[r];
-const rawDate = row[0];
-const rawSell = row[1], rawExpenses = row[2], rawWholesale = row[3];
-if(!rawDate && !rawSell && !rawExpenses && !rawWholesale) continue;
-
-let d = null, dateText;
-if(typeof rawDate === "number"){ d = excelSerialToDate(rawDate); dateText = formatArabicDate(d); }
-else if(rawDate instanceof Date){ d = rawDate; dateText = formatArabicDate(d); }
-else{ dateText = String(rawDate); }
-
-const sell = parseFloat(String(rawSell).replace(/,/g,"")) || 0;
-const expenses = parseFloat(String(rawExpenses).replace(/,/g,"")) || 0;
-const wholesale = parseFloat(String(rawWholesale).replace(/,/g,"")) || 0;
-
-// Skip days where all values are zero
-if(sell === 0 && expenses === 0 && wholesale === 0) continue;
-
-rows.push({
-dateObj:d,
-dateText:dateText,
-sell: sell,
-expenses: expenses,
-wholesale: wholesale
-});
-}
-
-if(!rows.length){
-container.innerHTML = '<div class="empty-note">لا توجد بيانات في ورقة الملخص.</div>';
-return;
-}
-
-// Sort descending (newest first)
-rows.sort((a,b) => (b.dateObj||0) - (a.dateObj||0));
-
-rows.forEach(r => {
-const card = document.createElement("div");
-card.className = "ticket-card";
-card.innerHTML = `
-<div class="t-title">${r.dateText}</div>
-<div class="metric-grid">
-<div class="metric ${r.sell<0?'neg':'pos'}"><div class="m-label">بيع</div><div class="m-value num">${formatNumberNoDecimals(r.sell)}</div></div>
-<div class="metric ${r.expenses<0?'neg':'pos'}"><div class="m-label">مصاريف</div><div class="m-value num">${formatNumberNoDecimals(r.expenses)}</div></div>
-<div class="metric ${r.wholesale<0?'neg':'pos'}"><div class="m-label">جملة</div><div class="m-value num">${formatNumberNoDecimals(r.wholesale)}</div></div>
-</div>
-`;
-container.appendChild(card);
-});
-}
-
-/* ---------- monthly chart navigators (Overview + Days) ---------- */
-
-function buildDailySeries(workbook){
-const ws = workbook.Sheets["ملخص"];
-if(!ws) return [];
-const data = XLSX.utils.sheet_to_json(ws, { header:1, defval:"", blankrows:false });
-const rows = [];
-for(let r=2;r<data.length;r++){
-const row = data[r];
-const rawDate = row[0];
-if(!rawDate) continue;
-let d;
-if(typeof rawDate === "number") d = excelSerialToDate(rawDate);
-else if(rawDate instanceof Date) d = rawDate;
-else{
-const tryDate = new Date(String(rawDate));
-if(isNaN(tryDate.getTime())) continue;
-d = tryDate;
-}
-const sell = parseFloat(String(row[1]).replace(/,/g,"")) || 0;
-const expenses = parseFloat(String(row[2]).replace(/,/g,"")) || 0;
-const wholesale = parseFloat(String(row[3]).replace(/,/g,"")) || 0;
-if(sell === 0 && expenses === 0 && wholesale === 0) continue;
-rows.push({ dateObj:d, sell, expenses, wholesale });
-}
-rows.sort((a,b) => a.dateObj - b.dateObj);
-return rows;
-}
-
-function buildWeeklySeries(dailySeries){
+/* بناء بيانات الأسابيع */
+function buildWeeklyChartData(rows){
 const weeklyMap = new Map();
-dailySeries.forEach(r => {
-const d = new Date(r.dateObj);
-const currentDay = d.getDay();
-const diffToMonday = (currentDay === 0) ? -6 : (1 - currentDay);
-const monday = new Date(d);
-monday.setDate(d.getDate() + diffToMonday);
-const mondayKey = monday.toISOString().slice(0,10);
-const sunday = new Date(monday);
-sunday.setDate(monday.getDate() + 6);
 
-let week = weeklyMap.get(mondayKey);
-if(!week){
-week = { from:new Date(monday), to:new Date(sunday), sell:0, expenses:0, wholesale:0 };
-weeklyMap.set(mondayKey, week);
-}
-week.sell += r.sell;
-week.expenses += r.expenses;
-week.wholesale += r.wholesale;
-});
-return Array.from(weeklyMap.values()).sort((a,b) => a.from - b.from);
-}
+rows.forEach(row => {
 
-function monthKeyOf(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`; }
-function monthLabelOf(d){ return `${monthNamesAr[d.getMonth()]} ${d.getFullYear()}`; }
+const monday = getWeekStartMonday(row.date);
+const sunday = getWeekEndSunday(monday);
+const key = dateKeyLocal(monday);
 
-// Weeks are assigned to the month that contains the END of the week (Sunday),
-// as requested: "نهاية الأسبوع هي اللي تحدد تبعيته للشهر".
-function buildMonthBuckets(dailySeries, weeklySeries){
-const months = new Map();
-
-function ensureMonth(d){
-const key = monthKeyOf(d);
-if(!months.has(key)){
-months.set(key, {
-key,
-label: monthLabelOf(d),
-sortDate: new Date(d.getFullYear(), d.getMonth(), 1),
-days: [],
-weeks: []
+if(!weeklyMap.has(key)){
+weeklyMap.set(key,{
+key:key,
+from:monday,
+to:sunday,
+sell:0,
+expenses:0,
+wholesale:0
 });
 }
-return months.get(key);
+
+const week = weeklyMap.get(key);
+
+week.sell += row.sell;
+week.expenses += row.expenses;
+week.wholesale += row.wholesale;
+});
+
+return Array.from(weeklyMap.values())
+.filter(week =>
+week.sell !== 0 ||
+week.expenses !== 0 ||
+week.wholesale !== 0
+)
+.sort((a,b) => a.to - b.to);
 }
 
-dailySeries.forEach(r => { ensureMonth(r.dateObj).days.push(r); });
-weeklySeries.forEach(w => { ensureMonth(w.to).weeks.push(w); });
+/* رقم الأسبوع داخل الشهر حسب نهاية الأسبوع */
+function getWeekNumberInsideMonth(week,monthKey,allWeeks){
+const monthWeeks = allWeeks
+.filter(item => getMonthKey(item.to) === monthKey)
+.sort((a,b) => a.to - b.to);
 
-return Array.from(months.values()).sort((a,b) => b.sortDate - a.sortDate); // newest month first
+const index = monthWeeks.findIndex(
+item => item.key === week.key
+);
+
+return index + 1;
 }
 
-function renderMonthButtons(containerId, selectedKey, onSelect){
+/* أزرار الأشهر */
+function renderMonthButtons(
+containerId,
+months,
+selectedMonth,
+onClick
+){
 const container = document.getElementById(containerId);
+
 container.innerHTML = "";
-if(!monthBuckets.length){
-container.innerHTML = '<div class="empty-note">لا توجد بيانات.</div>';
+
+if(!months.length){
+container.innerHTML =
+'<div class="empty-note">لا توجد أشهر</div>';
 return;
 }
-monthBuckets.forEach(b => {
-const btn = document.createElement("button");
-btn.textContent = b.label;
-btn.className = b.key === selectedKey ? "active" : "";
-btn.addEventListener("click", () => onSelect(b.key));
-container.appendChild(btn);
+
+months.forEach(monthKey => {
+
+const button = document.createElement("button");
+
+button.className = "month-btn";
+button.textContent = getMonthLabel(monthKey);
+
+if(monthKey === selectedMonth){
+button.classList.add("active");
+}
+
+button.addEventListener("click",() => {
+onClick(monthKey);
+});
+
+container.appendChild(button);
 });
 }
 
-function setupChartTabs(containerId, setMetric, updateFn){
-const container = document.getElementById(containerId);
-const buttons = container.querySelectorAll(".chart-tab-btn");
-buttons.forEach(btn => {
-btn.addEventListener("click", () => {
-buttons.forEach(b => b.classList.remove("active"));
-btn.classList.add("active");
-setMetric(btn.dataset.metric);
-updateFn();
-});
-});
-}
-
-function makeBarChart(ctx, labels, values, color){
-return new Chart(ctx, {
-type:"bar",
-data:{
-labels,
-datasets:[{
-data: values,
-backgroundColor: color,
-borderRadius: 6,
-maxBarThickness: 46
-}]
-},
-options:{
+/* إعدادات الرسم */
+function makeChartOptions(xTitle){
+return {
 responsive:true,
 maintainAspectRatio:false,
+animation:{
+duration:250
+},
 plugins:{
-legend:{ display:false },
+legend:{
+display:false
+},
 tooltip:{
+rtl:true,
+textDirection:"rtl",
 callbacks:{
-label:(ctx) => formatNumber(ctx.parsed.y) + " $"
+label:function(context){
+return `${formatNumber(context.raw)} $`;
+}
 }
 }
 },
 scales:{
-x:{ ticks:{ font:{ family:"Tajawal" } } },
-y:{ beginAtZero:true, ticks:{ callback:(v) => formatNumberNoDecimals(v) } }
+x:{
+title:{
+display:true,
+text:xTitle,
+font:{
+family:"Tajawal",
+weight:"bold"
+}
+},
+ticks:{
+font:{
+family:"Tajawal"
+}
+},
+grid:{
+color:"#E2E9E5"
+}
+},
+y:{
+beginAtZero:true,
+title:{
+display:true,
+text:"القيمة بالدولار",
+font:{
+family:"Tajawal",
+weight:"bold"
+}
+},
+ticks:{
+callback:function(value){
+return formatNumber(value) + " $";
+},
+font:{
+family:"IBM Plex Mono"
+}
+},
+grid:{
+color:"#E2E9E5"
 }
 }
+};
+}
+
+/* رسم الأسابيع */
+function renderWeeklyChart(){
+const canvas = document.getElementById("weeklyChart");
+const emptyBox = document.getElementById("weeklyChartEmpty");
+const title = document.getElementById("weeklyChartTitle");
+
+if(weeklyChartInstance){
+weeklyChartInstance.destroy();
+weeklyChartInstance = null;
+}
+
+const selectedWeeks = weeklyChartData
+.filter(week =>
+getMonthKey(week.to) === selectedWeeklyMonth
+)
+.sort((a,b) => a.to - b.to);
+
+if(!selectedWeeks.length){
+canvas.style.display = "none";
+emptyBox.style.display = "flex";
+title.textContent = getMonthLabel(selectedWeeklyMonth);
+return;
+}
+
+canvas.style.display = "block";
+emptyBox.style.display = "none";
+
+const names = {
+sell:"المبيع",
+wholesale:"الجملة",
+expenses:"المصاريف"
+};
+
+const colors = {
+sell:"#0E6B5C",
+wholesale:"#B8801C",
+expenses:"#C6483C"
+};
+
+const labels = selectedWeeks.map(week => {
+
+const weekNumber = getWeekNumberInsideMonth(
+week,
+selectedWeeklyMonth,
+weeklyChartData
+);
+
+return `الأسبوع ${weekNumber}`;
+});
+
+const values = selectedWeeks.map(
+week => week[weeklyChartType]
+);
+
+title.textContent =
+`${names[weeklyChartType]} - ${getMonthLabel(selectedWeeklyMonth)}`;
+
+weeklyChartInstance = new Chart(canvas,{
+type:"bar",
+data:{
+labels:labels,
+datasets:[{
+label:names[weeklyChartType],
+data:values,
+backgroundColor:colors[weeklyChartType],
+borderColor:colors[weeklyChartType],
+borderWidth:1,
+borderRadius:7,
+maxBarThickness:55
+}]
+},
+options:makeChartOptions("رقم الأسبوع")
 });
 }
 
-function updateOverviewChart(){
-const canvas = document.getElementById("overviewChartCanvas");
-const emptyNote = document.getElementById("overviewChartEmpty");
-const bucket = monthBuckets.find(b => b.key === overviewSelectedMonth);
-const weeksSorted = bucket ? bucket.weeks.slice().sort((a,b) => a.from - b.from) : [];
+/* تشغيل رسم الأسابيع */
+function setupWeeklyChart(workbook){
+const rows = getRowsFromSummary(workbook);
 
-if(overviewChart){ overviewChart.destroy(); overviewChart = null; }
+weeklyChartData = buildWeeklyChartData(rows);
 
-if(!weeksSorted.length){
+const monthRows = weeklyChartData.map(week => ({
+date:week.to
+}));
+
+const months = getAvailableMonths(monthRows);
+
+if(!months.length){
+document.getElementById("weeklyMonthList").innerHTML =
+'<div class="empty-note">لا توجد بيانات</div>';
+return;
+}
+
+selectedWeeklyMonth = months[0];
+
+function handleMonthClick(monthKey){
+selectedWeeklyMonth = monthKey;
+
+renderMonthButtons(
+"weeklyMonthList",
+months,
+selectedWeeklyMonth,
+handleMonthClick
+);
+
+renderWeeklyChart();
+}
+
+renderMonthButtons(
+"weeklyMonthList",
+months,
+selectedWeeklyMonth,
+handleMonthClick
+);
+
+document.querySelectorAll(
+"#panel-overview .chart-tab"
+).forEach(button => {
+
+button.addEventListener("click",() => {
+
+document.querySelectorAll(
+"#panel-overview .chart-tab"
+).forEach(btn => {
+btn.classList.remove("active");
+});
+
+button.classList.add("active");
+
+weeklyChartType = button.dataset.chart;
+
+renderWeeklyChart();
+});
+});
+
+renderWeeklyChart();
+}
+
+/* الملخص الأسبوعي القديم */
+function renderWeeklyCards(workbook){
+const container = document.getElementById("weeklyCards");
+container.innerHTML = "";
+
+const rows = getRowsFromSummary(workbook);
+
+if(!rows.length){
+container.innerHTML =
+'<div class="empty-note">لا توجد بيانات أسبوعية.</div>';
+return;
+}
+
+const weeklyMap = new Map();
+
+rows.forEach(row => {
+
+const monday = getWeekStartMonday(row.date);
+const sunday = getWeekEndSunday(monday);
+const key = dateKeyLocal(monday);
+
+if(!weeklyMap.has(key)){
+weeklyMap.set(key,{
+from:monday,
+to:sunday,
+sell:0,
+expenses:0,
+wholesale:0
+});
+}
+
+const week = weeklyMap.get(key);
+
+week.sell += row.sell;
+week.expenses += row.expenses;
+week.wholesale += row.wholesale;
+});
+
+const weeks = Array.from(weeklyMap.values())
+.filter(week =>
+week.sell !== 0 ||
+week.expenses !== 0 ||
+week.wholesale !== 0
+)
+.sort((a,b) => b.from - a.from);
+
+weeks.forEach(week => {
+
+const card = document.createElement("div");
+card.className = "ticket-card";
+
+card.innerHTML = `
+<div class="t-title">
+أسبوع ${formatArabicDate(week.from)}
+</div>
+
+<div class="t-sub">
+إلى ${formatArabicDate(week.to)}
+</div>
+
+<div class="metric-grid">
+
+<div class="metric ${week.sell < 0 ? "neg" : "pos"}">
+<div class="m-label">بيع</div>
+<div class="m-value num">
+${formatNumberNoDecimals(week.sell)} $
+</div>
+</div>
+
+<div class="metric ${week.expenses < 0 ? "neg" : "pos"}">
+<div class="m-label">مصاريف</div>
+<div class="m-value num">
+${formatNumberNoDecimals(week.expenses)} $
+</div>
+</div>
+
+<div class="metric ${week.wholesale < 0 ? "neg" : "pos"}">
+<div class="m-label">جملة</div>
+<div class="m-value num">
+${formatNumberNoDecimals(week.wholesale)} $
+</div>
+</div>
+
+</div>
+`;
+
+container.appendChild(card);
+});
+}
+
+/* الرسم اليومي */
+function buildDailyChartData(rows){
+return rows
+.filter(row =>
+row.sell !== 0 ||
+row.expenses !== 0 ||
+row.wholesale !== 0
+)
+.sort((a,b) => a.date - b.date);
+}
+
+function renderDailyChart(){
+const canvas = document.getElementById("dailyChart");
+const emptyBox = document.getElementById("dailyChartEmpty");
+const title = document.getElementById("dailyChartTitle");
+
+if(dailyChartInstance){
+dailyChartInstance.destroy();
+dailyChartInstance = null;
+}
+
+const selectedRows = dailyChartData
+.filter(row =>
+getMonthKey(row.date) === selectedDailyMonth
+);
+
+if(!selectedRows.length){
 canvas.style.display = "none";
-emptyNote.style.display = "block";
+emptyBox.style.display = "flex";
+title.textContent = getMonthLabel(selectedDailyMonth);
 return;
 }
 
 canvas.style.display = "block";
-emptyNote.style.display = "none";
-const labels = weeksSorted.map((w,i) => `الأسبوع ${i+1}`);
-const values = weeksSorted.map(w => w[overviewSelectedMetric]);
-overviewChart = makeBarChart(canvas.getContext("2d"), labels, values, chartMetricColors[overviewSelectedMetric]);
+emptyBox.style.display = "none";
+
+const names = {
+sell:"سعر المبيع",
+wholesale:"الجملة",
+expenses:"المصاريف"
+};
+
+const colors = {
+sell:"#0E6B5C",
+wholesale:"#B8801C",
+expenses:"#C6483C"
+};
+
+const labels = selectedRows.map(row => {
+
+const day = String(row.date.getDate()).padStart(2,"0");
+const month = String(row.date.getMonth()+1).padStart(2,"0");
+
+return `${day}-${month}`;
+});
+
+const values = selectedRows.map(
+row => row[dailyChartType]
+);
+
+title.textContent =
+`${names[dailyChartType]} - ${getMonthLabel(selectedDailyMonth)}`;
+
+dailyChartInstance = new Chart(canvas,{
+type:"bar",
+data:{
+labels:labels,
+datasets:[{
+label:names[dailyChartType],
+data:values,
+backgroundColor:colors[dailyChartType],
+borderColor:colors[dailyChartType],
+borderWidth:1,
+borderRadius:7,
+maxBarThickness:38
+}]
+},
+options:makeChartOptions("التاريخ")
+});
 }
 
-function updateDaysChart(){
-const canvas = document.getElementById("daysChartCanvas");
-const emptyNote = document.getElementById("daysChartEmpty");
-const bucket = monthBuckets.find(b => b.key === daysSelectedMonth);
-const daysSorted = bucket ? bucket.days.slice().sort((a,b) => a.dateObj - b.dateObj) : [];
+function setupDailyChart(workbook){
+dailyChartData = buildDailyChartData(
+getRowsFromSummary(workbook)
+);
 
-if(daysChart){ daysChart.destroy(); daysChart = null; }
+const months = getAvailableMonths(dailyChartData);
 
-if(!daysSorted.length){
-canvas.style.display = "none";
-emptyNote.style.display = "block";
+if(!months.length){
+document.getElementById("dailyMonthList").innerHTML =
+'<div class="empty-note">لا توجد بيانات</div>';
 return;
 }
 
-canvas.style.display = "block";
-emptyNote.style.display = "none";
-const labels = daysSorted.map(d => shortDate(d.dateObj));
-const values = daysSorted.map(d => d[daysSelectedMetric]);
-daysChart = makeBarChart(canvas.getContext("2d"), labels, values, chartMetricColors[daysSelectedMetric]);
+selectedDailyMonth = months[0];
+
+function handleMonthClick(monthKey){
+selectedDailyMonth = monthKey;
+
+renderMonthButtons(
+"dailyMonthList",
+months,
+selectedDailyMonth,
+handleMonthClick
+);
+
+renderDailyChart();
 }
 
-function selectOverviewMonth(key){
-overviewSelectedMonth = key;
-renderMonthButtons("overviewMonthList", overviewSelectedMonth, selectOverviewMonth);
-updateOverviewChart();
+renderMonthButtons(
+"dailyMonthList",
+months,
+selectedDailyMonth,
+handleMonthClick
+);
+
+document.querySelectorAll(
+"#panel-days .chart-tab"
+).forEach(button => {
+
+button.addEventListener("click",() => {
+
+document.querySelectorAll(
+"#panel-days .chart-tab"
+).forEach(btn => {
+btn.classList.remove("active");
+});
+
+button.classList.add("active");
+
+dailyChartType = button.dataset.chart;
+
+renderDailyChart();
+});
+});
+
+renderDailyChart();
 }
 
-function selectDaysMonth(key){
-daysSelectedMonth = key;
-renderMonthButtons("daysMonthList", daysSelectedMonth, selectDaysMonth);
-updateDaysChart();
+/* الرسم اليومي القديم */
+function renderDailyCards(workbook){
+const container = document.getElementById("dailyCards");
+container.innerHTML = "";
+
+const rows = getRowsFromSummary(workbook);
+
+if(!rows.length){
+container.innerHTML =
+'<div class="empty-note">لا توجد بيانات في ورقة الملخص.</div>';
+return;
 }
 
-function initMonthlyCharts(workbook){
-const dailySeries = buildDailySeries(workbook);
-const weeklySeries = buildWeeklySeries(dailySeries);
-monthBuckets = buildMonthBuckets(dailySeries, weeklySeries);
+const sortedRows = rows
+.filter(row =>
+row.sell !== 0 ||
+row.expenses !== 0 ||
+row.wholesale !== 0
+)
+.sort((a,b) => b.date - a.date);
 
-setupChartTabs("overviewChartTabs", (m) => { overviewSelectedMetric = m; }, updateOverviewChart);
-setupChartTabs("daysChartTabs", (m) => { daysSelectedMetric = m; }, updateDaysChart);
+sortedRows.forEach(row => {
 
-if(monthBuckets.length){
-selectOverviewMonth(monthBuckets[0].key);
-selectDaysMonth(monthBuckets[0].key);
-} else {
-renderMonthButtons("overviewMonthList", null, selectOverviewMonth);
-renderMonthButtons("daysMonthList", null, selectDaysMonth);
-updateOverviewChart();
-updateDaysChart();
+const card = document.createElement("div");
+card.className = "ticket-card";
+
+card.innerHTML = `
+<div class="t-title">
+${formatArabicDate(row.date)}
+</div>
+
+<div class="metric-grid">
+
+<div class="metric ${row.sell < 0 ? "neg" : "pos"}">
+<div class="m-label">بيع</div>
+<div class="m-value num">
+${formatNumberNoDecimals(row.sell)} $
+</div>
+</div>
+
+<div class="metric ${row.expenses < 0 ? "neg" : "pos"}">
+<div class="m-label">مصاريف</div>
+<div class="m-value num">
+${formatNumberNoDecimals(row.expenses)} $
+</div>
+</div>
+
+<div class="metric ${row.wholesale < 0 ? "neg" : "pos"}">
+<div class="m-label">جملة</div>
+<div class="m-value num">
+${formatNumberNoDecimals(row.wholesale)} $
+</div>
+</div>
+
+</div>
+`;
+
+container.appendChild(card);
+});
 }
+
+/* فلترة العمليات */
+function parseNumericFilter(input){
+const text = String(input || "").trim();
+
+if(!text) return null;
+
+const cleaned = text.replace(/,/g,"");
+
+let match = cleaned.match(/^>=\s*(-?\d+(?:\.\d+)?)$/);
+if(match){
+return {
+type:"gte",
+value:parseFloat(match[1])
+};
 }
 
+match = cleaned.match(/^<=\s*(-?\d+(?:\.\d+)?)$/);
+if(match){
+return {
+type:"lte",
+value:parseFloat(match[1])
+};
+}
+
+match = cleaned.match(/^>\s*(-?\d+(?:\.\d+)?)$/);
+if(match){
+return {
+type:"gt",
+value:parseFloat(match[1])
+};
+}
+
+match = cleaned.match(/^<\s*(-?\d+(?:\.\d+)?)$/);
+if(match){
+return {
+type:"lt",
+value:parseFloat(match[1])
+};
+}
+
+match = cleaned.match(
+/^(-?\d+(?:\.\d+)?)\s*-\s*(-?\d+(?:\.\d+)?)$/
+);
+
+if(match){
+return {
+type:"range",
+min:parseFloat(match[1]),
+max:parseFloat(match[2])
+};
+}
+
+const numeric = parseFloat(cleaned);
+
+if(!isNaN(numeric)){
+return {
+type:"exact",
+value:numeric
+};
+}
+
+return {
+type:"text",
+value:cleaned
+};
+}
+
+function matchesNumericFilter(amount,filterText){
+if(!filterText) return true;
+
+const filter = parseNumericFilter(filterText);
+
+if(!filter) return true;
+
+if(filter.type === "text"){
+return formatNumber(amount).includes(filter.value) ||
+String(amount).includes(filter.value);
+}
+
+if(filter.type === "exact"){
+return Math.abs(amount - filter.value) < 0.000001;
+}
+
+if(filter.type === "gte"){
+return amount >= filter.value;
+}
+
+if(filter.type === "lte"){
+return amount <= filter.value;
+}
+
+if(filter.type === "gt"){
+return amount > filter.value;
+}
+
+if(filter.type === "lt"){
+return amount < filter.value;
+}
+
+if(filter.type === "range"){
+const min = Math.min(filter.min,filter.max);
+const max = Math.max(filter.min,filter.max);
+
+return amount >= min && amount <= max;
+}
+
+return true;
+}
+
+function getOperationList(workbook){
+const operations = new Set();
+
+const sheets = workbook.SheetNames.filter(
+isDateSheetName
+);
+
+sheets.forEach(sheetName => {
+
+const ws = workbook.Sheets[sheetName];
+
+const data = XLSX.utils.sheet_to_json(ws,{
+header:1,
+defval:"",
+blankrows:false
+});
+
+data.forEach(row => {
+
+const operation = row[7];
+
+if(
+operation &&
+typeof operation === "string" &&
+operation.trim() !== ""
+){
+operations.add(operation.trim());
+}
+});
+});
+
+return Array.from(operations).sort();
+}
+
+function getFilteredRows(
+workbook,
+sheetName,
+operation,
+descriptionFilter,
+amountFilter
+){
+const ws = workbook.Sheets[sheetName];
+
+if(!ws) return [];
+
+const data = XLSX.utils.sheet_to_json(ws,{
+header:1,
+defval:"",
+blankrows:false
+});
+
+const rows = [];
+
+const dateObj = sheetNameToDate(sheetName);
+const dateText = sheetNameToFullDate(sheetName);
+
+data.forEach(row => {
+
+const operationValue = row[7];
+const description = String(row[8] || "").trim();
+
+const amount = numberValue(row[11]);
+
+if(description === "حركة الصندوق") return;
+if(amount === 0) return;
+
+if(operation && operationValue !== operation){
+return;
+}
+
+if(
+descriptionFilter &&
+!description.includes(descriptionFilter)
+){
+return;
+}
+
+if(!matchesNumericFilter(amount,amountFilter)){
+return;
+}
+
+rows.push({
+date:dateText,
+dateObj:dateObj,
+desc:description,
+amount:amount
+});
+});
+
+return rows;
+}
+
+function renderTransactionCards(rows){
+const container = document.getElementById("transactionCards");
+
+container.innerHTML = "";
+
+if(!rows.length){
+container.innerHTML =
+'<div class="empty-note">لا توجد بيانات مطابقة للبحث.</div>';
+
+document.getElementById("totalAmount").textContent =
+formatNumber(0);
+
+return;
+}
+
+rows.sort((a,b) => {
+return (b.dateObj || 0) - (a.dateObj || 0);
+});
+
+let total = 0;
+
+rows.forEach(row => {
+
+const div = document.createElement("div");
+
+div.className =
+"txn-row " + (row.amount > 0 ? "pos" : "neg");
+
+div.innerHTML = `
+<div class="txn-main">
+<div class="txn-desc">${row.desc}</div>
+<div class="txn-date">${row.date}</div>
+</div>
+
+<div class="txn-amount num">
+${formatNumber(row.amount)} $
+</div>
+`;
+
+container.appendChild(div);
+
+total += row.amount;
+});
+
+document.getElementById("totalAmount").textContent =
+formatNumber(total);
+}
+
+/* التبويبات الرئيسية */
 function setupTabs(){
 const buttons = document.querySelectorAll(".tab-btn");
+
+buttons.forEach(button => {
+
+button.addEventListener("click",() => {
+
 buttons.forEach(btn => {
-btn.addEventListener("click", () => {
-buttons.forEach(b => b.classList.remove("active"));
-document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
-btn.classList.add("active");
-document.getElementById("panel-" + btn.dataset.tab).classList.add("active");
+btn.classList.remove("active");
+});
+
+document.querySelectorAll(".panel").forEach(panel => {
+panel.classList.remove("active");
+});
+
+button.classList.add("active");
+
+const panel = document.getElementById(
+"panel-" + button.dataset.tab
+);
+
+if(panel){
+panel.classList.add("active");
+}
 });
 });
 }
 
+/* تشغيل الفلاتر */
+function setupTransactionFilters(workbook){
+const selectDate = document.getElementById("selectDate");
+const selectOperation = document.getElementById("selectOperation");
+const filterDescription = document.getElementById("filterDescription");
+const filterAmount = document.getElementById("filterAmount");
+const buttonShow = document.getElementById("btnShow");
+
+const validSheets = getValidSheets(workbook);
+
+selectDate.innerHTML =
+'<option value="">الكل</option>';
+
+validSheets.forEach(sheetName => {
+
+const option = document.createElement("option");
+
+option.value = sheetName;
+option.textContent = sheetName;
+
+selectDate.appendChild(option);
+});
+
+const operations = getOperationList(workbook);
+
+selectOperation.innerHTML =
+'<option value="">الكل</option>';
+
+operations.forEach(operation => {
+
+const option = document.createElement("option");
+
+option.value = operation;
+option.textContent = operation;
+
+selectOperation.appendChild(option);
+});
+
+function runFilter(){
+
+const selectedDate = selectDate.value;
+const selectedOperation = selectOperation.value;
+const descriptionFilter = filterDescription.value.trim();
+const amountFilter = filterAmount.value.trim();
+
+const targetSheets = selectedDate
+? [selectedDate]
+: validSheets;
+
+let allRows = [];
+
+targetSheets.forEach(sheetName => {
+
+allRows = allRows.concat(
+getFilteredRows(
+workbook,
+sheetName,
+selectedOperation,
+descriptionFilter,
+amountFilter
+)
+);
+});
+
+renderTransactionCards(allRows);
+}
+
+buttonShow.addEventListener("click",runFilter);
+selectDate.addEventListener("change",runFilter);
+selectOperation.addEventListener("change",runFilter);
+filterDescription.addEventListener("input",runFilter);
+filterAmount.addEventListener("input",runFilter);
+
+runFilter();
+}
+
+/* تشغيل الصفحة */
 async function refreshPage(){
+
 setupTabs();
 
 const workbook = await loadWorkbook();
+
 if(!workbook) return;
 
 renderHeroKpis(workbook);
 renderMonthlyCards(workbook);
 renderWeeklyCards(workbook);
 renderDailyCards(workbook);
-initMonthlyCharts(workbook);
 
-const selectDate = document.getElementById("selectDate");
-const selectOperation = document.getElementById("selectOperation");
-const filterDescription = document.getElementById("filterDescription");
-const filterAmount = document.getElementById("filterAmount");
+setupWeeklyChart(workbook);
+setupDailyChart(workbook);
 
-const validSheets = getValidSheets(workbook);
-selectDate.innerHTML = '<option value="">الكل</option>';
-validSheets.forEach(sheet => {
-const opt = document.createElement("option");
-opt.value = sheet; opt.textContent = sheet;
-selectDate.appendChild(opt);
-});
-
-const operations = getOperationList(workbook);
-selectOperation.innerHTML = '<option value="">الكل</option>';
-operations.forEach(op => {
-const opt = document.createElement("option");
-opt.value = op; opt.textContent = op;
-selectOperation.appendChild(opt);
-});
-
-const btnShow = document.getElementById("btnShow");
-const runFilter = () => {
-const selectedDate = selectDate.value;
-const selectedOperation = selectOperation.value;
-const descFilter = filterDescription.value.trim();
-const amountFilter = filterAmount.value.trim();
-
-let allRows = [];
-let targetSheets = selectedDate ? [selectedDate] : validSheets;
-
-targetSheets.forEach(sheet => {
-allRows = allRows.concat(getFilteredRows(workbook, sheet, selectedOperation, descFilter, amountFilter));
-});
-
-renderTransactionCards(allRows);
-};
-
-btnShow.onclick = runFilter;
-filterDescription.oninput = runFilter;
-filterAmount.oninput = runFilter;
-selectDate.onchange = runFilter;
-selectOperation.onchange = runFilter;
-
-runFilter();
+setupTransactionFilters(workbook);
 }
 
-window.addEventListener("load", refreshPage);
+window.addEventListener("load",refreshPage);
 </script>
+
 </body>
 </html>
