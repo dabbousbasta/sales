@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>صندوق دبوس البسطة</title>
 
@@ -14,622 +14,623 @@
 
 <style>
 :root{
---bg:#F2F6F4;
---surface:#FFFFFF;
---surface-alt:#EAF0EC;
---ink:#17241F;
---ink-soft:#5B6B64;
---line:#DCE4E0;
---teal:#0E6B5C;
---teal-dark:#0A4A40;
---teal-tint:#E3F3EE;
---coral:#C6483C;
---coral-tint:#FBEAE7;
---amber:#B8801C;
---amber-tint:#FBF1DE;
---radius:14px;
---shadow:0 1px 2px rgba(23,36,31,.06),0 6px 18px rgba(23,36,31,.06);
+    --bg:#F2F6F4;
+    --surface:#FFFFFF;
+    --surface-alt:#EAF0EC;
+    --ink:#17241F;
+    --ink-soft:#5B6B64;
+    --line:#DCE4E0;
+    --teal:#0E6B5C;
+    --teal-dark:#0A4A40;
+    --teal-tint:#E3F3EE;
+    --coral:#C6483C;
+    --amber:#B8801C;
+    --radius:14px;
+    --shadow:0 1px 2px rgba(23,36,31,.06),
+             0 6px 18px rgba(23,36,31,.06);
 }
 
 *{
-box-sizing:border-box;
+    box-sizing:border-box;
 }
 
 body{
-margin:0;
-background:var(--bg);
-color:var(--ink);
-font-family:'Tajawal',sans-serif;
--webkit-font-smoothing:antialiased;
-padding-bottom:40px;
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Tajawal',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:40px;
 }
 
 .num{
-font-family:'IBM Plex Mono',monospace;
-unicode-bidi:plaintext;
+    font-family:'IBM Plex Mono',monospace;
+    unicode-bidi:plaintext;
 }
 
-/* زر التحديث الثابت */
+/* زر تحديث الصفحة */
 #refreshBtn{
-position:fixed;
-top:10px;
-left:10px;
-z-index:1000;
-border:none;
-border-radius:999px;
-padding:9px 15px;
-background:#198754;
-color:#fff;
-font-family:inherit;
-font-size:.85rem;
-font-weight:700;
-cursor:pointer;
-box-shadow:0 3px 10px rgba(0,0,0,.22);
-display:inline-flex;
-align-items:center;
-gap:6px;
-transition:.15s ease;
+    position:fixed;
+    top:10px;
+    left:10px;
+    z-index:1000;
+    border:none;
+    border-radius:999px;
+    padding:9px 15px;
+    background:#198754;
+    color:#fff;
+    font-family:inherit;
+    font-size:.85rem;
+    font-weight:700;
+    cursor:pointer;
+    box-shadow:0 3px 10px rgba(0,0,0,.22);
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    transition:.15s ease;
 }
 
 #refreshBtn:hover:not(:disabled){
-background:#146c43;
-transform:translateY(-1px);
+    background:#146c43;
+    transform:translateY(-1px);
 }
 
 #refreshBtn:active:not(:disabled){
-transform:translateY(1px);
+    transform:translateY(1px);
 }
 
 #refreshBtn:disabled{
-opacity:.65;
-cursor:not-allowed;
+    opacity:.65;
+    cursor:not-allowed;
 }
 
 #refreshBtn.loading .refresh-icon{
-animation:spin .8s linear infinite;
+    animation:spin .8s linear infinite;
 }
 
 @keyframes spin{
-from{transform:rotate(0deg);}
-to{transform:rotate(360deg);}
+    from{transform:rotate(0deg);}
+    to{transform:rotate(360deg);}
 }
 
-/* header */
+/* الرأس */
 header.app-header{
-position:sticky;
-top:0;
-z-index:20;
-background:var(--teal-dark);
-color:#fff;
-padding:16px 18px 14px;
-box-shadow:0 4px 14px rgba(10,74,64,.25);
+    position:sticky;
+    top:0;
+    z-index:20;
+    background:var(--teal-dark);
+    color:#fff;
+    padding:16px 18px 14px;
+    box-shadow:0 4px 14px rgba(10,74,64,.25);
 }
 
 header.app-header h1{
-margin:0;
-font-size:1.15rem;
-font-weight:900;
-letter-spacing:.2px;
+    margin:0;
+    font-size:1.15rem;
+    font-weight:900;
 }
 
 header.app-header p{
-margin:4px 0 0;
-font-size:.82rem;
-color:#CFE9E1;
-font-weight:500;
+    margin:4px 0 0;
+    font-size:.82rem;
+    color:#CFE9E1;
+    font-weight:500;
 }
 
-/* tabs */
+/* التبويبات */
 nav.tabs{
-position:sticky;
-top:64px;
-z-index:19;
-display:flex;
-gap:6px;
-padding:10px 12px;
-background:var(--bg);
-border-bottom:1px solid var(--line);
-overflow-x:auto;
+    position:sticky;
+    top:64px;
+    z-index:19;
+    display:flex;
+    gap:6px;
+    padding:10px 12px;
+    background:var(--bg);
+    border-bottom:1px solid var(--line);
+    overflow-x:auto;
 }
 
 nav.tabs button{
-flex:0 0 auto;
-border:1px solid var(--line);
-background:var(--surface);
-color:var(--ink-soft);
-font-family:inherit;
-font-weight:700;
-font-size:.88rem;
-padding:9px 16px;
-border-radius:999px;
-cursor:pointer;
-transition:.15s ease;
+    flex:0 0 auto;
+    border:1px solid var(--line);
+    background:var(--surface);
+    color:var(--ink-soft);
+    font-family:inherit;
+    font-weight:700;
+    font-size:.88rem;
+    padding:9px 16px;
+    border-radius:999px;
+    cursor:pointer;
 }
 
 nav.tabs button.active{
-background:var(--teal);
-border-color:var(--teal);
-color:#fff;
+    background:var(--teal);
+    border-color:var(--teal);
+    color:#fff;
 }
 
 main{
-padding:14px 12px 0;
-max-width:900px;
-margin:0 auto;
+    padding:14px 12px 0;
+    max-width:900px;
+    margin:0 auto;
 }
 
 .panel{
-display:none;
+    display:none;
 }
 
 .panel.active{
-display:block;
-animation:fade .18s ease;
+    display:block;
+    animation:fade .18s ease;
 }
 
 @keyframes fade{
-from{
-opacity:0;
-transform:translateY(4px);
-}
-to{
-opacity:1;
-transform:none;
-}
+    from{
+        opacity:0;
+        transform:translateY(4px);
+    }
+
+    to{
+        opacity:1;
+        transform:none;
+    }
 }
 
 .section-title{
-font-size:.95rem;
-font-weight:900;
-color:var(--teal-dark);
-margin:18px 2px 10px;
-display:flex;
-align-items:center;
-gap:8px;
+    font-size:.95rem;
+    font-weight:900;
+    color:var(--teal-dark);
+    margin:18px 2px 10px;
+    display:flex;
+    align-items:center;
+    gap:8px;
 }
 
 .section-title::before{
-content:"";
-width:6px;
-height:6px;
-border-radius:50%;
-background:var(--teal);
+    content:"";
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:var(--teal);
 }
 
-/* KPI */
+/* بطاقات الإجمالي */
 .kpi-row{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:10px;
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
 }
 
 @media(min-width:560px){
-.kpi-row{
-grid-template-columns:repeat(4,1fr);
-}
+    .kpi-row{
+        grid-template-columns:repeat(4,1fr);
+    }
 }
 
 .kpi-card{
-background:var(--surface);
-border-radius:var(--radius);
-box-shadow:var(--shadow);
-padding:14px 12px;
-border-inline-start:4px solid var(--line);
+    background:var(--surface);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:14px 12px;
+    border-inline-start:4px solid var(--line);
 }
 
 .kpi-card .label{
-font-size:.76rem;
-color:var(--ink-soft);
-font-weight:700;
+    font-size:.76rem;
+    color:var(--ink-soft);
+    font-weight:700;
 }
 
 .kpi-card .value{
-font-size:1.25rem;
-font-weight:700;
-margin-top:6px;
+    font-size:1.25rem;
+    font-weight:700;
+    margin-top:6px;
 }
 
 .kpi-card.teal{
-border-inline-start-color:var(--teal);
+    border-inline-start-color:var(--teal);
 }
 
 .kpi-card.teal .value{
-color:var(--teal-dark);
+    color:var(--teal-dark);
 }
 
 .kpi-card.coral{
-border-inline-start-color:var(--coral);
+    border-inline-start-color:var(--coral);
 }
 
 .kpi-card.coral .value{
-color:var(--coral);
+    color:var(--coral);
 }
 
 .kpi-card.amber{
-border-inline-start-color:var(--amber);
+    border-inline-start-color:var(--amber);
 }
 
 .kpi-card.amber .value{
-color:var(--amber);
+    color:var(--amber);
 }
 
 .kpi-card.ink .value{
-color:var(--ink);
+    color:var(--ink);
 }
 
-/* البطاقات */
+/* البطاقات العامة */
 .card-grid{
-display:grid;
-grid-template-columns:1fr;
-gap:12px;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:12px;
 }
 
 @media(min-width:640px){
-.card-grid{
-grid-template-columns:repeat(2,1fr);
-}
+    .card-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
 }
 
 .ticket-card{
-position:relative;
-background:var(--surface);
-border-radius:var(--radius);
-box-shadow:var(--shadow);
-padding:14px 16px 12px;
-border-top:2px dashed var(--line);
+    position:relative;
+    background:var(--surface);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:14px 16px 12px;
+    border-top:2px dashed var(--line);
 }
 
 .ticket-card::before,
 .ticket-card::after{
-content:"";
-position:absolute;
-top:-9px;
-width:18px;
-height:18px;
-background:var(--bg);
-border-radius:50%;
+    content:"";
+    position:absolute;
+    top:-9px;
+    width:18px;
+    height:18px;
+    background:var(--bg);
+    border-radius:50%;
 }
 
 .ticket-card::before{
-inset-inline-start:12px;
+    inset-inline-start:12px;
 }
 
 .ticket-card::after{
-inset-inline-end:12px;
+    inset-inline-end:12px;
 }
 
 .ticket-card .t-title{
-font-weight:900;
-font-size:.95rem;
-color:var(--ink);
-margin-bottom:2px;
+    font-weight:900;
+    font-size:.95rem;
+    color:var(--ink);
+    margin-bottom:2px;
 }
 
 .ticket-card .t-sub{
-font-size:.76rem;
-color:var(--ink-soft);
-margin-bottom:10px;
+    font-size:.76rem;
+    color:var(--ink-soft);
+    margin-bottom:10px;
 }
 
 .metric-grid{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:8px;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
 }
 
 .metric{
-background:var(--surface-alt);
-border-radius:10px;
-padding:8px 6px;
-text-align:center;
+    background:var(--surface-alt);
+    border-radius:10px;
+    padding:8px 6px;
+    text-align:center;
 }
 
 .metric .m-label{
-font-size:.7rem;
-color:var(--ink-soft);
-font-weight:700;
+    font-size:.7rem;
+    color:var(--ink-soft);
+    font-weight:700;
 }
 
 .metric .m-value{
-font-size:.92rem;
-font-weight:700;
-margin-top:3px;
+    font-size:.92rem;
+    font-weight:700;
+    margin-top:3px;
 }
 
 .metric.neg .m-value{
-color:var(--coral);
+    color:var(--coral);
 }
 
 .metric.pos .m-value{
-color:var(--teal-dark);
+    color:var(--teal-dark);
 }
 
 .metric-list{
-display:flex;
-flex-direction:column;
-gap:6px;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
 }
 
 .metric-list .row{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:6px 4px;
-border-bottom:1px dashed var(--line);
-font-size:.85rem;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:6px 4px;
+    border-bottom:1px dashed var(--line);
+    font-size:.85rem;
 }
 
 .metric-list .row:last-child{
-border-bottom:none;
+    border-bottom:none;
 }
 
-.metric-list .row .m-label{
-color:var(--ink-soft);
-font-weight:600;
+.metric-list .m-label{
+    color:var(--ink-soft);
+    font-weight:600;
 }
 
-.metric-list .row .m-value{
-font-weight:700;
+.metric-list .m-value{
+    font-weight:700;
 }
 
-.metric-list .row .m-value.neg{
-color:var(--coral);
+.metric-list .m-value.neg{
+    color:var(--coral);
 }
 
 .empty-note{
-background:var(--surface);
-border:1px dashed var(--line);
-border-radius:var(--radius);
-padding:22px;
-text-align:center;
-color:var(--ink-soft);
-font-size:.88rem;
+    background:var(--surface);
+    border:1px dashed var(--line);
+    border-radius:var(--radius);
+    padding:22px;
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:.88rem;
 }
 
 /* الفلاتر */
 .filters-card{
-background:var(--surface);
-border-radius:var(--radius);
-box-shadow:var(--shadow);
-padding:14px;
-display:flex;
-flex-wrap:wrap;
-gap:10px;
-align-items:flex-end;
+    background:var(--surface);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:14px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:flex-end;
 }
 
 .field{
-display:flex;
-flex-direction:column;
-gap:5px;
-flex:1 1 140px;
-min-width:130px;
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+    flex:1 1 140px;
+    min-width:130px;
 }
 
 .field label{
-font-size:.76rem;
-color:var(--ink-soft);
-font-weight:700;
+    font-size:.76rem;
+    color:var(--ink-soft);
+    font-weight:700;
 }
 
 .field input,
 .field select{
-padding:10px;
-border:1px solid var(--line);
-border-radius:10px;
-font-family:inherit;
-font-size:.9rem;
-background:var(--surface-alt);
-color:var(--ink);
+    padding:10px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    font-family:inherit;
+    font-size:.9rem;
+    background:var(--surface-alt);
+    color:var(--ink);
 }
 
 .field input:focus,
 .field select:focus{
-outline:2px solid var(--teal);
-outline-offset:1px;
+    outline:2px solid var(--teal);
+    outline-offset:1px;
 }
 
 .btn-primary{
-padding:11px 18px;
-border:none;
-border-radius:10px;
-background:var(--teal);
-color:#fff;
-font-family:inherit;
-font-weight:700;
-font-size:.9rem;
-cursor:pointer;
-flex:0 0 auto;
+    padding:11px 18px;
+    border:none;
+    border-radius:10px;
+    background:var(--teal);
+    color:#fff;
+    font-family:inherit;
+    font-weight:700;
+    font-size:.9rem;
+    cursor:pointer;
 }
 
 .btn-primary:hover{
-background:var(--teal-dark);
+    background:var(--teal-dark);
 }
 
-/* الإجمالي */
+/* الإجمالي المثبت */
 .sticky-total{
-position:sticky;
-top:112px;
-z-index:15;
-margin:12px 0;
-padding:12px 16px;
-border-radius:var(--radius);
-background:var(--teal-tint);
-border:1px solid var(--teal);
-display:flex;
-justify-content:space-between;
-align-items:center;
+    position:sticky;
+    top:112px;
+    z-index:15;
+    margin:12px 0;
+    padding:12px 16px;
+    border-radius:var(--radius);
+    background:var(--teal-tint);
+    border:1px solid var(--teal);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 }
 
 .sticky-total .label{
-font-weight:700;
-color:var(--teal-dark);
-font-size:.88rem;
+    font-weight:700;
+    color:var(--teal-dark);
+    font-size:.88rem;
 }
 
 .sticky-total .amount{
-font-size:1.15rem;
-font-weight:700;
-color:var(--teal-dark);
+    font-size:1.15rem;
+    font-weight:700;
+    color:var(--teal-dark);
 }
 
 /* الحركات */
 .txn-list{
-display:flex;
-flex-direction:column;
-gap:8px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
 }
 
 .txn-row{
-display:flex;
-align-items:center;
-gap:10px;
-background:var(--surface);
-border-radius:12px;
-box-shadow:var(--shadow);
-padding:10px 12px;
-border-inline-start:4px solid var(--line);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:var(--surface);
+    border-radius:12px;
+    box-shadow:var(--shadow);
+    padding:10px 12px;
+    border-inline-start:4px solid var(--line);
 }
 
 .txn-row.pos{
-border-inline-start-color:var(--teal);
+    border-inline-start-color:var(--teal);
 }
 
 .txn-row.neg{
-border-inline-start-color:var(--coral);
+    border-inline-start-color:var(--coral);
 }
 
-.txn-row .txn-main{
-flex:1;
-min-width:0;
+.txn-main{
+    flex:1;
+    min-width:0;
 }
 
-.txn-row .txn-desc{
-font-weight:700;
-font-size:.9rem;
-color:var(--ink);
-overflow-wrap:anywhere;
+.txn-desc{
+    font-weight:700;
+    font-size:.9rem;
+    color:var(--ink);
+    overflow-wrap:anywhere;
 }
 
-.txn-row .txn-date{
-font-size:.74rem;
-color:var(--ink-soft);
-margin-top:2px;
+.txn-date{
+    font-size:.74rem;
+    color:var(--ink-soft);
+    margin-top:2px;
 }
 
-.txn-row .txn-amount{
-font-weight:700;
-font-size:.95rem;
-white-space:nowrap;
+.txn-amount{
+    font-weight:700;
+    font-size:.95rem;
+    white-space:nowrap;
 }
 
 .txn-row.pos .txn-amount{
-color:var(--teal-dark);
+    color:var(--teal-dark);
 }
 
 .txn-row.neg .txn-amount{
-color:var(--coral);
-}
-
-.load-msg{
-text-align:center;
-color:var(--ink-soft);
-padding:30px 10px;
-font-size:.9rem;
+    color:var(--coral);
 }
 
 @media(max-width:560px){
-#refreshBtn{
-top:8px;
-left:8px;
-padding:7px 11px;
-font-size:.78rem;
-}
-
-header.app-header{
-padding-top:17px;
-}
+    #refreshBtn{
+        top:8px;
+        left:8px;
+        padding:7px 11px;
+        font-size:.78rem;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<!-- زر تحديث البيانات -->
 <button id="refreshBtn" type="button" disabled>
-<span class="refresh-icon">🔄</span>
-<span class="refresh-text">تحديث</span>
+    <span class="refresh-icon">🔄</span>
+    <span class="refresh-text">تحديث</span>
 </button>
 
 <header class="app-header">
-<h1>صندوق دبوس البسطة</h1>
-<p>سجل المبيعات والمصاريف اليومي</p>
+    <h1>صندوق دبوس البسطة</h1>
+    <p>سجل المبيعات والمصاريف اليومي</p>
 </header>
 
 <nav class="tabs">
-<button class="tab-btn active" data-tab="overview">نظرة عامة</button>
-<button class="tab-btn" data-tab="days">الأيام</button>
-<button class="tab-btn" data-tab="txns">الحركات التفصيلية</button>
+    <button class="tab-btn active" data-tab="overview">
+        نظرة عامة
+    </button>
+
+    <button class="tab-btn" data-tab="days">
+        الأيام
+    </button>
+
+    <button class="tab-btn" data-tab="txns">
+        الحركات التفصيلية
+    </button>
 </nav>
 
 <main>
 
 <section class="panel active" id="panel-overview">
-<div class="section-title">الإجمالي العام</div>
-<div class="kpi-row" id="heroKpis"></div>
+    <div class="section-title">الإجمالي العام</div>
+    <div class="kpi-row" id="heroKpis"></div>
 
-<div class="section-title">الملخص الشهري</div>
-<div class="card-grid" id="monthlyCards"></div>
+    <div class="section-title">الملخص الشهري</div>
+    <div class="card-grid" id="monthlyCards"></div>
 
-<div class="section-title">الملخص الأسبوعي (اثنين - أحد)</div>
-<div class="card-grid" id="weeklyCards"></div>
+    <div class="section-title">الملخص الأسبوعي (اثنين - أحد)</div>
+    <div class="card-grid" id="weeklyCards"></div>
 </section>
 
 <section class="panel" id="panel-days">
-<div class="section-title">ملخص كل يوم</div>
-<div class="card-grid" id="dailyCards"></div>
+    <div class="section-title">ملخص كل يوم</div>
+    <div class="card-grid" id="dailyCards"></div>
 </section>
 
 <section class="panel" id="panel-txns">
-<div class="section-title">فلترة البيانات</div>
+    <div class="section-title">فلترة البيانات</div>
 
-<div class="filters-card">
-<div class="field">
-<label>التاريخ</label>
-<select id="selectDate">
-<option value="">الكل</option>
-</select>
-</div>
+    <div class="filters-card">
+        <div class="field">
+            <label for="selectDate">التاريخ</label>
+            <select id="selectDate">
+                <option value="">الكل</option>
+            </select>
+        </div>
 
-<div class="field">
-<label>العملية</label>
-<select id="selectOperation">
-<option value="">الكل</option>
-</select>
-</div>
+        <div class="field">
+            <label for="selectOperation">العملية</label>
+            <select id="selectOperation">
+                <option value="">الكل</option>
+            </select>
+        </div>
 
-<div class="field">
-<label>بحث في البيان</label>
-<input type="text" id="filterDescription" placeholder="مثال: شحن" />
-</div>
+        <div class="field">
+            <label for="filterDescription">بحث في البيان</label>
+            <input
+                type="text"
+                id="filterDescription"
+                placeholder="مثال: شحن"
+            >
+        </div>
 
-<div class="field">
-<label>فلتر السعر</label>
-<input type="text" id="filterAmount" placeholder="مثال: >=500" />
-</div>
+        <div class="field">
+            <label for="filterAmount">فلتر السعر</label>
+            <input
+                type="text"
+                id="filterAmount"
+                placeholder="مثال: >=500"
+            >
+        </div>
 
-<button class="btn-primary" id="btnShow" type="button">
-إظهار
-</button>
-</div>
+        <button class="btn-primary" id="btnShow" type="button">
+            إظهار
+        </button>
+    </div>
 
-<div class="sticky-total">
-<span class="label">إجمالي المبيع $</span>
-<span class="amount num" id="totalAmount">0.00</span>
-</div>
+    <div class="sticky-total">
+        <span class="label">إجمالي المبيع $</span>
+        <span class="amount num" id="totalAmount">0.00</span>
+    </div>
 
-<div class="section-title">الحركات</div>
-<div class="txn-list" id="transactionCards"></div>
+    <div class="section-title">الحركات</div>
+    <div class="txn-list" id="transactionCards"></div>
 </section>
 
 </main>
@@ -638,1119 +639,1236 @@ padding-top:17px;
 const EXCEL_FILE_NAME = "صندوق دبوس.xlsx";
 
 let tabsInitialized = false;
-let currentFilterFunction = null;
+let currentWorkbook = null;
 
 function formatNumber(value){
-return new Intl.NumberFormat('en-US',{
-minimumFractionDigits:2,
-maximumFractionDigits:2
-}).format(value);
+    return new Intl.NumberFormat("en-US", {
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+    }).format(Number(value) || 0);
 }
 
 function formatNumberNoDecimals(value){
-return new Intl.NumberFormat('en-US',{
-minimumFractionDigits:0,
-maximumFractionDigits:0
-}).format(value);
+    return new Intl.NumberFormat("en-US", {
+        minimumFractionDigits:0,
+        maximumFractionDigits:0
+    }).format(Number(value) || 0);
+}
+
+function escapeHtml(value){
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 function excelSerialToDate(serial){
-const d = new Date(1899,11,30);
-d.setDate(d.getDate() + serial);
-return d;
+    const date = new Date(1899, 11, 30);
+    date.setDate(date.getDate() + Number(serial));
+    return date;
 }
 
-function formatArabicDate(d){
-const daysAr = [
-"الأحد",
-"الاثنين",
-"الثلاثاء",
-"الأربعاء",
-"الخميس",
-"الجمعة",
-"السبت"
-];
+function formatArabicDate(date){
+    const days = [
+        "الأحد",
+        "الاثنين",
+        "الثلاثاء",
+        "الأربعاء",
+        "الخميس",
+        "الجمعة",
+        "السبت"
+    ];
 
-const dayName = daysAr[d.getDay()];
-const day = String(d.getDate()).padStart(2,"0");
-const month = String(d.getMonth()+1).padStart(2,"0");
-const year = d.getFullYear();
+    const dayName = days[date.getDay()];
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
 
-return `${dayName} ${day}-${month}-${year}`;
+    return `${dayName} ${day}-${month}-${year}`;
 }
 
-function parseNumericFilter(input){
-const text = String(input || "").trim();
+function parseAmount(value){
+    if (typeof value === "number") {
+        return value;
+    }
 
-if(!text){
-return null;
+    const text = String(value ?? "")
+        .replace(/,/g, "")
+        .replace(/\$/g, "")
+        .trim();
+
+    if (!text) {
+        return 0;
+    }
+
+    const number = Number(text);
+
+    return Number.isFinite(number) ? number : 0;
 }
 
-const cleaned = text.replace(/,/g,"");
+function parseNumericFilter(value){
+    const text = String(value || "").trim();
 
-let match = cleaned.match(/^>=\s*(-?\d+(?:\.\d+)?)$/);
+    if (!text) {
+        return null;
+    }
 
-if(match){
-return {
-type:"gte",
-value:parseFloat(match[1])
-};
-}
+    const cleaned = text.replace(/,/g, "");
 
-match = cleaned.match(/^<=\s*(-?\d+(?:\.\d+)?)$/);
+    let match = cleaned.match(/^>=\s*(-?\d+(?:\.\d+)?)$/);
 
-if(match){
-return {
-type:"lte",
-value:parseFloat(match[1])
-};
-}
+    if (match) {
+        return {
+            type:"gte",
+            value:Number(match[1])
+        };
+    }
 
-match = cleaned.match(/^>\s*(-?\d+(?:\.\d+)?)$/);
+    match = cleaned.match(/^<=\s*(-?\d+(?:\.\d+)?)$/);
 
-if(match){
-return {
-type:"gt",
-value:parseFloat(match[1])
-};
-}
+    if (match) {
+        return {
+            type:"lte",
+            value:Number(match[1])
+        };
+    }
 
-match = cleaned.match(/^<\s*(-?\d+(?:\.\d+)?)$/);
+    match = cleaned.match(/^>\s*(-?\d+(?:\.\d+)?)$/);
 
-if(match){
-return {
-type:"lt",
-value:parseFloat(match[1])
-};
-}
+    if (match) {
+        return {
+            type:"gt",
+            value:Number(match[1])
+        };
+    }
 
-match = cleaned.match(
-/^(-?\d+(?:\.\d+)?)\s*-\s*(-?\d+(?:\.\d+)?)$/
-);
+    match = cleaned.match(/^<\s*(-?\d+(?:\.\d+)?)$/);
 
-if(match){
-return {
-type:"range",
-min:parseFloat(match[1]),
-max:parseFloat(match[2])
-};
-}
+    if (match) {
+        return {
+            type:"lt",
+            value:Number(match[1])
+        };
+    }
 
-const number = parseFloat(cleaned);
+    match = cleaned.match(
+        /^(-?\d+(?:\.\d+)?)\s*-\s*(-?\d+(?:\.\d+)?)$/
+    );
 
-if(!isNaN(number)){
-return {
-type:"exact",
-value:number
-};
-}
+    if (match) {
+        return {
+            type:"range",
+            min:Number(match[1]),
+            max:Number(match[2])
+        };
+    }
 
-return {
-type:"text",
-value:cleaned
-};
+    const exactNumber = Number(cleaned);
+
+    if (Number.isFinite(exactNumber)) {
+        return {
+            type:"exact",
+            value:exactNumber
+        };
+    }
+
+    return {
+        type:"text",
+        value:cleaned
+    };
 }
 
 function matchesNumericFilter(amount, filterText){
-if(!filterText){
-return true;
-}
+    if (!filterText) {
+        return true;
+    }
 
-const filter = parseNumericFilter(filterText);
+    const filter = parseNumericFilter(filterText);
 
-if(!filter){
-return true;
-}
+    if (!filter) {
+        return true;
+    }
 
-if(filter.type === "text"){
-return formatNumber(amount).includes(filter.value) ||
-String(amount).includes(filter.value);
-}
+    if (filter.type === "exact") {
+        return amount === filter.value;
+    }
 
-if(filter.type === "exact"){
-return Math.abs(amount - filter.value) < 0.000001;
-}
+    if (filter.type === "gte") {
+        return amount >= filter.value;
+    }
 
-if(filter.type === "gte"){
-return amount >= filter.value;
-}
+    if (filter.type === "lte") {
+        return amount <= filter.value;
+    }
 
-if(filter.type === "lte"){
-return amount <= filter.value;
-}
+    if (filter.type === "gt") {
+        return amount > filter.value;
+    }
 
-if(filter.type === "gt"){
-return amount > filter.value;
-}
+    if (filter.type === "lt") {
+        return amount < filter.value;
+    }
 
-if(filter.type === "lt"){
-return amount < filter.value;
-}
+    if (filter.type === "range") {
+        const min = Math.min(filter.min, filter.max);
+        const max = Math.max(filter.min, filter.max);
 
-if(filter.type === "range"){
-const min = Math.min(filter.min, filter.max);
-const max = Math.max(filter.min, filter.max);
+        return amount >= min && amount <= max;
+    }
 
-return amount >= min && amount <= max;
-}
+    if (filter.type === "text") {
+        return String(amount).includes(filter.value);
+    }
 
-return true;
+    return true;
 }
 
 /*
-تحميل ملف Excel من جديد.
-إضافة ?v=Date.now() تمنع استعمال الرابط القديم،
-و cache:no-store يمنع استعمال التخزين المؤقت للمتصفح.
+    تحميل ملف Excel من جديد.
+    ?v=Date.now() و cache:no-store
+    يساعدان في طلب النسخة الجديدة من الملف.
 */
 async function loadWorkbook(){
-try{
-const separator = EXCEL_FILE_NAME.includes("?")
-? "&"
-: "?";
+    const separator =
+        EXCEL_FILE_NAME.includes("?")
+        ? "&"
+        : "?";
 
-const freshFileUrl =
-EXCEL_FILE_NAME +
-separator +
-"v=" +
-Date.now();
+    const freshUrl =
+        EXCEL_FILE_NAME +
+        separator +
+        "v=" +
+        Date.now();
 
-const response = await fetch(freshFileUrl,{
-cache:"no-store"
-});
+    const response = await fetch(freshUrl, {
+        cache:"no-store"
+    });
 
-if(!response.ok){
-throw new Error(
-"HTTP " +
-response.status +
-" - تعذر تحميل الملف"
-);
+    if (!response.ok) {
+        throw new Error(
+            "تعذر تحميل الملف. رمز الخطأ: " +
+            response.status
+        );
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+
+    return XLSX.read(
+        new Uint8Array(arrayBuffer),
+        {
+            type:"array",
+            cellDates:true
+        }
+    );
 }
 
-const data = await response.arrayBuffer();
+function getDateFromSheetName(sheetName){
+    const match =
+        String(sheetName).trim().match(/^(\d{2})-(\d{2})$/);
 
-return XLSX.read(data,{
-type:"array"
-});
+    if (!match) {
+        return null;
+    }
 
-}catch(error){
-alert(
-"خطأ في قراءة ملف صندوق دبوس.xlsx:\n" +
-error.message
-);
+    const day = Number(match[1]);
+    const month = Number(match[2]);
 
-console.error(error);
-return null;
-}
+    return new Date(2026, month - 1, day);
 }
 
-function sheetNameToDate(sheetName){
-const match = sheetName.trim().match(/^(\d{2})-(\d{2})$/);
+function formatSheetDate(sheetName){
+    const date = getDateFromSheetName(sheetName);
 
-if(!match){
-return null;
-}
-
-const day = parseInt(match[1],10);
-const month = parseInt(match[2],10);
-const year = 2026;
-
-return new Date(year,month-1,day);
-}
-
-function sheetNameToFullDate(sheetName){
-const date = sheetNameToDate(sheetName);
-
-return date
-? formatArabicDate(date)
-: sheetName;
+    return date
+        ? formatArabicDate(date)
+        : String(sheetName);
 }
 
 function isDateSheetName(sheetName){
-return /^\d{2}-\d{2}$/.test(sheetName.trim());
+    return /^\d{2}-\d{2}$/.test(
+        String(sheetName).trim()
+    );
 }
 
-function getValidSheets(workbook){
-return workbook.SheetNames.filter(isDateSheetName);
+function getDateSheets(workbook){
+    return workbook.SheetNames.filter(
+        isDateSheetName
+    );
 }
 
+/*
+    قراءة قائمة العمليات من العمود H.
+    رقم العمود H هو 7 لأن JavaScript يبدأ من صفر.
+*/
 function getOperationList(workbook){
-const operations = new Set();
+    const operations = new Set();
 
-const sheets = workbook.SheetNames.filter(
-isDateSheetName
-);
+    getDateSheets(workbook).forEach(sheetName => {
+        const worksheet = workbook.Sheets[sheetName];
 
-sheets.forEach(sheetName => {
-const worksheet = workbook.Sheets[sheetName];
+        const rows = XLSX.utils.sheet_to_json(
+            worksheet,
+            {
+                header:1,
+                defval:"",
+                blankrows:false
+            }
+        );
 
-const data = XLSX.utils.sheet_to_json(
-worksheet,
-{
-header:1,
-defval:"",
-blankrows:false
-}
-);
+        rows.forEach(row => {
+            const operation =
+                String(row[7] ?? "").trim();
 
-for(let i=0;i<data.length;i++){
-const operation = data[i][7];
+            if (operation) {
+                operations.add(operation);
+            }
+        });
+    });
 
-if(
-operation &&
-typeof operation === "string" &&
-operation.trim() !== ""
-){
-operations.add(operation.trim());
-}
-}
-});
-
-return Array.from(operations).sort();
+    return Array.from(operations).sort(
+        (a,b) => a.localeCompare(b, "ar")
+    );
 }
 
+/*
+    الدالة المصححة.
+
+    operationFilter:
+    العملية التي اختارها المستخدم.
+
+    operation:
+    العملية الموجودة داخل صف Excel.
+
+    تم فصل الاسمين حتى لا يحدث تعارض.
+*/
 function getFilteredRows(
-workbook,
-sheetName,
-operation,
-descriptionFilter,
-amountFilter
+    workbook,
+    sheetName,
+    operationFilter,
+    descriptionFilter,
+    amountFilter
 ){
-const worksheet = workbook.Sheets[sheetName];
+    const worksheet =
+        workbook.Sheets[sheetName];
 
-const data = XLSX.utils.sheet_to_json(
-worksheet,
-{
-header:1,
-defval:""
-}
-);
+    const rows =
+        XLSX.utils.sheet_to_json(
+            worksheet,
+            {
+                header:1,
+                defval:"",
+                blankrows:false
+            }
+        );
 
-const rows = [];
-const dateObj = sheetNameToDate(sheetName);
-const dateStr = sheetNameToFullDate(sheetName);
+    const result = [];
 
-for(let i=0;i<data.length;i++){
-const row = data[i];
+    const dateObj =
+        getDateFromSheetName(sheetName);
 
-const operation = row[7];
-const description = String(row[8] || "").trim();
+    const dateText =
+        formatSheetDate(sheetName);
 
-const amount = parseFloat(
-String(row[11] || "").replace(/,/g,"")
-);
+    rows.forEach(row => {
+        /*
+            H = العملية
+            I = البيان
+            L = المبلغ
+        */
+        const operation =
+            String(row[7] ?? "").trim();
 
-if(description === "حركة الصندوق"){
-continue;
-}
+        const description =
+            String(row[8] ?? "").trim();
 
-if(isNaN(amount) || amount === 0){
-continue;
-}
+        const amount =
+            parseAmount(row[11]);
 
-if(operation && operation !== operation){
-continue;
-}
+        /*
+            تجاهل الصفوف غير المطلوبة
+        */
+        if (description === "حركة الصندوق") {
+            return;
+        }
 
-if(
-operation &&
-String(row[7] || "").trim() !== operation
-){
-continue;
-}
+        if (description === "") {
+            return;
+        }
 
-if(
-descriptionFilter &&
-!description.includes(descriptionFilter)
-){
-continue;
-}
+        if (amount === 0) {
+            return;
+        }
 
-if(!matchesNumericFilter(amount,amountFilter)){
-continue;
-}
+        /*
+            إذا اختار المستخدم عملية،
+            نعرض العملية المطابقة فقط.
+        */
+        if (
+            operationFilter &&
+            operation !== operationFilter
+        ) {
+            return;
+        }
 
-rows.push({
-date:dateStr,
-dateObj:dateObj,
-desc:description,
-amount:amount
-});
-}
+        /*
+            البحث داخل البيان
+        */
+        if (
+            descriptionFilter &&
+            !description
+                .toLowerCase()
+                .includes(
+                    descriptionFilter.toLowerCase()
+                )
+        ) {
+            return;
+        }
 
-return rows;
+        /*
+            فلترة المبلغ
+        */
+        if (
+            !matchesNumericFilter(
+                amount,
+                amountFilter
+            )
+        ) {
+            return;
+        }
+
+        result.push({
+            date:dateText,
+            dateObj:dateObj,
+            operation:operation,
+            description:description,
+            amount:amount
+        });
+    });
+
+    return result;
 }
 
 function renderTransactionCards(rows){
-const container =
-document.getElementById("transactionCards");
+    const container =
+        document.getElementById("transactionCards");
 
-container.innerHTML = "";
+    container.innerHTML = "";
 
-if(rows.length === 0){
-container.innerHTML =
-'<div class="empty-note">' +
-'لا توجد بيانات مطابقة للبحث.' +
-'</div>';
+    if (rows.length === 0) {
+        container.innerHTML =
+            '<div class="empty-note">' +
+            'لا توجد بيانات مطابقة للبحث.' +
+            '</div>';
 
-document.getElementById("totalAmount").textContent =
-formatNumber(0);
+        document.getElementById("totalAmount")
+            .textContent = formatNumber(0);
 
-return;
-}
+        return;
+    }
 
-rows.sort((a,b) => {
-return (b.dateObj || 0) - (a.dateObj || 0);
-});
+    rows.sort((a,b) => {
+        const dateA = a.dateObj
+            ? a.dateObj.getTime()
+            : 0;
 
-let total = 0;
+        const dateB = b.dateObj
+            ? b.dateObj.getTime()
+            : 0;
 
-rows.forEach(row => {
-const className =
-row.amount > 0
-? "pos"
-: "neg";
+        return dateB - dateA;
+    });
 
-const div = document.createElement("div");
+    let total = 0;
 
-div.className =
-"txn-row " +
-className;
+    rows.forEach(row => {
+        const className =
+            row.amount > 0
+            ? "pos"
+            : "neg";
 
-div.innerHTML = `
-<div class="txn-main">
-<div class="txn-desc">${row.desc}</div>
-<div class="txn-date">${row.date}</div>
-</div>
-<div class="txn-amount num">${formatNumber(row.amount)}</div>
-`;
+        const element =
+            document.createElement("div");
 
-container.appendChild(div);
+        element.className =
+            "txn-row " + className;
 
-total += row.amount;
-});
+        element.innerHTML = `
+            <div class="txn-main">
+                <div class="txn-desc">
+                    ${escapeHtml(row.description)}
+                </div>
 
-document.getElementById("totalAmount").textContent =
-formatNumber(total);
+                <div class="txn-date">
+                    ${escapeHtml(row.date)}
+                </div>
+            </div>
+
+            <div class="txn-amount num">
+                ${formatNumber(row.amount)}
+            </div>
+        `;
+
+        container.appendChild(element);
+
+        total += row.amount;
+    });
+
+    document.getElementById("totalAmount")
+        .textContent = formatNumber(total);
 }
 
 function renderHeroKpis(workbook){
-const worksheet = workbook.Sheets["ملخص"];
-const container = document.getElementById("heroKpis");
+    const worksheet =
+        workbook.Sheets["ملخص"];
 
-container.innerHTML = "";
+    const container =
+        document.getElementById("heroKpis");
 
-if(!worksheet){
-container.innerHTML =
-'<div class="empty-note">' +
-'لا توجد ورقة باسم "ملخص".' +
-'</div>';
+    container.innerHTML = "";
 
-return;
-}
+    if (!worksheet) {
+        container.innerHTML =
+            '<div class="empty-note">' +
+            'لا توجد ورقة باسم "ملخص".' +
+            '</div>';
 
-const data = XLSX.utils.sheet_to_json(
-worksheet,
-{
-header:1,
-defval:"",
-blankrows:false
-}
-);
+        return;
+    }
 
-let sellTotal = 0;
-let expensesTotal = 0;
-let wholesaleTotal = 0;
-let dayCount = 0;
+    const rows =
+        XLSX.utils.sheet_to_json(
+            worksheet,
+            {
+                header:1,
+                defval:"",
+                blankrows:false
+            }
+        );
 
-for(let r=2;r<data.length;r++){
-const row = data[r];
+    let sellTotal = 0;
+    let expensesTotal = 0;
+    let wholesaleTotal = 0;
+    let dayCount = 0;
 
-if(!row[0] && !row[1] && !row[2] && !row[3]){
-continue;
-}
+    for (let i = 2; i < rows.length; i++) {
+        const row = rows[i];
 
-sellTotal +=
-parseFloat(String(row[1]).replace(/,/g,"")) || 0;
+        if (
+            !row[0] &&
+            !row[1] &&
+            !row[2] &&
+            !row[3]
+        ) {
+            continue;
+        }
 
-expensesTotal +=
-parseFloat(String(row[2]).replace(/,/g,"")) || 0;
+        sellTotal += parseAmount(row[1]);
+        expensesTotal += parseAmount(row[2]);
+        wholesaleTotal += parseAmount(row[3]);
 
-wholesaleTotal +=
-parseFloat(String(row[3]).replace(/,/g,"")) || 0;
+        dayCount++;
+    }
 
-dayCount++;
-}
+    const cards = [
+        {
+            label:"مجموع البيع",
+            value:sellTotal,
+            className:"teal"
+        },
+        {
+            label:"مجموع المصاريف",
+            value:expensesTotal,
+            className:"coral"
+        },
+        {
+            label:"مجموع الجملة",
+            value:wholesaleTotal,
+            className:"amber"
+        },
+        {
+            label:"عدد الأيام المسجلة",
+            value:dayCount,
+            className:"ink"
+        }
+    ];
 
-const cards = [
-{
-label:"مجموع البيع",
-value:sellTotal,
-cls:"teal"
-},
-{
-label:"مجموع المصاريف",
-value:expensesTotal,
-cls:"coral"
-},
-{
-label:"مجموع الجملة",
-value:wholesaleTotal,
-cls:"amber"
-},
-{
-label:"عدد الأيام المسجلة",
-value:dayCount,
-cls:"ink"
-}
-];
+    cards.forEach(cardData => {
+        const element =
+            document.createElement("div");
 
-cards.forEach(cardData => {
-const div = document.createElement("div");
+        element.className =
+            "kpi-card " +
+            cardData.className;
 
-div.className =
-"kpi-card " +
-cardData.cls;
+        element.innerHTML = `
+            <div class="label">
+                ${cardData.label}
+            </div>
 
-div.innerHTML = `
-<div class="label">${cardData.label}</div>
-<div class="value num">
-${formatNumberNoDecimals(cardData.value)}
-</div>
-`;
+            <div class="value num">
+                ${formatNumberNoDecimals(cardData.value)}
+            </div>
+        `;
 
-container.appendChild(div);
-});
+        container.appendChild(element);
+    });
 }
 
 function renderMonthlyCards(workbook){
-const worksheet = workbook.Sheets["شهري"];
-const container = document.getElementById("monthlyCards");
+    const worksheet =
+        workbook.Sheets["شهري"];
 
-container.innerHTML = "";
+    const container =
+        document.getElementById("monthlyCards");
 
-if(!worksheet){
-container.innerHTML =
-'<div class="empty-note">' +
-'لا توجد ورقة باسم "شهري".' +
-'</div>';
+    container.innerHTML = "";
 
-return;
-}
+    if (!worksheet) {
+        container.innerHTML =
+            '<div class="empty-note">' +
+            'لا توجد ورقة باسم "شهري".' +
+            '</div>';
 
-const data = XLSX.utils.sheet_to_json(
-worksheet,
-{
-header:1,
-defval:"",
-blankrows:false,
-range:"A1:K6"
-}
-);
+        return;
+    }
 
-if(data.length < 2){
-container.innerHTML =
-'<div class="empty-note">' +
-'لا توجد بيانات شهرية.' +
-'</div>';
+    const rows =
+        XLSX.utils.sheet_to_json(
+            worksheet,
+            {
+                header:1,
+                defval:"",
+                blankrows:false
+            }
+        );
 
-return;
-}
+    if (rows.length < 2) {
+        container.innerHTML =
+            '<div class="empty-note">' +
+            'لا توجد بيانات شهرية.' +
+            '</div>';
 
-const headers = data[0];
-let hasData = false;
+        return;
+    }
 
-for(let r=1;r<data.length;r++){
-const row = data[r];
+    const headers = rows[0];
+    let hasData = false;
 
-if(row.every(value => value === "" || value == null)){
-continue;
-}
+    for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
 
-let hasNonZeroValue = false;
+        if (
+            row.every(value => {
+                return value === "" ||
+                       value == null;
+            })
+        ) {
+            continue;
+        }
 
-for(let c=1;c<row.length;c++){
-const raw = row[c];
+        let hasNonZeroValue = false;
 
-if(raw === "" || raw == null){
-continue;
-}
+        for (let col = 1; col < row.length; col++) {
+            const value = parseAmount(row[col]);
 
-const number = parseFloat(
-String(raw).replace(/,/g,"")
-);
+            if (value !== 0) {
+                hasNonZeroValue = true;
+                break;
+            }
+        }
 
-if(!isNaN(number) && number !== 0){
-hasNonZeroValue = true;
-break;
-}
-}
+        if (!hasNonZeroValue) {
+            continue;
+        }
 
-if(!hasNonZeroValue){
-continue;
-}
+        hasData = true;
 
-hasData = true;
+        const card =
+            document.createElement("div");
 
-const card = document.createElement("div");
-card.className = "ticket-card";
+        card.className = "ticket-card";
 
-let rowsHtml = "";
+        let html = "";
 
-for(let c=1;c<row.length;c++){
-const raw = row[c];
+        for (let col = 1; col < row.length; col++) {
+            if (
+                row[col] === "" ||
+                row[col] == null
+            ) {
+                continue;
+            }
 
-if(raw === "" || raw == null){
-continue;
-}
+            const number = parseAmount(row[col]);
+            const negativeClass =
+                number < 0 ? "neg" : "";
 
-const number = parseFloat(
-String(raw).replace(/,/g,"")
-);
+            html += `
+                <div class="row">
+                    <span class="m-label">
+                        ${escapeHtml(headers[col] || "")}
+                    </span>
 
-const isNumber = !isNaN(number);
+                    <span class="m-value num ${negativeClass}">
+                        ${formatNumberNoDecimals(number)}
+                    </span>
+                </div>
+            `;
+        }
 
-const displayValue = isNumber
-? formatNumberNoDecimals(number)
-: raw;
+        card.innerHTML = `
+            <div class="t-title">
+                ${escapeHtml(row[0] || "")}
+            </div>
 
-const negativeClass =
-isNumber && number < 0
-? "neg"
-: "";
+            <div class="metric-list">
+                ${html}
+            </div>
+        `;
 
-rowsHtml += `
-<div class="row">
-<span class="m-label">${headers[c] || ""}</span>
-<span class="m-value num ${negativeClass}">
-${displayValue}
-</span>
-</div>
-`;
-}
+        container.appendChild(card);
+    }
 
-card.innerHTML = `
-<div class="t-title">${row[0]}</div>
-<div class="metric-list">${rowsHtml}</div>
-`;
-
-container.appendChild(card);
-}
-
-if(!hasData){
-container.innerHTML =
-'<div class="empty-note">' +
-'لا توجد بيانات شهرية.' +
-'</div>';
-}
+    if (!hasData) {
+        container.innerHTML =
+            '<div class="empty-note">' +
+            'لا توجد بيانات شهرية.' +
+            '</div>';
+    }
 }
 
 function renderWeeklyCards(workbook){
-const worksheet = workbook.Sheets["ملخص"];
-const container = document.getElementById("weeklyCards");
+    const worksheet =
+        workbook.Sheets["ملخص"];
 
-container.innerHTML = "";
+    const container =
+        document.getElementById("weeklyCards");
 
-if(!worksheet){
-container.innerHTML =
-'<div class="empty-note">' +
-'لا توجد ورقة باسم "ملخص".' +
-'</div>';
+    container.innerHTML = "";
 
-return;
-}
+    if (!worksheet) {
+        container.innerHTML =
+            '<div class="empty-note">' +
+            'لا توجد ورقة باسم "ملخص".' +
+            '</div>';
 
-const data = XLSX.utils.sheet_to_json(
-worksheet,
-{
-header:1,
-defval:"",
-blankrows:false
-}
-);
+        return;
+    }
 
-const rows = [];
+    const rows =
+        XLSX.utils.sheet_to_json(
+            worksheet,
+            {
+                header:1,
+                defval:"",
+                blankrows:false
+            }
+        );
 
-for(let r=2;r<data.length;r++){
-const row = data[r];
-const rawDate = row[0];
+    const weeklyMap = new Map();
 
-if(!rawDate){
-continue;
-}
+    for (let i = 2; i < rows.length; i++) {
+        const row = rows[i];
 
-let date;
+        if (!row[0]) {
+            continue;
+        }
 
-if(typeof rawDate === "number"){
-date = excelSerialToDate(rawDate);
-}else if(rawDate instanceof Date){
-date = rawDate;
-}else{
-const parsedDate = new Date(String(rawDate));
+        let date;
 
-if(isNaN(parsedDate.getTime())){
-continue;
-}
+        if (typeof row[0] === "number") {
+            date = excelSerialToDate(row[0]);
+        } else if (row[0] instanceof Date) {
+            date = row[0];
+        } else {
+            date = new Date(row[0]);
+        }
 
-date = parsedDate;
-}
+        if (!(date instanceof Date) || isNaN(date.getTime())) {
+            continue;
+        }
 
-rows.push({
-date:date,
-sell:parseFloat(
-String(row[1]).replace(/,/g,"")
-) || 0,
-expenses:parseFloat(
-String(row[2]).replace(/,/g,"")
-) || 0,
-wholesale:parseFloat(
-String(row[3]).replace(/,/g,"")
-) || 0
-});
-}
+        const day = date.getDay();
 
-if(!rows.length){
-container.innerHTML =
-'<div class="empty-note">' +
-'لا توجد بيانات أسبوعية.' +
-'</div>';
+        const mondayOffset =
+            day === 0
+            ? -6
+            : 1 - day;
 
-return;
-}
+        const monday = new Date(date);
 
-const weeklyMap = new Map();
+        monday.setDate(
+            date.getDate() + mondayOffset
+        );
 
-rows.forEach(row => {
-const date = new Date(row.date);
-const currentDay = date.getDay();
+        monday.setHours(0,0,0,0);
 
-const diffToMonday =
-currentDay === 0
-? -6
-: 1 - currentDay;
+        const key =
+            monday.toISOString().slice(0,10);
 
-const monday = new Date(date);
+        const sunday = new Date(monday);
 
-monday.setDate(
-date.getDate() + diffToMonday
-);
+        sunday.setDate(
+            monday.getDate() + 6
+        );
 
-const mondayKey =
-monday.toISOString().slice(0,10);
+        if (!weeklyMap.has(key)) {
+            weeklyMap.set(key, {
+                from:monday,
+                to:sunday,
+                sell:0,
+                expenses:0,
+                wholesale:0
+            });
+        }
 
-const sunday = new Date(monday);
+        const week = weeklyMap.get(key);
 
-sunday.setDate(
-monday.getDate() + 6
-);
+        week.sell += parseAmount(row[1]);
+        week.expenses += parseAmount(row[2]);
+        week.wholesale += parseAmount(row[3]);
+    }
 
-let week = weeklyMap.get(mondayKey);
+    const weeks =
+        Array.from(weeklyMap.values())
+        .filter(week => {
+            return week.sell !== 0 ||
+                   week.expenses !== 0 ||
+                   week.wholesale !== 0;
+        })
+        .sort((a,b) => {
+            return b.from - a.from;
+        });
 
-if(!week){
-week = {
-from:new Date(monday),
-to:new Date(sunday),
-sell:0,
-expenses:0,
-wholesale:0
-};
+    if (weeks.length === 0) {
+        container.innerHTML =
+            '<div class="empty-note">' +
+            'لا توجد بيانات أسبوعية.' +
+            '</div>';
 
-weeklyMap.set(mondayKey,week);
-}
+        return;
+    }
 
-week.sell += row.sell;
-week.expenses += row.expenses;
-week.wholesale += row.wholesale;
-});
+    weeks.forEach(week => {
+        const card =
+            document.createElement("div");
 
-const weeks = Array.from(weeklyMap.values())
-.filter(week => {
-return week.sell !== 0 ||
-week.expenses !== 0 ||
-week.wholesale !== 0;
-})
-.sort((a,b) => b.from - a.from);
+        card.className = "ticket-card";
 
-if(!weeks.length){
-container.innerHTML =
-'<div class="empty-note">' +
-'لا توجد بيانات أسبوعية.' +
-'</div>';
+        card.innerHTML = `
+            <div class="t-title">
+                أسبوع ${formatArabicDate(week.from)}
+            </div>
 
-return;
-}
+            <div class="t-sub">
+                إلى ${formatArabicDate(week.to)}
+            </div>
 
-weeks.forEach(week => {
-const card = document.createElement("div");
-card.className = "ticket-card";
+            <div class="metric-grid">
+                <div class="metric ${
+                    week.sell < 0 ? "neg" : "pos"
+                }">
+                    <div class="m-label">بيع</div>
+                    <div class="m-value num">
+                        ${formatNumberNoDecimals(week.sell)}
+                    </div>
+                </div>
 
-card.innerHTML = `
-<div class="t-title">
-أسبوع ${formatArabicDate(week.from)}
-</div>
+                <div class="metric ${
+                    week.expenses < 0 ? "neg" : "pos"
+                }">
+                    <div class="m-label">مصاريف</div>
+                    <div class="m-value num">
+                        ${formatNumberNoDecimals(week.expenses)}
+                    </div>
+                </div>
 
-<div class="t-sub">
-إلى ${formatArabicDate(week.to)}
-</div>
+                <div class="metric ${
+                    week.wholesale < 0 ? "neg" : "pos"
+                }">
+                    <div class="m-label">جملة</div>
+                    <div class="m-value num">
+                        ${formatNumberNoDecimals(week.wholesale)}
+                    </div>
+                </div>
+            </div>
+        `;
 
-<div class="metric-grid">
-<div class="metric ${week.sell < 0 ? "neg" : "pos"}">
-<div class="m-label">بيع</div>
-<div class="m-value num">
-${formatNumberNoDecimals(week.sell)}
-</div>
-</div>
-
-<div class="metric ${week.expenses < 0 ? "neg" : "pos"}">
-<div class="m-label">مصاريف</div>
-<div class="m-value num">
-${formatNumberNoDecimals(week.expenses)}
-</div>
-</div>
-
-<div class="metric ${week.wholesale < 0 ? "neg" : "pos"}">
-<div class="m-label">جملة</div>
-<div class="m-value num">
-${formatNumberNoDecimals(week.wholesale)}
-</div>
-</div>
-</div>
-`;
-
-container.appendChild(card);
-});
+        container.appendChild(card);
+    });
 }
 
 function renderDailyCards(workbook){
-const worksheet = workbook.Sheets["ملخص"];
-const container = document.getElementById("dailyCards");
+    const worksheet =
+        workbook.Sheets["ملخص"];
 
-container.innerHTML = "";
+    const container =
+        document.getElementById("dailyCards");
 
-if(!worksheet){
-container.innerHTML =
-'<div class="empty-note">' +
-'لا توجد ورقة باسم "ملخص".' +
-'</div>';
+    container.innerHTML = "";
 
-return;
-}
+    if (!worksheet) {
+        container.innerHTML =
+            '<div class="empty-note">' +
+            'لا توجد ورقة باسم "ملخص".' +
+            '</div>';
 
-const data = XLSX.utils.sheet_to_json(
-worksheet,
-{
-header:1,
-defval:"",
-blankrows:false
-}
-);
+        return;
+    }
 
-const rows = [];
+    const rows =
+        XLSX.utils.sheet_to_json(
+            worksheet,
+            {
+                header:1,
+                defval:"",
+                blankrows:false
+            }
+        );
 
-for(let r=2;r<data.length;r++){
-const row = data[r];
+    const dailyRows = [];
 
-const rawDate = row[0];
-const rawSell = row[1];
-const rawExpenses = row[2];
-const rawWholesale = row[3];
+    for (let i = 2; i < rows.length; i++) {
+        const row = rows[i];
 
-if(
-!rawDate &&
-!rawSell &&
-!rawExpenses &&
-!rawWholesale
-){
-continue;
-}
+        if (!row[0]) {
+            continue;
+        }
 
-let dateObj = null;
-let dateText;
+        let dateObj;
+        let dateText;
 
-if(typeof rawDate === "number"){
-dateObj = excelSerialToDate(rawDate);
-dateText = formatArabicDate(dateObj);
-}else if(rawDate instanceof Date){
-dateObj = rawDate;
-dateText = formatArabicDate(dateObj);
-}else{
-dateText = String(rawDate);
-}
+        if (typeof row[0] === "number") {
+            dateObj = excelSerialToDate(row[0]);
+            dateText = formatArabicDate(dateObj);
+        } else if (row[0] instanceof Date) {
+            dateObj = row[0];
+            dateText = formatArabicDate(dateObj);
+        } else {
+            dateObj = new Date(row[0]);
 
-const sell =
-parseFloat(String(rawSell).replace(/,/g,"")) || 0;
+            if (isNaN(dateObj.getTime())) {
+                dateObj = null;
+            }
 
-const expenses =
-parseFloat(String(rawExpenses).replace(/,/g,"")) || 0;
+            dateText = row[0];
+        }
 
-const wholesale =
-parseFloat(String(rawWholesale).replace(/,/g,"")) || 0;
+        const sell = parseAmount(row[1]);
+        const expenses = parseAmount(row[2]);
+        const wholesale = parseAmount(row[3]);
 
-if(
-sell === 0 &&
-expenses === 0 &&
-wholesale === 0
-){
-continue;
-}
+        if (
+            sell === 0 &&
+            expenses === 0 &&
+            wholesale === 0
+        ) {
+            continue;
+        }
 
-rows.push({
-dateObj:dateObj,
-dateText:dateText,
-sell:sell,
-expenses:expenses,
-wholesale:wholesale
-});
-}
+        dailyRows.push({
+            dateObj:dateObj,
+            dateText:dateText,
+            sell:sell,
+            expenses:expenses,
+            wholesale:wholesale
+        });
+    }
 
-if(!rows.length){
-container.innerHTML =
-'<div class="empty-note">' +
-'لا توجد بيانات في ورقة الملخص.' +
-'</div>';
+    dailyRows.sort((a,b) => {
+        const dateA = a.dateObj
+            ? a.dateObj.getTime()
+            : 0;
 
-return;
-}
+        const dateB = b.dateObj
+            ? b.dateObj.getTime()
+            : 0;
 
-rows.sort((a,b) => {
-return (b.dateObj || 0) - (a.dateObj || 0);
-});
+        return dateB - dateA;
+    });
 
-rows.forEach(row => {
-const card = document.createElement("div");
-card.className = "ticket-card";
+    if (dailyRows.length === 0) {
+        container.innerHTML =
+            '<div class="empty-note">' +
+            'لا توجد بيانات يومية.' +
+            '</div>';
 
-card.innerHTML = `
-<div class="t-title">${row.dateText}</div>
+        return;
+    }
 
-<div class="metric-grid">
-<div class="metric ${row.sell < 0 ? "neg" : "pos"}">
-<div class="m-label">بيع</div>
-<div class="m-value num">
-${formatNumberNoDecimals(row.sell)}
-</div>
-</div>
+    dailyRows.forEach(row => {
+        const card =
+            document.createElement("div");
 
-<div class="metric ${row.expenses < 0 ? "neg" : "pos"}">
-<div class="m-label">مصاريف</div>
-<div class="m-value num">
-${formatNumberNoDecimals(row.expenses)}
-</div>
-</div>
+        card.className = "ticket-card";
 
-<div class="metric ${row.wholesale < 0 ? "neg" : "pos"}">
-<div class="m-label">جملة</div>
-<div class="m-value num">
-${formatNumberNoDecimals(row.wholesale)}
-</div>
-</div>
-</div>
-`;
+        card.innerHTML = `
+            <div class="t-title">
+                ${escapeHtml(row.dateText)}
+            </div>
 
-container.appendChild(card);
-});
+            <div class="metric-grid">
+                <div class="metric ${
+                    row.sell < 0 ? "neg" : "pos"
+                }">
+                    <div class="m-label">بيع</div>
+                    <div class="m-value num">
+                        ${formatNumberNoDecimals(row.sell)}
+                    </div>
+                </div>
+
+                <div class="metric ${
+                    row.expenses < 0 ? "neg" : "pos"
+                }">
+                    <div class="m-label">مصاريف</div>
+                    <div class="m-value num">
+                        ${formatNumberNoDecimals(row.expenses)}
+                    </div>
+                </div>
+
+                <div class="metric ${
+                    row.wholesale < 0 ? "neg" : "pos"
+                }">
+                    <div class="m-label">جملة</div>
+                    <div class="m-value num">
+                        ${formatNumberNoDecimals(row.wholesale)}
+                    </div>
+                </div>
+            </div>
+        `;
+
+        container.appendChild(card);
+    });
 }
 
 function setupTabs(){
-if(tabsInitialized){
-return;
+    if (tabsInitialized) {
+        return;
+    }
+
+    tabsInitialized = true;
+
+    const buttons =
+        document.querySelectorAll(".tab-btn");
+
+    buttons.forEach(button => {
+        button.addEventListener("click", () => {
+            buttons.forEach(item => {
+                item.classList.remove("active");
+            });
+
+            document.querySelectorAll(".panel")
+                .forEach(panel => {
+                    panel.classList.remove("active");
+                });
+
+            button.classList.add("active");
+
+            const panel =
+                document.getElementById(
+                    "panel-" + button.dataset.tab
+                );
+
+            if (panel) {
+                panel.classList.add("active");
+            }
+        });
+    });
 }
 
-tabsInitialized = true;
-
-const buttons = document.querySelectorAll(".tab-btn");
-
-buttons.forEach(button => {
-button.addEventListener("click",() => {
-buttons.forEach(item => {
-item.classList.remove("active");
-});
-
-document.querySelectorAll(".panel").forEach(panel => {
-panel.classList.remove("active");
-});
-
-button.classList.add("active");
-
-document
-.getElementById("panel-" + button.dataset.tab)
-.classList.add("active");
-});
-});
+function getCurrentFilters(){
+    return {
+        date:document.getElementById("selectDate").value,
+        operation:document.getElementById("selectOperation").value,
+        description:document.getElementById("filterDescription").value,
+        amount:document.getElementById("filterAmount").value
+    };
 }
 
-function restoreFilterValues(){
-return {
-date:document.getElementById("selectDate").value,
-operation:document.getElementById("selectOperation").value,
-description:document.getElementById("filterDescription").value,
-amount:document.getElementById("filterAmount").value
-};
+function restoreSelectValue(select, value){
+    const exists =
+        Array.from(select.options)
+        .some(option => option.value === value);
+
+    select.value = exists ? value : "";
 }
 
-function restoreSelectValue(selectElement,value){
-const exists = Array.from(selectElement.options)
-.some(option => option.value === value);
+function refreshFilters(workbook){
+    const selectDate =
+        document.getElementById("selectDate");
 
-if(exists){
-selectElement.value = value;
-}else{
-selectElement.value = "";
+    const selectOperation =
+        document.getElementById("selectOperation");
+
+    const oldFilters =
+        getCurrentFilters();
+
+    const dateSheets =
+        getDateSheets(workbook);
+
+    selectDate.innerHTML =
+        '<option value="">الكل</option>';
+
+    dateSheets.forEach(sheetName => {
+        const option =
+            document.createElement("option");
+
+        option.value = sheetName;
+        option.textContent =
+            formatSheetDate(sheetName);
+
+        selectDate.appendChild(option);
+    });
+
+    const operations =
+        getOperationList(workbook);
+
+    selectOperation.innerHTML =
+        '<option value="">الكل</option>';
+
+    operations.forEach(operation => {
+        const option =
+            document.createElement("option");
+
+        option.value = operation;
+        option.textContent = operation;
+
+        selectOperation.appendChild(option);
+    });
+
+    restoreSelectValue(selectDate, oldFilters.date);
+    restoreSelectValue(
+        selectOperation,
+        oldFilters.operation
+    );
+
+    document.getElementById("filterDescription")
+        .value = oldFilters.description;
+
+    document.getElementById("filterAmount")
+        .value = oldFilters.amount;
 }
+
+function applyTransactionFilter(){
+    if (!currentWorkbook) {
+        return;
+    }
+
+    const selectedDate =
+        document.getElementById("selectDate").value;
+
+    const selectedOperation =
+        document.getElementById("selectOperation").value;
+
+    const descriptionFilter =
+        document.getElementById("filterDescription")
+        .value
+        .trim();
+
+    const amountFilter =
+        document.getElementById("filterAmount")
+        .value
+        .trim();
+
+    const dateSheets =
+        getDateSheets(currentWorkbook);
+
+    const sheetsToRead =
+        selectedDate
+        ? [selectedDate]
+        : dateSheets;
+
+    let allRows = [];
+
+    sheetsToRead.forEach(sheetName => {
+        const sheetRows =
+            getFilteredRows(
+                currentWorkbook,
+                sheetName,
+                selectedOperation,
+                descriptionFilter,
+                amountFilter
+            );
+
+        allRows = allRows.concat(sheetRows);
+    });
+
+    renderTransactionCards(allRows);
+}
+
+function setupFilters(){
+    document.getElementById("btnShow")
+        .onclick = applyTransactionFilter;
+
+    document.getElementById("selectDate")
+        .onchange = applyTransactionFilter;
+
+    document.getElementById("selectOperation")
+        .onchange = applyTransactionFilter;
+
+    document.getElementById("filterDescription")
+        .oninput = applyTransactionFilter;
+
+    document.getElementById("filterAmount")
+        .oninput = applyTransactionFilter;
 }
 
 async function refreshPage(){
-const refreshButton =
-document.getElementById("refreshBtn");
+    const button =
+        document.getElementById("refreshBtn");
 
-const refreshText =
-refreshButton.querySelector(".refresh-text");
+    const icon =
+        button.querySelector(".refresh-icon");
 
-const oldFilters = restoreFilterValues();
+    const text =
+        button.querySelector(".refresh-text");
 
-refreshButton.disabled = true;
-refreshButton.classList.add("loading");
+    button.disabled = true;
+    button.classList.add("loading");
 
-refreshButton.querySelector(".refresh-icon")
-.textContent = "⟳";
+    icon.textContent = "⟳";
+    text.textContent = "جاري التحديث";
 
-refreshText.textContent = "جاري التحديث";
+    try {
+        const workbook =
+            await loadWorkbook();
 
-const workbook = await loadWorkbook();
+        currentWorkbook = workbook;
 
-if(!workbook){
-refreshButton.disabled = false;
-refreshButton.classList.remove("loading");
+        renderHeroKpis(workbook);
+        renderMonthlyCards(workbook);
+        renderWeeklyCards(workbook);
+        renderDailyCards(workbook);
 
-refreshButton.querySelector(".refresh-icon")
-.textContent = "🔄";
+        refreshFilters(workbook);
+        applyTransactionFilter();
 
-refreshText.textContent = "تحديث";
+    } catch (error) {
+        console.error(error);
 
-return;
-}
+        alert(
+            "حدث خطأ أثناء تحميل ملف صندوق دبوس.xlsx:\n" +
+            error.message
+        );
+    } finally {
+        button.disabled = false;
+        button.classList.remove("loading");
 
-renderHeroKpis(workbook);
-renderMonthlyCards(workbook);
-renderWeeklyCards(workbook);
-renderDailyCards(workbook);
-
-const selectDate =
-document.getElementById("selectDate");
-
-const selectOperation =
-document.getElementById("selectOperation");
-
-const filterDescription =
-document.getElementById("filterDescription");
-
-const filterAmount =
-document.getElementById("filterAmount");
-
-const validSheets =
-getValidSheets(workbook);
-
-selectDate.innerHTML =
-'<option value="">الكل</option>';
-
-validSheets.forEach(sheet => {
-const option = document.createElement("option");
-
-option.value = sheet;
-option.textContent = sheet;
-
-selectDate.appendChild(option);
-});
-
-const operations =
-getOperationList(workbook);
-
-selectOperation.innerHTML =
-'<option value="">الكل</option>';
-
-operations.forEach(operation => {
-const option = document.createElement("option");
-
-option.value = operation;
-option.textContent = operation;
-
-selectOperation.appendChild(option);
-});
-
-/*
-إرجاع الفلاتر القديمة بعد تحديث الملف
-*/
-restoreSelectValue(selectDate,oldFilters.date);
-restoreSelectValue(selectOperation,oldFilters.operation);
-
-filterDescription.value = oldFilters.description;
-filterAmount.value = oldFilters.amount;
-
-const btnShow =
-document.getElementById("btnShow");
-
-const runFilter = () => {
-const selectedDate = selectDate.value;
-const selectedOperation = selectOperation.value;
-const descriptionFilter =
-filterDescription.value.trim();
-
-const amountFilter =
-filterAmount.value.trim();
-
-let allRows = [];
-
-const targetSheets = selectedDate
-? [selectedDate]
-: validSheets;
-
-targetSheets.forEach(sheet => {
-allRows = allRows.concat(
-getFilteredRows(
-workbook,
-sheet,
-selectedOperation,
-descriptionFilter,
-amountFilter
-)
-);
-});
-
-renderTransactionCards(allRows);
-};
-
-currentFilterFunction = runFilter;
-
-btnShow.onclick = runFilter;
-filterDescription.oninput = runFilter;
-filterAmount.oninput = runFilter;
-selectDate.onchange = runFilter;
-selectOperation.onchange = runFilter;
-
-runFilter();
-
-refreshButton.disabled = false;
-refreshButton.classList.remove("loading");
-
-refreshButton.querySelector(".refresh-icon")
-.textContent = "🔄";
-
-refreshText.textContent = "تحديث";
+        icon.textContent = "🔄";
+        text.textContent = "تحديث";
+    }
 }
 
 setupTabs();
+setupFilters();
 
-const refreshButton =
-document.getElementById("refreshBtn");
+document.getElementById("refreshBtn")
+    .addEventListener("click", refreshPage);
 
-refreshButton.addEventListener(
-"click",
-refreshPage
-);
-
-window.addEventListener(
-"load",
-refreshPage
-);
+window.addEventListener("load", () => {
+    refreshPage();
+});
 </script>
 
 </body>
