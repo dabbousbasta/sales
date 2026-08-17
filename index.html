@@ -108,6 +108,10 @@ header.app-header h1{
     margin:0;
     font-size:1.15rem;
     font-weight:900;
+    display:flex;
+    align-items:baseline;
+    flex-wrap:wrap;
+    gap:8px;
 }
 
 header.app-header p{
@@ -115,6 +119,16 @@ header.app-header p{
     font-size:.82rem;
     color:#CFE9E1;
     font-weight:500;
+}
+
+.update-badge{
+    font-size:.66rem;
+    font-weight:500;
+    color:#CFE9E1;
+    background:rgba(255,255,255,.1);
+    padding:3px 9px;
+    border-radius:999px;
+    white-space:nowrap;
 }
 
 /* التبويبات */
@@ -547,7 +561,10 @@ main{
 </button>
 
 <header class="app-header">
-    <h1>صندوق دبوس البسطة</h1>
+    <h1>
+        صندوق دبوس البسطة
+        <span class="update-badge" id="lastUpdateBadge"></span>
+    </h1>
     <p>سجل المبيعات والمصاريف اليومي</p>
 </header>
 
@@ -638,6 +655,14 @@ main{
 <script>
 const EXCEL_FILE_NAME = "صندوق دبوس.xlsx";
 
+/*
+    مفاتيح التخزين المحلي.
+    نخزن نسخة من الملف (Base64) ووقت آخر تحديث،
+    حتى تفتح الصفحة بسرعة من غير ما تنتظر التحميل.
+*/
+const CACHE_KEY_DATA = "sanduq_dabbous_cache_data";
+const CACHE_KEY_TIME = "sanduq_dabbous_cache_time";
+
 let tabsInitialized = false;
 let currentWorkbook = null;
 
@@ -662,6 +687,133 @@ function escapeHtml(value){
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+}
+
+/*
+    تحويل بيانات الملف (ArrayBuffer) إلى نص Base64
+    حتى نقدر نخزنها بالـ localStorage.
+*/
+function arrayBufferToBase64(buffer){
+    let binary = "";
+
+    const bytes = new Uint8Array(buffer);
+    const chunkSize = 0x8000;
+
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+        const chunk = bytes.subarray(i, i + chunkSize);
+
+        binary += String.fromCharCode.apply(
+            null,
+            chunk
+        );
+    }
+
+    return btoa(binary);
+}
+
+function base64ToArrayBuffer(base64){
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+
+    for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+    }
+
+    return bytes.buffer;
+}
+
+/*
+    حفظ نسخة الملف ووقت التحديث محلياً.
+*/
+function saveToCache(arrayBuffer, isoTimestamp){
+    try {
+        const base64 = arrayBufferToBase64(arrayBuffer);
+
+        localStorage.setItem(CACHE_KEY_DATA, base64);
+        localStorage.setItem(CACHE_KEY_TIME, isoTimestamp);
+    } catch (error) {
+        console.error(
+            "تعذر حفظ البيانات محلياً:",
+            error
+        );
+    }
+}
+
+/*
+    قراءة النسخة المحفوظة محلياً، إن وجدت.
+*/
+function loadFromCache(){
+    const base64 = localStorage.getItem(CACHE_KEY_DATA);
+    const timestamp = localStorage.getItem(CACHE_KEY_TIME);
+
+    if (!base64) {
+        return null;
+    }
+
+    try {
+        return {
+            arrayBuffer:base64ToArrayBuffer(base64),
+            timestamp:timestamp
+        };
+    } catch (error) {
+        console.error(
+            "تعذر قراءة النسخة المحفوظة:",
+            error
+        );
+
+        return null;
+    }
+}
+
+function parseWorkbookFromBuffer(arrayBuffer){
+    return XLSX.read(
+        new Uint8Array(arrayBuffer),
+        {
+            type:"array",
+            cellDates:true
+        }
+    );
+}
+
+function formatArabicDateTime(date){
+    const dateText = formatArabicDate(date);
+
+    let hours = date.getHours();
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const period = hours >= 12 ? "م" : "ص";
+
+    hours = hours % 12;
+
+    if (hours === 0) {
+        hours = 12;
+    }
+
+    return `${dateText} - ${hours}:${minutes} ${period}`;
+}
+
+function updateLastUpdateDisplay(isoTimestamp){
+    const badge =
+        document.getElementById("lastUpdateBadge");
+
+    if (!badge) {
+        return;
+    }
+
+    if (!isoTimestamp) {
+        badge.textContent = "";
+        return;
+    }
+
+    const date = new Date(isoTimestamp);
+
+    if (isNaN(date.getTime())) {
+        badge.textContent = "";
+        return;
+    }
+
+    badge.textContent =
+        "آخر تحديث: " +
+        formatArabicDateTime(date);
 }
 
 function excelSerialToDate(serial){
@@ -853,15 +1005,7 @@ async function loadWorkbook(){
         );
     }
 
-    const arrayBuffer = await response.arrayBuffer();
-
-    return XLSX.read(
-        new Uint8Array(arrayBuffer),
-        {
-            type:"array",
-            cellDates:true
-        }
-    );
+    return await response.arrayBuffer();
 }
 
 function getDateFromSheetName(sheetName){
@@ -1836,8 +1980,11 @@ async function refreshPage(){
     text.textContent = "جاري التحديث";
 
     try {
-        const workbook =
+        const arrayBuffer =
             await loadWorkbook();
+
+        const workbook =
+            parseWorkbookFromBuffer(arrayBuffer);
 
         currentWorkbook = workbook;
 
@@ -1848,6 +1995,11 @@ async function refreshPage(){
 
         refreshFilters(workbook);
         applyTransactionFilter();
+
+        const nowIso = new Date().toISOString();
+
+        saveToCache(arrayBuffer, nowIso);
+        updateLastUpdateDisplay(nowIso);
 
     } catch (error) {
         console.error(error);
@@ -1871,8 +2023,57 @@ setupFilters();
 document.getElementById("refreshBtn")
     .addEventListener("click", refreshPage);
 
+function loadFromCacheOnStartup(){
+    const cached = loadFromCache();
+
+    if (!cached) {
+        return false;
+    }
+
+    try {
+        const workbook =
+            parseWorkbookFromBuffer(cached.arrayBuffer);
+
+        currentWorkbook = workbook;
+
+        renderHeroKpis(workbook);
+        renderMonthlyCards(workbook);
+        renderWeeklyCards(workbook);
+        renderDailyCards(workbook);
+
+        refreshFilters(workbook);
+        applyTransactionFilter();
+
+        updateLastUpdateDisplay(cached.timestamp);
+
+        return true;
+
+    } catch (error) {
+        console.error(
+            "تعذر عرض النسخة المحفوظة محلياً:",
+            error
+        );
+
+        return false;
+    }
+}
+
 window.addEventListener("load", () => {
-    refreshPage();
+    /*
+        إذا في نسخة محفوظة محلياً، نعرضها فوراً
+        بدون انتظار تحميل الملف من الشبكة.
+        التحديث الفعلي بيصير فقط لما يضغط
+        المستخدم على زر "تحديث".
+    */
+    const shownFromCache =
+        loadFromCacheOnStartup();
+
+    if (!shownFromCache) {
+        refreshPage();
+    } else {
+        document.getElementById("refreshBtn")
+            .disabled = false;
+    }
 });
 </script>
 
