@@ -987,13 +987,11 @@ function getFilteredRows(
             parseAmount(row[11]);
 
         /*
-            تجاهل الصفوف غير المطلوبة
+            تجاهل سطر "حركة الصندوق" فقط.
+            لا نتجاهل الأسطر بدون بيان بعد الآن،
+            المعيار الوحيد هو أن يكون المبلغ غير صفر.
         */
         if (description === "حركة الصندوق") {
-            return;
-        }
-
-        if (description === "") {
             return;
         }
 
@@ -1013,7 +1011,9 @@ function getFilteredRows(
         }
 
         /*
-            البحث داخل البيان
+            البحث داخل البيان.
+            إذا كان البيان فارغاً ولم يبحث المستخدم
+            عن نص معين، يبقى السطر ظاهراً.
         */
         if (
             descriptionFilter &&
@@ -1094,10 +1094,15 @@ function renderTransactionCards(rows){
         element.className =
             "txn-row " + className;
 
+        const descriptionText =
+            row.description
+            ? row.description
+            : "(بدون بيان)";
+
         element.innerHTML = `
             <div class="txn-main">
                 <div class="txn-desc">
-                    ${escapeHtml(row.description)}
+                    ${escapeHtml(descriptionText)}
                 </div>
 
                 <div class="txn-date">
