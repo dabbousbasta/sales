@@ -24,7 +24,9 @@
     --teal-dark:#0A4A40;
     --teal-tint:#E3F3EE;
     --coral:#C6483C;
+    --coral-tint:#FBEAE8;
     --amber:#B8801C;
+    --amber-tint:#FBF1DD;
     --radius:14px;
     --shadow:0 1px 2px rgba(23,36,31,.06),
              0 6px 18px rgba(23,36,31,.06);
@@ -46,6 +48,15 @@ body{
 .num{
     font-family:'IBM Plex Mono',monospace;
     unicode-bidi:plaintext;
+}
+
+.sr-only{
+    position:absolute;
+    width:1px;
+    height:1px;
+    overflow:hidden;
+    clip:rect(0,0,0,0);
+    white-space:nowrap;
 }
 
 /* زر تحديث الصفحة */
@@ -86,6 +97,11 @@ body{
 
 #refreshBtn.loading .refresh-icon{
     animation:spin .8s linear infinite;
+}
+
+#refreshBtn:focus-visible{
+    outline:3px solid #fff;
+    outline-offset:2px;
 }
 
 @keyframes spin{
@@ -131,6 +147,60 @@ header.app-header p{
     white-space:nowrap;
 }
 
+/* شريط الرسائل (خطأ / نجاح / معلومة) */
+#bannerStack{
+    position:sticky;
+    top:64px;
+    z-index:21;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    padding:0 12px;
+}
+
+.app-banner{
+    max-width:900px;
+    margin:8px auto 0;
+    padding:10px 14px;
+    border-radius:10px;
+    font-size:.85rem;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    box-shadow:var(--shadow);
+    animation:fade .18s ease;
+}
+
+.app-banner.error{
+    background:var(--coral-tint);
+    color:#7A2A22;
+    border:1px solid var(--coral);
+}
+
+.app-banner.success{
+    background:var(--teal-tint);
+    color:var(--teal-dark);
+    border:1px solid var(--teal);
+}
+
+.app-banner.info{
+    background:var(--amber-tint);
+    color:#6B4E12;
+    border:1px solid var(--amber);
+}
+
+.app-banner button{
+    border:none;
+    background:transparent;
+    font-size:1rem;
+    line-height:1;
+    cursor:pointer;
+    color:inherit;
+    padding:2px 4px;
+}
+
 /* التبويبات */
 nav.tabs{
     position:sticky;
@@ -161,6 +231,11 @@ nav.tabs button.active{
     background:var(--teal);
     border-color:var(--teal);
     color:#fff;
+}
+
+nav.tabs button:focus-visible{
+    outline:2px solid var(--teal-dark);
+    outline-offset:2px;
 }
 
 main{
@@ -269,6 +344,24 @@ main{
     color:var(--ink);
 }
 
+.period-info{
+    background:var(--surface);
+    border:1px dashed var(--line);
+    border-radius:var(--radius);
+    padding:10px 14px;
+    margin-top:10px;
+    font-size:.82rem;
+    color:var(--ink-soft);
+    display:flex;
+    flex-wrap:wrap;
+    gap:14px;
+}
+
+.period-info strong{
+    color:var(--ink);
+    font-weight:700;
+}
+
 /* البطاقات العامة */
 .card-grid{
     display:grid;
@@ -289,6 +382,11 @@ main{
     box-shadow:var(--shadow);
     padding:14px 16px 12px;
     border-top:2px dashed var(--line);
+}
+
+.ticket-card.high-expense{
+    border-top-color:var(--coral);
+    background:linear-gradient(180deg, var(--coral-tint) 0%, var(--surface) 22%);
 }
 
 .ticket-card::before,
@@ -315,6 +413,20 @@ main{
     font-size:.95rem;
     color:var(--ink);
     margin-bottom:2px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    flex-wrap:wrap;
+}
+
+.t-flag{
+    font-size:.66rem;
+    font-weight:700;
+    color:var(--coral);
+    background:var(--coral-tint);
+    border:1px solid var(--coral);
+    border-radius:999px;
+    padding:2px 8px;
 }
 
 .ticket-card .t-sub{
@@ -398,6 +510,61 @@ main{
     font-size:.88rem;
 }
 
+.loading-note{
+    background:var(--surface);
+    border:1px dashed var(--line);
+    border-radius:var(--radius);
+    padding:22px;
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:.88rem;
+}
+
+/* أدوات إضافية فوق قوائم الأيام / الحركات */
+.list-toolbar{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    align-items:center;
+    margin-bottom:12px;
+}
+
+.list-toolbar input{
+    flex:1 1 200px;
+    min-width:150px;
+    padding:10px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    font-family:inherit;
+    font-size:16px;
+    background:var(--surface-alt);
+    color:var(--ink);
+}
+
+.btn-secondary{
+    padding:9px 14px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:var(--surface);
+    color:var(--ink-soft);
+    font-family:inherit;
+    font-weight:700;
+    font-size:.84rem;
+    cursor:pointer;
+    white-space:nowrap;
+}
+
+.btn-secondary:hover{
+    background:var(--surface-alt);
+    color:var(--ink);
+}
+
+.load-more-wrap{
+    display:flex;
+    justify-content:center;
+    margin:16px 0;
+}
+
 /* الفلاتر */
 .filters-card{
     background:var(--surface);
@@ -407,7 +574,7 @@ main{
     display:flex;
     flex-wrap:wrap;
     gap:10px;
-    align-items:flex-end;
+    align-items:flex-start;
 }
 
 .field{
@@ -430,7 +597,7 @@ main{
     border:1px solid var(--line);
     border-radius:10px;
     font-family:inherit;
-    font-size:.9rem;
+    font-size:16px;
     background:var(--surface-alt);
     color:var(--ink);
 }
@@ -439,6 +606,20 @@ main{
 .field select:focus{
     outline:2px solid var(--teal);
     outline-offset:1px;
+}
+
+.field .field-error{
+    font-size:.72rem;
+    color:var(--coral);
+    font-weight:700;
+    min-height:14px;
+}
+
+.filters-actions{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    align-self:flex-end;
 }
 
 .btn-primary{
@@ -457,6 +638,12 @@ main{
     background:var(--teal-dark);
 }
 
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible{
+    outline:2px solid var(--teal-dark);
+    outline-offset:2px;
+}
+
 /* الإجمالي المثبت */
 .sticky-total{
     position:sticky;
@@ -470,6 +657,14 @@ main{
     display:flex;
     justify-content:space-between;
     align-items:center;
+    flex-wrap:wrap;
+    gap:6px;
+}
+
+.sticky-total .label-group{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
 }
 
 .sticky-total .label{
@@ -478,10 +673,23 @@ main{
     font-size:.88rem;
 }
 
+.sticky-total .count-note{
+    font-size:.72rem;
+    color:var(--ink-soft);
+}
+
 .sticky-total .amount{
     font-size:1.15rem;
     font-weight:700;
     color:var(--teal-dark);
+}
+
+/* أزرار نسخ / طباعة / تصدير */
+.actions-row{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin:10px 0 4px;
 }
 
 /* الحركات */
@@ -549,6 +757,40 @@ main{
         padding:7px 11px;
         font-size:.78rem;
     }
+
+    nav.tabs,
+    #bannerStack{
+        top:60px;
+    }
+
+    .sticky-total{
+        top:108px;
+    }
+}
+
+@media print{
+    #refreshBtn,
+    nav.tabs,
+    #bannerStack,
+    .filters-card,
+    .actions-row,
+    .load-more-wrap,
+    .list-toolbar{
+        display:none !important;
+    }
+
+    header.app-header{
+        position:static;
+        box-shadow:none;
+    }
+
+    .sticky-total{
+        position:static;
+    }
+
+    body{
+        background:#fff;
+    }
 }
 </style>
 </head>
@@ -556,7 +798,7 @@ main{
 <body>
 
 <button id="refreshBtn" type="button" disabled>
-    <span class="refresh-icon">🔄</span>
+    <span class="refresh-icon" aria-hidden="true">🔄</span>
     <span class="refresh-text">تحديث</span>
 </button>
 
@@ -568,25 +810,52 @@ main{
     <p>سجل المبيعات والمصاريف اليومي</p>
 </header>
 
-<nav class="tabs">
-    <button class="tab-btn active" data-tab="overview">
+<div id="bannerStack" aria-live="polite"></div>
+
+<nav class="tabs" role="tablist" aria-label="أقسام الصفحة">
+    <button
+        class="tab-btn active"
+        data-tab="overview"
+        role="tab"
+        id="tabbtn-overview"
+        aria-selected="true"
+        aria-controls="panel-overview"
+        tabindex="0"
+    >
         نظرة عامة
     </button>
 
-    <button class="tab-btn" data-tab="days">
+    <button
+        class="tab-btn"
+        data-tab="days"
+        role="tab"
+        id="tabbtn-days"
+        aria-selected="false"
+        aria-controls="panel-days"
+        tabindex="-1"
+    >
         الأيام
     </button>
 
-    <button class="tab-btn" data-tab="txns">
+    <button
+        class="tab-btn"
+        data-tab="txns"
+        role="tab"
+        id="tabbtn-txns"
+        aria-selected="false"
+        aria-controls="panel-txns"
+        tabindex="-1"
+    >
         الحركات التفصيلية
     </button>
 </nav>
 
 <main>
 
-<section class="panel active" id="panel-overview">
+<section class="panel active" id="panel-overview" role="tabpanel" aria-labelledby="tabbtn-overview" tabindex="0">
     <div class="section-title">الإجمالي العام</div>
     <div class="kpi-row" id="heroKpis"></div>
+    <div class="period-info" id="periodInfo"></div>
 
     <div class="section-title">الملخص الشهري</div>
     <div class="card-grid" id="monthlyCards"></div>
@@ -595,12 +864,29 @@ main{
     <div class="card-grid" id="weeklyCards"></div>
 </section>
 
-<section class="panel" id="panel-days">
+<section class="panel" id="panel-days" role="tabpanel" aria-labelledby="tabbtn-days" tabindex="0">
     <div class="section-title">ملخص كل يوم</div>
+
+    <div class="list-toolbar">
+        <input
+            type="text"
+            id="daySearchInput"
+            placeholder="بحث عن يوم معيّن (مثال: 15-03 أو الأحد)"
+            aria-label="بحث في الأيام"
+        >
+        <button class="btn-secondary" id="clearDaySearchBtn" type="button">مسح البحث</button>
+    </div>
+
+    <div id="daysResultNote" class="count-note" style="margin:0 2px 10px;font-size:.78rem;color:var(--ink-soft);"></div>
+
     <div class="card-grid" id="dailyCards"></div>
+
+    <div class="load-more-wrap" id="daysLoadMoreWrap" hidden>
+        <button class="btn-secondary" id="loadMoreDaysBtn" type="button">عرض المزيد من الأيام</button>
+    </div>
 </section>
 
-<section class="panel" id="panel-txns">
+<section class="panel" id="panel-txns" role="tabpanel" aria-labelledby="tabbtn-txns" tabindex="0">
     <div class="section-title">فلترة البيانات</div>
 
     <div class="filters-card">
@@ -623,7 +909,7 @@ main{
             <input
                 type="text"
                 id="filterDescription"
-                placeholder="مثال: شحن"
+                placeholder="مثال: شراء مواد تنظيف"
             >
         </div>
 
@@ -632,22 +918,43 @@ main{
             <input
                 type="text"
                 id="filterAmount"
-                placeholder="مثال: >=500"
+                placeholder="مثال: >=500 أو 500-1000"
+                aria-describedby="filterAmountError"
             >
+            <span class="field-error" id="filterAmountError"></span>
         </div>
 
-        <button class="btn-primary" id="btnShow" type="button">
-            إظهار
-        </button>
+        <div class="filters-actions">
+            <button class="btn-primary" id="btnShow" type="button">
+                إظهار
+            </button>
+
+            <button class="btn-secondary" id="clearFiltersBtn" type="button">
+                مسح الفلاتر
+            </button>
+        </div>
     </div>
 
     <div class="sticky-total">
-        <span class="label">إجمالي المبيع $</span>
+        <div class="label-group">
+            <span class="label">إجمالي المبيع $</span>
+            <span class="count-note" id="resultCountNote" aria-live="polite"></span>
+        </div>
         <span class="amount num" id="totalAmount">0.00</span>
+    </div>
+
+    <div class="actions-row">
+        <button class="btn-secondary" id="copyResultsBtn" type="button">نسخ النتائج</button>
+        <button class="btn-secondary" id="printResultsBtn" type="button">طباعة</button>
+        <button class="btn-secondary" id="exportExcelBtn" type="button">تصدير Excel</button>
     </div>
 
     <div class="section-title">الحركات</div>
     <div class="txn-list" id="transactionCards"></div>
+
+    <div class="load-more-wrap" id="txnLoadMoreWrap" hidden>
+        <button class="btn-secondary" id="loadMoreTxnBtn" type="button">عرض المزيد من الحركات</button>
+    </div>
 </section>
 
 </main>
@@ -662,9 +969,39 @@ const EXCEL_FILE_NAME = "صندوق دبوس.xlsx";
 */
 const CACHE_KEY_DATA = "sanduq_dabbous_cache_data";
 const CACHE_KEY_TIME = "sanduq_dabbous_cache_time";
+const CACHE_KEY_FILTERS = "sanduq_dabbous_last_filters";
+
+/* أرقام الأعمدة الافتراضية (fallback) في أوراق الأيام */
+const OP_COL_DEFAULT = 7;      // H = العملية
+const DESC_COL_DEFAULT = 8;    // I = البيان
+const AMOUNT_COL_DEFAULT = 11; // L = المبلغ
+
+const PAGE_SIZE_TXN = 150;
+const PAGE_SIZE_DAYS = 20;
 
 let tabsInitialized = false;
 let currentWorkbook = null;
+
+/*
+    فهرس الحركات: يُبنى مرة واحدة بعد كل تحميل/تحديث للملف،
+    بدل إعادة تحليل كل ورقة Excel في كل مرة يتغيّر فيها فلتر.
+    هذا يحسّن الأداء بشكل كبير عند وجود آلاف الحركات.
+*/
+let transactionIndex = [];
+
+/* آخر مجموعة حركات مطابقة للفلاتر الحالية (غير مقصوصة بالـ pagination) */
+let currentMatchedRows = [];
+
+/* حدود العرض الحالية (تُعاد للقيمة الافتراضية عند تغيير الفلاتر) */
+let txnDisplayLimit = PAGE_SIZE_TXN;
+let dailyDisplayLimit = PAGE_SIZE_DAYS;
+
+/* قائمة الأيام الكاملة بعد آخر بناء (قبل فلترة البحث النصي وقبل pagination) */
+let allDailyRows = [];
+
+let descDebounceTimer = null;
+let amountDebounceTimer = null;
+let daySearchDebounceTimer = null;
 
 function formatNumber(value){
     return new Intl.NumberFormat("en-US", {
@@ -687,6 +1024,43 @@ function escapeHtml(value){
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+}
+
+/*
+    تطبيع النص العربي للبحث فقط (لا يُستخدم لتغيير البيانات المخزّنة،
+    فقط لمقارنة نص البحث مع البيان بشكل أكثر تسامحاً).
+*/
+function normalizeArabicText(text){
+    return String(text ?? "")
+        .replace(/[\u064B-\u065F\u0670]/g, "") // إزالة التشكيل
+        .replace(/[إأآا]/g, "ا")
+        .replace(/ى/g, "ي")
+        .replace(/ة/g, "ه")
+        .toLowerCase()
+        .trim();
+}
+
+/* تحويل الأرقام العربية (٠-٩) إلى أرقام غربية */
+function convertArabicDigits(text){
+    const arabicDigits = "٠١٢٣٤٥٦٧٨٩";
+
+    return String(text ?? "").replace(/[٠-٩]/g, ch => {
+        return String(arabicDigits.indexOf(ch));
+    });
+}
+
+function debounce(fn, delayMs){
+    let timer = null;
+
+    return function(...args){
+        if (timer) {
+            clearTimeout(timer);
+        }
+
+        timer = setTimeout(() => {
+            fn.apply(this, args);
+        }, delayMs);
+    };
 }
 
 /*
@@ -724,6 +1098,9 @@ function base64ToArrayBuffer(base64){
 
 /*
     حفظ نسخة الملف ووقت التحديث محلياً.
+    إذا فشل الحفظ (مثلاً تجاوز حجم localStorage)، نتجاهل الخطأ
+    بدون كسر الصفحة - المستخدم يبقى يشاهد البيانات المحدّثة حالياً،
+    فقط لن تكون هناك نسخة محفوظة لفتح سريع بالمرة القادمة.
 */
 function saveToCache(arrayBuffer, isoTimestamp){
     try {
@@ -733,7 +1110,7 @@ function saveToCache(arrayBuffer, isoTimestamp){
         localStorage.setItem(CACHE_KEY_TIME, isoTimestamp);
     } catch (error) {
         console.error(
-            "تعذر حفظ البيانات محلياً:",
+            "تعذر حفظ البيانات محلياً (قد يكون الملف كبيراً على مساحة التخزين المحلي):",
             error
         );
     }
@@ -766,13 +1143,29 @@ function loadFromCache(){
 }
 
 function parseWorkbookFromBuffer(arrayBuffer){
-    return XLSX.read(
-        new Uint8Array(arrayBuffer),
-        {
-            type:"array",
-            cellDates:true
-        }
-    );
+    let workbook;
+
+    try {
+        workbook = XLSX.read(
+            new Uint8Array(arrayBuffer),
+            {
+                type:"array",
+                cellDates:true
+            }
+        );
+    } catch (error) {
+        throw new Error(
+            "ملف Excel تالف أو غير قابل للقراءة."
+        );
+    }
+
+    if (!workbook || !workbook.SheetNames || workbook.SheetNames.length === 0) {
+        throw new Error(
+            "الملف لا يحتوي على أي أوراق بيانات صالحة."
+        );
+    }
+
+    return workbook;
 }
 
 function formatArabicDateTime(date){
@@ -846,7 +1239,7 @@ function parseAmount(value){
         return value;
     }
 
-    const text = String(value ?? "")
+    const text = convertArabicDigits(String(value ?? ""))
         .replace(/,/g, "")
         .replace(/\$/g, "")
         .trim();
@@ -860,57 +1253,52 @@ function parseAmount(value){
     return Number.isFinite(number) ? number : 0;
 }
 
-function parseNumericFilter(value){
-    const text = String(value || "").trim();
+/*
+    تحليل نص فلتر المبلغ.
+    يرجع null إذا كان الحقل فارغاً (لا فلترة).
+    يرجع { valid:false } إذا كانت الصيغة غير مفهومة إطلاقاً،
+    حتى نعرض للمستخدم رسالة واضحة بدل تجاهل الخطأ بصمت.
+*/
+function parseNumericFilter(rawValue){
+    const text = convertArabicDigits(String(rawValue || "")).trim();
 
     if (!text) {
         return null;
     }
 
-    const cleaned = text.replace(/,/g, "");
+    const cleaned = text.replace(/,/g, "").replace(/\s+/g, "");
 
-    let match = cleaned.match(/^>=\s*(-?\d+(?:\.\d+)?)$/);
+    let match = cleaned.match(/^>=(-?\d+(?:\.\d+)?)$/);
 
     if (match) {
-        return {
-            type:"gte",
-            value:Number(match[1])
-        };
+        return { valid:true, type:"gte", value:Number(match[1]) };
     }
 
-    match = cleaned.match(/^<=\s*(-?\d+(?:\.\d+)?)$/);
+    match = cleaned.match(/^<=(-?\d+(?:\.\d+)?)$/);
 
     if (match) {
-        return {
-            type:"lte",
-            value:Number(match[1])
-        };
+        return { valid:true, type:"lte", value:Number(match[1]) };
     }
 
-    match = cleaned.match(/^>\s*(-?\d+(?:\.\d+)?)$/);
+    match = cleaned.match(/^>(-?\d+(?:\.\d+)?)$/);
 
     if (match) {
-        return {
-            type:"gt",
-            value:Number(match[1])
-        };
+        return { valid:true, type:"gt", value:Number(match[1]) };
     }
 
-    match = cleaned.match(/^<\s*(-?\d+(?:\.\d+)?)$/);
+    match = cleaned.match(/^<(-?\d+(?:\.\d+)?)$/);
 
     if (match) {
-        return {
-            type:"lt",
-            value:Number(match[1])
-        };
+        return { valid:true, type:"lt", value:Number(match[1]) };
     }
 
     match = cleaned.match(
-        /^(-?\d+(?:\.\d+)?)\s*-\s*(-?\d+(?:\.\d+)?)$/
+        /^(-?\d+(?:\.\d+)?)-(-?\d+(?:\.\d+)?)$/
     );
 
     if (match) {
         return {
+            valid:true,
             type:"range",
             min:Number(match[1]),
             max:Number(match[2])
@@ -920,58 +1308,48 @@ function parseNumericFilter(value){
     const exactNumber = Number(cleaned);
 
     if (Number.isFinite(exactNumber)) {
-        return {
-            type:"exact",
-            value:exactNumber
-        };
+        return { valid:true, type:"exact", value:exactNumber };
     }
 
-    return {
-        type:"text",
-        value:cleaned
-    };
+    /* لا توجد أي أرقام بالمرة - نعتبرها صيغة غير صحيحة وليست بحثاً نصياً */
+    return { valid:false };
 }
 
-function matchesNumericFilter(amount, filterText){
-    if (!filterText) {
+function matchesNumericFilter(amount, parsedFilter){
+    if (!parsedFilter) {
         return true;
     }
 
-    const filter = parseNumericFilter(filterText);
-
-    if (!filter) {
+    if (!parsedFilter.valid) {
+        /* فلتر غير صالح: لا نطبّق أي فلترة (تُعرض رسالة الخطأ في الواجهة بشكل منفصل) */
         return true;
     }
 
-    if (filter.type === "exact") {
-        return amount === filter.value;
+    if (parsedFilter.type === "exact") {
+        return amount === parsedFilter.value;
     }
 
-    if (filter.type === "gte") {
-        return amount >= filter.value;
+    if (parsedFilter.type === "gte") {
+        return amount >= parsedFilter.value;
     }
 
-    if (filter.type === "lte") {
-        return amount <= filter.value;
+    if (parsedFilter.type === "lte") {
+        return amount <= parsedFilter.value;
     }
 
-    if (filter.type === "gt") {
-        return amount > filter.value;
+    if (parsedFilter.type === "gt") {
+        return amount > parsedFilter.value;
     }
 
-    if (filter.type === "lt") {
-        return amount < filter.value;
+    if (parsedFilter.type === "lt") {
+        return amount < parsedFilter.value;
     }
 
-    if (filter.type === "range") {
-        const min = Math.min(filter.min, filter.max);
-        const max = Math.max(filter.min, filter.max);
+    if (parsedFilter.type === "range") {
+        const min = Math.min(parsedFilter.min, parsedFilter.max);
+        const max = Math.max(parsedFilter.min, parsedFilter.max);
 
         return amount >= min && amount <= max;
-    }
-
-    if (filter.type === "text") {
-        return String(amount).includes(filter.value);
     }
 
     return true;
@@ -994,11 +1372,25 @@ async function loadWorkbook(){
         "v=" +
         Date.now();
 
-    const response = await fetch(freshUrl, {
-        cache:"no-store"
-    });
+    let response;
+
+    try {
+        response = await fetch(freshUrl, {
+            cache:"no-store"
+        });
+    } catch (networkError) {
+        throw new Error(
+            "تعذر الاتصال لتحميل ملف \"" + EXCEL_FILE_NAME + "\". تأكد من الاتصال بالإنترنت."
+        );
+    }
 
     if (!response.ok) {
+        if (response.status === 404) {
+            throw new Error(
+                "لم يتم العثور على الملف \"" + EXCEL_FILE_NAME + "\" في هذا الموقع."
+            );
+        }
+
         throw new Error(
             "تعذر تحميل الملف. رمز الخطأ: " +
             response.status
@@ -1043,11 +1435,51 @@ function getDateSheets(workbook){
 }
 
 /*
-    قراءة قائمة العمليات من العمود H.
-    رقم العمود H هو 7 لأن JavaScript يبدأ من صفر.
+    اكتشاف أرقام أعمدة "العملية" / "البيان" / "المبلغ" من صف العناوين
+    إذا كان موجوداً، وإلا نستخدم الأرقام الثابتة الحالية (fallback)
+    حتى لا ينكسر التوافق مع الملف الحالي.
 */
-function getOperationList(workbook){
-    const operations = new Set();
+function detectColumnMap(rows){
+    const headerRow = rows && rows[0] ? rows[0] : [];
+
+    let opCol = null;
+    let descCol = null;
+    let amountCol = null;
+
+    headerRow.forEach((cell, index) => {
+        const label = String(cell ?? "").trim();
+
+        if (label === "العملية" && opCol === null) {
+            opCol = index;
+        }
+
+        if (label === "البيان" && descCol === null) {
+            descCol = index;
+        }
+
+        if (label === "المبلغ" && amountCol === null) {
+            amountCol = index;
+        }
+    });
+
+    return {
+        op: opCol !== null ? opCol : OP_COL_DEFAULT,
+        desc: descCol !== null ? descCol : DESC_COL_DEFAULT,
+        amount: amountCol !== null ? amountCol : AMOUNT_COL_DEFAULT
+    };
+}
+
+/*
+    بناء فهرس كل الحركات من كل أوراق الأيام مرة واحدة.
+    هذا يستبدل إعادة تحليل XLSX.utils.sheet_to_json عند كل فلترة،
+    مما يحسّن الأداء بشكل ملحوظ عند وجود آلاف الحركات.
+
+    قواعد الاستثناء محفوظة كما كانت بالضبط:
+    - يتم تجاهل الصف إذا كان البيان "حركة الصندوق".
+    - يتم تجاهل الصف إذا كان المبلغ = 0.
+*/
+function buildTransactionIndex(workbook){
+    const index = [];
 
     getDateSheets(workbook).forEach(sheetName => {
         const worksheet = workbook.Sheets[sheetName];
@@ -1061,14 +1493,46 @@ function getOperationList(workbook){
             }
         );
 
-        rows.forEach(row => {
-            const operation =
-                String(row[7] ?? "").trim();
+        const columnMap = detectColumnMap(rows);
 
-            if (operation) {
-                operations.add(operation);
+        const dateObj = getDateFromSheetName(sheetName);
+        const dateText = formatSheetDate(sheetName);
+
+        rows.forEach(row => {
+            const operation = String(row[columnMap.op] ?? "").trim();
+            const description = String(row[columnMap.desc] ?? "").trim();
+            const amount = parseAmount(row[columnMap.amount]);
+
+            if (description === "حركة الصندوق") {
+                return;
             }
+
+            if (amount === 0) {
+                return;
+            }
+
+            index.push({
+                sheetName:sheetName,
+                date:dateText,
+                dateObj:dateObj,
+                operation:operation,
+                description:description,
+                normalizedDescription:normalizeArabicText(description),
+                amount:amount
+            });
         });
+    });
+
+    return index;
+}
+
+function getOperationList(){
+    const operations = new Set();
+
+    transactionIndex.forEach(row => {
+        if (row.operation) {
+            operations.add(row.operation);
+        }
     });
 
     return Array.from(operations).sort(
@@ -1077,171 +1541,100 @@ function getOperationList(workbook){
 }
 
 /*
-    الدالة المصححة.
-
-    operationFilter:
-    العملية التي اختارها المستخدم.
-
-    operation:
-    العملية الموجودة داخل صف Excel.
-
-    تم فصل الاسمين حتى لا يحدث تعارض.
+    مطابقة نص البحث في البيان بدعم:
+    - تطبيع الحروف العربية (ا/أ/إ/آ، ى/ي، ة/ه) والتشكيل.
+    - بحث متعدد الكلمات (كل كلمة يجب أن تكون موجودة، بأي ترتيب).
 */
-function getFilteredRows(
-    workbook,
-    sheetName,
-    operationFilter,
-    descriptionFilter,
-    amountFilter
-){
-    const worksheet =
-        workbook.Sheets[sheetName];
+function matchesDescriptionSearch(normalizedDescription, searchTerms){
+    if (!searchTerms || searchTerms.length === 0) {
+        return true;
+    }
 
-    const rows =
-        XLSX.utils.sheet_to_json(
-            worksheet,
-            {
-                header:1,
-                defval:"",
-                blankrows:false
-            }
-        );
+    return searchTerms.every(term => normalizedDescription.includes(term));
+}
+
+function computeMatchedRows(filters){
+    const selectedDate = filters.date;
+    const selectedOperation = filters.operation;
+
+    const normalizedSearch = normalizeArabicText(filters.description);
+    const searchTerms = normalizedSearch
+        ? normalizedSearch.split(/\s+/).filter(Boolean)
+        : [];
+
+    const parsedAmountFilter = parseNumericFilter(filters.amount);
 
     const result = [];
 
-    const dateObj =
-        getDateFromSheetName(sheetName);
-
-    const dateText =
-        formatSheetDate(sheetName);
-
-    rows.forEach(row => {
-        /*
-            H = العملية
-            I = البيان
-            L = المبلغ
-        */
-        const operation =
-            String(row[7] ?? "").trim();
-
-        const description =
-            String(row[8] ?? "").trim();
-
-        const amount =
-            parseAmount(row[11]);
-
-        /*
-            تجاهل سطر "حركة الصندوق" فقط.
-            لا نتجاهل الأسطر بدون بيان بعد الآن،
-            المعيار الوحيد هو أن يكون المبلغ غير صفر.
-        */
-        if (description === "حركة الصندوق") {
+    transactionIndex.forEach(row => {
+        if (selectedDate && row.sheetName !== selectedDate) {
             return;
         }
 
-        if (amount === 0) {
+        if (selectedOperation && row.operation !== selectedOperation) {
             return;
         }
 
-        /*
-            إذا اختار المستخدم عملية،
-            نعرض العملية المطابقة فقط.
-        */
-        if (
-            operationFilter &&
-            operation !== operationFilter
-        ) {
+        if (!matchesDescriptionSearch(row.normalizedDescription, searchTerms)) {
             return;
         }
 
-        /*
-            البحث داخل البيان.
-            إذا كان البيان فارغاً ولم يبحث المستخدم
-            عن نص معين، يبقى السطر ظاهراً.
-        */
-        if (
-            descriptionFilter &&
-            !description
-                .toLowerCase()
-                .includes(
-                    descriptionFilter.toLowerCase()
-                )
-        ) {
+        if (!matchesNumericFilter(row.amount, parsedAmountFilter)) {
             return;
         }
 
-        /*
-            فلترة المبلغ
-        */
-        if (
-            !matchesNumericFilter(
-                amount,
-                amountFilter
-            )
-        ) {
-            return;
-        }
-
-        result.push({
-            date:dateText,
-            dateObj:dateObj,
-            operation:operation,
-            description:description,
-            amount:amount
-        });
+        result.push(row);
     });
 
-    return result;
-}
-
-function renderTransactionCards(rows){
-    const container =
-        document.getElementById("transactionCards");
-
-    container.innerHTML = "";
-
-    if (rows.length === 0) {
-        container.innerHTML =
-            '<div class="empty-note">' +
-            'لا توجد بيانات مطابقة للبحث.' +
-            '</div>';
-
-        document.getElementById("totalAmount")
-            .textContent = formatNumber(0);
-
-        return;
-    }
-
-    rows.sort((a,b) => {
-        const dateA = a.dateObj
-            ? a.dateObj.getTime()
-            : 0;
-
-        const dateB = b.dateObj
-            ? b.dateObj.getTime()
-            : 0;
+    result.sort((a,b) => {
+        const dateA = a.dateObj ? a.dateObj.getTime() : 0;
+        const dateB = b.dateObj ? b.dateObj.getTime() : 0;
 
         return dateB - dateA;
     });
 
+    return {
+        rows: result,
+        amountFilterValid: !parsedAmountFilter || parsedAmountFilter.valid
+    };
+}
+
+function renderTransactionCards(){
+    const container = document.getElementById("transactionCards");
+    const loadMoreWrap = document.getElementById("txnLoadMoreWrap");
+    const resultCountNote = document.getElementById("resultCountNote");
+
+    container.innerHTML = "";
+
+    const totalMatched = currentMatchedRows.length;
+
+    if (totalMatched === 0) {
+        container.innerHTML =
+            '<div class="empty-note">لا توجد بيانات مطابقة للبحث.</div>';
+
+        document.getElementById("totalAmount").textContent = formatNumber(0);
+        resultCountNote.textContent = "0 نتيجة";
+        loadMoreWrap.hidden = true;
+
+        return;
+    }
+
+    const rowsToShow = currentMatchedRows.slice(0, txnDisplayLimit);
+
+    /* الإجمالي يُحسب على كل النتائج المطابقة، وليس فقط المعروضة */
     let total = 0;
 
-    rows.forEach(row => {
-        const className =
-            row.amount > 0
-            ? "pos"
-            : "neg";
+    currentMatchedRows.forEach(row => {
+        total += row.amount;
+    });
 
-        const element =
-            document.createElement("div");
+    rowsToShow.forEach(row => {
+        const className = row.amount > 0 ? "pos" : "neg";
 
-        element.className =
-            "txn-row " + className;
+        const element = document.createElement("div");
+        element.className = "txn-row " + className;
 
-        const descriptionText =
-            row.description
-            ? row.description
-            : "(بدون بيان)";
+        const descriptionText = row.description || "(بدون بيان)";
 
         element.innerHTML = `
             <div class="txn-main">
@@ -1250,7 +1643,7 @@ function renderTransactionCards(rows){
                 </div>
 
                 <div class="txn-date">
-                    ${escapeHtml(row.date)}
+                    ${escapeHtml(row.date)}${row.operation ? " · " + escapeHtml(row.operation) : ""}
                 </div>
             </div>
 
@@ -1260,56 +1653,60 @@ function renderTransactionCards(rows){
         `;
 
         container.appendChild(element);
-
-        total += row.amount;
     });
 
-    document.getElementById("totalAmount")
-        .textContent = formatNumber(total);
+    document.getElementById("totalAmount").textContent = formatNumber(total);
+
+    if (rowsToShow.length < totalMatched) {
+        resultCountNote.textContent =
+            "عرض " + formatNumberNoDecimals(rowsToShow.length) +
+            " من أصل " + formatNumberNoDecimals(totalMatched) + " حركة";
+
+        loadMoreWrap.hidden = false;
+    } else {
+        resultCountNote.textContent =
+            formatNumberNoDecimals(totalMatched) + " حركة مطابقة";
+
+        loadMoreWrap.hidden = true;
+    }
 }
 
 function renderHeroKpis(workbook){
-    const worksheet =
-        workbook.Sheets["ملخص"];
-
-    const container =
-        document.getElementById("heroKpis");
+    const worksheet = workbook.Sheets["ملخص"];
+    const container = document.getElementById("heroKpis");
+    const periodInfo = document.getElementById("periodInfo");
 
     container.innerHTML = "";
+    periodInfo.innerHTML = "";
 
     if (!worksheet) {
         container.innerHTML =
-            '<div class="empty-note">' +
-            'لا توجد ورقة باسم "ملخص".' +
-            '</div>';
+            '<div class="empty-note">لا توجد ورقة باسم "ملخص".</div>';
 
         return;
     }
 
-    const rows =
-        XLSX.utils.sheet_to_json(
-            worksheet,
-            {
-                header:1,
-                defval:"",
-                blankrows:false
-            }
-        );
+    const rows = XLSX.utils.sheet_to_json(
+        worksheet,
+        {
+            header:1,
+            defval:"",
+            blankrows:false
+        }
+    );
 
     let sellTotal = 0;
     let expensesTotal = 0;
     let wholesaleTotal = 0;
     let dayCount = 0;
 
+    let firstDate = null;
+    let lastDate = null;
+
     for (let i = 2; i < rows.length; i++) {
         const row = rows[i];
 
-        if (
-            !row[0] &&
-            !row[1] &&
-            !row[2] &&
-            !row[3]
-        ) {
+        if (!row[0] && !row[1] && !row[2] && !row[3]) {
             continue;
         }
 
@@ -1318,86 +1715,85 @@ function renderHeroKpis(workbook){
         wholesaleTotal += parseAmount(row[3]);
 
         dayCount++;
+
+        let rowDate = null;
+
+        if (typeof row[0] === "number") {
+            rowDate = excelSerialToDate(row[0]);
+        } else if (row[0] instanceof Date) {
+            rowDate = row[0];
+        }
+
+        if (rowDate && !isNaN(rowDate.getTime())) {
+            if (!firstDate || rowDate < firstDate) {
+                firstDate = rowDate;
+            }
+
+            if (!lastDate || rowDate > lastDate) {
+                lastDate = rowDate;
+            }
+        }
     }
 
     const cards = [
-        {
-            label:"مجموع البيع",
-            value:sellTotal,
-            className:"teal"
-        },
-        {
-            label:"مجموع المصاريف",
-            value:expensesTotal,
-            className:"coral"
-        },
-        {
-            label:"مجموع الجملة",
-            value:wholesaleTotal,
-            className:"amber"
-        },
-        {
-            label:"عدد الأيام المسجلة",
-            value:dayCount,
-            className:"ink"
-        }
+        { label:"مجموع البيع", value:sellTotal, className:"teal" },
+        { label:"مجموع المصاريف", value:expensesTotal, className:"coral" },
+        { label:"مجموع الجملة", value:wholesaleTotal, className:"amber" },
+        { label:"عدد الأيام المسجلة", value:dayCount, className:"ink" }
     ];
 
     cards.forEach(cardData => {
-        const element =
-            document.createElement("div");
-
-        element.className =
-            "kpi-card " +
-            cardData.className;
+        const element = document.createElement("div");
+        element.className = "kpi-card " + cardData.className;
 
         element.innerHTML = `
-            <div class="label">
-                ${cardData.label}
-            </div>
-
-            <div class="value num">
-                ${formatNumberNoDecimals(cardData.value)}
-            </div>
+            <div class="label">${cardData.label}</div>
+            <div class="value num">${formatNumberNoDecimals(cardData.value)}</div>
         `;
 
         container.appendChild(element);
     });
+
+    if (firstDate && lastDate) {
+        periodInfo.innerHTML = `
+            <span>الفترة المسجّلة: <strong>${escapeHtml(formatArabicDate(firstDate))}</strong> إلى <strong>${escapeHtml(formatArabicDate(lastDate))}</strong></span>
+            <span>آخر تاريخ في البيانات: <strong>${escapeHtml(formatArabicDate(lastDate))}</strong></span>
+        `;
+    }
+
+    /*
+        ملاحظة مهمة: لا يمكن حساب "صافي الربح" بشكل موثوق من هذه الأعمدة
+        (البيع، المصاريف، الجملة) بدون معرفة دقيقة لمعنى عمود "الجملة"
+        في هذا الملف. لذلك تم تجنّب إضافة أي مؤشر ربح جديد كي لا نعرض
+        رقماً قد يكون خاطئاً على صفحة مالية.
+    */
 }
 
 function renderMonthlyCards(workbook){
-    const worksheet =
-        workbook.Sheets["شهري"];
-
-    const container =
-        document.getElementById("monthlyCards");
+    const worksheet = workbook.Sheets["شهري"];
+    const container = document.getElementById("monthlyCards");
 
     container.innerHTML = "";
 
     if (!worksheet) {
         container.innerHTML =
-            '<div class="empty-note">' +
-            'لا توجد ورقة باسم "شهري".' +
-            '</div>';
+            '<div class="empty-note">لا توجد ورقة باسم "شهري".</div>';
 
         return;
     }
 
-    const rows =
-        XLSX.utils.sheet_to_json(
-            worksheet,
-            {
-                header:1,
-                defval:"",
-                blankrows:false
-            }
-        );
+    const rows = XLSX.utils.sheet_to_json(
+        worksheet,
+        {
+            header:1,
+            defval:"",
+            blankrows:false
+        }
+    );
 
     if (rows.length < 2) {
         container.innerHTML =
-            '<div class="empty-note">' +
-            'لا توجد بيانات شهرية.' +
-            '</div>';
+            '<div class="empty-note">لا توجد بيانات شهرية.</div>';
 
         return;
     }
@@ -1408,12 +1804,7 @@ function renderMonthlyCards(workbook){
     for (let i = 1; i < rows.length; i++) {
         const row = rows[i];
 
-        if (
-            row.every(value => {
-                return value === "" ||
-                       value == null;
-            })
-        ) {
+        if (row.every(value => value === "" || value == null)) {
             continue;
         }
 
@@ -1434,46 +1825,30 @@ function renderMonthlyCards(workbook){
 
         hasData = true;
 
-        const card =
-            document.createElement("div");
-
+        const card = document.createElement("div");
         card.className = "ticket-card";
 
         let html = "";
 
         for (let col = 1; col < row.length; col++) {
-            if (
-                row[col] === "" ||
-                row[col] == null
-            ) {
+            if (row[col] === "" || row[col] == null) {
                 continue;
             }
 
             const number = parseAmount(row[col]);
-            const negativeClass =
-                number < 0 ? "neg" : "";
+            const negativeClass = number < 0 ? "neg" : "";
 
             html += `
                 <div class="row">
-                    <span class="m-label">
-                        ${escapeHtml(headers[col] || "")}
-                    </span>
-
-                    <span class="m-value num ${negativeClass}">
-                        ${formatNumberNoDecimals(number)}
-                    </span>
+                    <span class="m-label">${escapeHtml(headers[col] || "")}</span>
+                    <span class="m-value num ${negativeClass}">${formatNumberNoDecimals(number)}</span>
                 </div>
             `;
         }
 
         card.innerHTML = `
-            <div class="t-title">
-                ${escapeHtml(row[0] || "")}
-            </div>
-
-            <div class="metric-list">
-                ${html}
-            </div>
+            <div class="t-title">${escapeHtml(row[0] || "")}</div>
+            <div class="metric-list">${html}</div>
         `;
 
         container.appendChild(card);
@@ -1481,39 +1856,31 @@ function renderMonthlyCards(workbook){
 
     if (!hasData) {
         container.innerHTML =
-            '<div class="empty-note">' +
-            'لا توجد بيانات شهرية.' +
-            '</div>';
+            '<div class="empty-note">لا توجد بيانات شهرية.</div>';
     }
 }
 
 function renderWeeklyCards(workbook){
-    const worksheet =
-        workbook.Sheets["ملخص"];
-
-    const container =
-        document.getElementById("weeklyCards");
+    const worksheet = workbook.Sheets["ملخص"];
+    const container = document.getElementById("weeklyCards");
 
     container.innerHTML = "";
 
     if (!worksheet) {
         container.innerHTML =
-            '<div class="empty-note">' +
-            'لا توجد ورقة باسم "ملخص".' +
-            '</div>';
+            '<div class="empty-note">لا توجد ورقة باسم "ملخص".</div>';
 
         return;
     }
 
-    const rows =
-        XLSX.utils.sheet_to_json(
-            worksheet,
-            {
-                header:1,
-                defval:"",
-                blankrows:false
-            }
-        );
+    const rows = XLSX.utils.sheet_to_json(
+        worksheet,
+        {
+            header:1,
+            defval:"",
+            blankrows:false
+        }
+    );
 
     const weeklyMap = new Map();
 
@@ -1540,27 +1907,17 @@ function renderWeeklyCards(workbook){
 
         const day = date.getDay();
 
-        const mondayOffset =
-            day === 0
-            ? -6
-            : 1 - day;
+        /* الأسبوع من الاثنين إلى الأحد. day=0 (أحد) يعتبر آخر يوم بالأسبوع السابق له. */
+        const mondayOffset = day === 0 ? -6 : 1 - day;
 
         const monday = new Date(date);
-
-        monday.setDate(
-            date.getDate() + mondayOffset
-        );
-
+        monday.setDate(date.getDate() + mondayOffset);
         monday.setHours(0,0,0,0);
 
-        const key =
-            monday.toISOString().slice(0,10);
+        const key = monday.toISOString().slice(0,10);
 
         const sunday = new Date(monday);
-
-        sunday.setDate(
-            monday.getDate() + 6
-        );
+        sunday.setDate(monday.getDate() + 6);
 
         if (!weeklyMap.has(key)) {
             weeklyMap.set(key, {
@@ -1579,67 +1936,39 @@ function renderWeeklyCards(workbook){
         week.wholesale += parseAmount(row[3]);
     }
 
-    const weeks =
-        Array.from(weeklyMap.values())
-        .filter(week => {
-            return week.sell !== 0 ||
-                   week.expenses !== 0 ||
-                   week.wholesale !== 0;
-        })
-        .sort((a,b) => {
-            return b.from - a.from;
-        });
+    const weeks = Array.from(weeklyMap.values())
+        .filter(week => week.sell !== 0 || week.expenses !== 0 || week.wholesale !== 0)
+        .sort((a,b) => b.from - a.from);
 
     if (weeks.length === 0) {
         container.innerHTML =
-            '<div class="empty-note">' +
-            'لا توجد بيانات أسبوعية.' +
-            '</div>';
+            '<div class="empty-note">لا توجد بيانات أسبوعية.</div>';
 
         return;
     }
 
     weeks.forEach(week => {
-        const card =
-            document.createElement("div");
-
+        const card = document.createElement("div");
         card.className = "ticket-card";
 
         card.innerHTML = `
-            <div class="t-title">
-                أسبوع ${formatArabicDate(week.from)}
-            </div>
-
-            <div class="t-sub">
-                إلى ${formatArabicDate(week.to)}
-            </div>
+            <div class="t-title">أسبوع ${formatArabicDate(week.from)}</div>
+            <div class="t-sub">إلى ${formatArabicDate(week.to)}</div>
 
             <div class="metric-grid">
-                <div class="metric ${
-                    week.sell < 0 ? "neg" : "pos"
-                }">
+                <div class="metric ${week.sell < 0 ? "neg" : "pos"}">
                     <div class="m-label">بيع</div>
-                    <div class="m-value num">
-                        ${formatNumberNoDecimals(week.sell)}
-                    </div>
+                    <div class="m-value num">${formatNumberNoDecimals(week.sell)}</div>
                 </div>
 
-                <div class="metric ${
-                    week.expenses < 0 ? "neg" : "pos"
-                }">
+                <div class="metric ${week.expenses < 0 ? "neg" : "pos"}">
                     <div class="m-label">مصاريف</div>
-                    <div class="m-value num">
-                        ${formatNumberNoDecimals(week.expenses)}
-                    </div>
+                    <div class="m-value num">${formatNumberNoDecimals(week.expenses)}</div>
                 </div>
 
-                <div class="metric ${
-                    week.wholesale < 0 ? "neg" : "pos"
-                }">
+                <div class="metric ${week.wholesale < 0 ? "neg" : "pos"}">
                     <div class="m-label">جملة</div>
-                    <div class="m-value num">
-                        ${formatNumberNoDecimals(week.wholesale)}
-                    </div>
+                    <div class="m-value num">${formatNumberNoDecimals(week.wholesale)}</div>
                 </div>
             </div>
         `;
@@ -1648,33 +1977,21 @@ function renderWeeklyCards(workbook){
     });
 }
 
-function renderDailyCards(workbook){
-    const worksheet =
-        workbook.Sheets["ملخص"];
-
-    const container =
-        document.getElementById("dailyCards");
-
-    container.innerHTML = "";
+function buildDailyRows(workbook){
+    const worksheet = workbook.Sheets["ملخص"];
 
     if (!worksheet) {
-        container.innerHTML =
-            '<div class="empty-note">' +
-            'لا توجد ورقة باسم "ملخص".' +
-            '</div>';
-
-        return;
+        return null;
     }
 
-    const rows =
-        XLSX.utils.sheet_to_json(
-            worksheet,
-            {
-                header:1,
-                defval:"",
-                blankrows:false
-            }
-        );
+    const rows = XLSX.utils.sheet_to_json(
+        worksheet,
+        {
+            header:1,
+            defval:"",
+            blankrows:false
+        }
+    );
 
     const dailyRows = [];
 
@@ -1708,11 +2025,7 @@ function renderDailyCards(workbook){
         const expenses = parseAmount(row[2]);
         const wholesale = parseAmount(row[3]);
 
-        if (
-            sell === 0 &&
-            expenses === 0 &&
-            wholesale === 0
-        ) {
+        if (sell === 0 && expenses === 0 && wholesale === 0) {
             continue;
         }
 
@@ -1726,69 +2039,133 @@ function renderDailyCards(workbook){
     }
 
     dailyRows.sort((a,b) => {
-        const dateA = a.dateObj
-            ? a.dateObj.getTime()
-            : 0;
-
-        const dateB = b.dateObj
-            ? b.dateObj.getTime()
-            : 0;
+        const dateA = a.dateObj ? a.dateObj.getTime() : 0;
+        const dateB = b.dateObj ? b.dateObj.getTime() : 0;
 
         return dateB - dateA;
     });
 
-    if (dailyRows.length === 0) {
+    /*
+        تمييز الأيام ذات المصاريف المرتفعة نسبياً (أعلى من 1.5 مرة متوسط المصاريف)،
+        بدون اختراع أي مفهوم "خطأ" أو "ربح" - فقط إشارة بصرية للمراجعة.
+    */
+    if (dailyRows.length > 0) {
+        const totalExpenses = dailyRows.reduce((sum, r) => sum + Math.abs(r.expenses), 0);
+        const avgExpenses = totalExpenses / dailyRows.length;
+
+        dailyRows.forEach(row => {
+            row.highExpense = avgExpenses > 0 && Math.abs(row.expenses) > avgExpenses * 1.5;
+        });
+    }
+
+    return dailyRows;
+}
+
+function renderDailyCards(){
+    const container = document.getElementById("dailyCards");
+    const loadMoreWrap = document.getElementById("daysLoadMoreWrap");
+    const resultNote = document.getElementById("daysResultNote");
+
+    container.innerHTML = "";
+
+    if (allDailyRows === null) {
         container.innerHTML =
-            '<div class="empty-note">' +
-            'لا توجد بيانات يومية.' +
-            '</div>';
+            '<div class="empty-note">لا توجد ورقة باسم "ملخص".</div>';
+
+        resultNote.textContent = "";
+        loadMoreWrap.hidden = true;
 
         return;
     }
 
-    dailyRows.forEach(row => {
-        const card =
-            document.createElement("div");
+    const searchRaw = document.getElementById("daySearchInput").value.trim();
+    const normalizedSearch = normalizeArabicText(searchRaw);
 
-        card.className = "ticket-card";
+    const filteredRows = normalizedSearch
+        ? allDailyRows.filter(row =>
+            normalizeArabicText(String(row.dateText)).includes(normalizedSearch)
+          )
+        : allDailyRows;
+
+    if (filteredRows.length === 0) {
+        container.innerHTML =
+            '<div class="empty-note">لا توجد بيانات يومية مطابقة.</div>';
+
+        resultNote.textContent = "0 يوم";
+        loadMoreWrap.hidden = true;
+
+        return;
+    }
+
+    const rowsToShow = filteredRows.slice(0, dailyDisplayLimit);
+
+    rowsToShow.forEach(row => {
+        const card = document.createElement("div");
+        card.className = "ticket-card" + (row.highExpense ? " high-expense" : "");
 
         card.innerHTML = `
             <div class="t-title">
                 ${escapeHtml(row.dateText)}
+                ${row.highExpense ? '<span class="t-flag">مصاريف مرتفعة</span>' : ""}
             </div>
 
             <div class="metric-grid">
-                <div class="metric ${
-                    row.sell < 0 ? "neg" : "pos"
-                }">
+                <div class="metric ${row.sell < 0 ? "neg" : "pos"}">
                     <div class="m-label">بيع</div>
-                    <div class="m-value num">
-                        ${formatNumberNoDecimals(row.sell)}
-                    </div>
+                    <div class="m-value num">${formatNumberNoDecimals(row.sell)}</div>
                 </div>
 
-                <div class="metric ${
-                    row.expenses < 0 ? "neg" : "pos"
-                }">
+                <div class="metric ${row.expenses < 0 ? "neg" : "pos"}">
                     <div class="m-label">مصاريف</div>
-                    <div class="m-value num">
-                        ${formatNumberNoDecimals(row.expenses)}
-                    </div>
+                    <div class="m-value num">${formatNumberNoDecimals(row.expenses)}</div>
                 </div>
 
-                <div class="metric ${
-                    row.wholesale < 0 ? "neg" : "pos"
-                }">
+                <div class="metric ${row.wholesale < 0 ? "neg" : "pos"}">
                     <div class="m-label">جملة</div>
-                    <div class="m-value num">
-                        ${formatNumberNoDecimals(row.wholesale)}
-                    </div>
+                    <div class="m-value num">${formatNumberNoDecimals(row.wholesale)}</div>
                 </div>
             </div>
         `;
 
         container.appendChild(card);
     });
+
+    if (rowsToShow.length < filteredRows.length) {
+        resultNote.textContent =
+            "عرض " + formatNumberNoDecimals(rowsToShow.length) +
+            " من أصل " + formatNumberNoDecimals(filteredRows.length) + " يوم";
+
+        loadMoreWrap.hidden = false;
+    } else {
+        resultNote.textContent =
+            formatNumberNoDecimals(filteredRows.length) + " يوم";
+
+        loadMoreWrap.hidden = true;
+    }
+}
+
+/* ---------- التبويبات ---------- */
+
+function activateTab(tabName){
+    const buttons = document.querySelectorAll(".tab-btn");
+
+    buttons.forEach(item => {
+        const isActive = item.dataset.tab === tabName;
+
+        item.classList.toggle("active", isActive);
+        item.setAttribute("aria-selected", isActive ? "true" : "false");
+        item.tabIndex = isActive ? 0 : -1;
+    });
+
+    document.querySelectorAll(".panel").forEach(panel => {
+        panel.classList.remove("active");
+    });
+
+    const panel = document.getElementById("panel-" + tabName);
+
+    if (panel) {
+        panel.classList.add("active");
+    }
 }
 
 function setupTabs(){
@@ -1798,33 +2175,67 @@ function setupTabs(){
 
     tabsInitialized = true;
 
-    const buttons =
-        document.querySelectorAll(".tab-btn");
+    const buttons = Array.from(document.querySelectorAll(".tab-btn"));
 
-    buttons.forEach(button => {
+    buttons.forEach((button, buttonIndex) => {
         button.addEventListener("click", () => {
-            buttons.forEach(item => {
-                item.classList.remove("active");
-            });
+            activateTab(button.dataset.tab);
+        });
 
-            document.querySelectorAll(".panel")
-                .forEach(panel => {
-                    panel.classList.remove("active");
-                });
+        button.addEventListener("keydown", (event) => {
+            let targetIndex = null;
 
-            button.classList.add("active");
+            if (event.key === "ArrowRight") {
+                targetIndex = (buttonIndex + 1) % buttons.length;
+            } else if (event.key === "ArrowLeft") {
+                targetIndex = (buttonIndex - 1 + buttons.length) % buttons.length;
+            } else if (event.key === "Home") {
+                targetIndex = 0;
+            } else if (event.key === "End") {
+                targetIndex = buttons.length - 1;
+            }
 
-            const panel =
-                document.getElementById(
-                    "panel-" + button.dataset.tab
-                );
-
-            if (panel) {
-                panel.classList.add("active");
+            if (targetIndex !== null) {
+                event.preventDefault();
+                buttons[targetIndex].focus();
+                activateTab(buttons[targetIndex].dataset.tab);
             }
         });
     });
 }
+
+/* ---------- الرسائل (بانرات) ---------- */
+
+function showBanner(message, type){
+    const stack = document.getElementById("bannerStack");
+
+    const banner = document.createElement("div");
+    banner.className = "app-banner " + type;
+    banner.setAttribute("role", type === "error" ? "alert" : "status");
+
+    const textSpan = document.createElement("span");
+    textSpan.textContent = message;
+
+    const closeBtn = document.createElement("button");
+    closeBtn.type = "button";
+    closeBtn.setAttribute("aria-label", "إغلاق الرسالة");
+    closeBtn.textContent = "✕";
+    closeBtn.onclick = () => banner.remove();
+
+    banner.appendChild(textSpan);
+    banner.appendChild(closeBtn);
+    stack.appendChild(banner);
+
+    if (type !== "error") {
+        setTimeout(() => {
+            banner.remove();
+        }, 5000);
+    }
+
+    return banner;
+}
+
+/* ---------- الفلاتر ---------- */
 
 function getCurrentFilters(){
     return {
@@ -1835,68 +2246,80 @@ function getCurrentFilters(){
     };
 }
 
-function restoreSelectValue(select, value){
-    const exists =
-        Array.from(select.options)
-        .some(option => option.value === value);
+function saveFiltersToStorage(filters){
+    try {
+        localStorage.setItem(CACHE_KEY_FILTERS, JSON.stringify(filters));
+    } catch (error) {
+        /* تجاهل بأمان - حفظ الفلاتر تحسين وليس وظيفة أساسية */
+    }
+}
 
+function loadFiltersFromStorage(){
+    try {
+        const raw = localStorage.getItem(CACHE_KEY_FILTERS);
+
+        if (!raw) {
+            return null;
+        }
+
+        return JSON.parse(raw);
+    } catch (error) {
+        return null;
+    }
+}
+
+function restoreSelectValue(select, value){
+    const exists = Array.from(select.options).some(option => option.value === value);
     select.value = exists ? value : "";
 }
 
 function refreshFilters(workbook){
-    const selectDate =
-        document.getElementById("selectDate");
+    const selectDate = document.getElementById("selectDate");
+    const selectOperation = document.getElementById("selectOperation");
 
-    const selectOperation =
-        document.getElementById("selectOperation");
+    let effectiveFilters = getCurrentFilters();
 
-    const oldFilters =
-        getCurrentFilters();
+    const isFirstLoad =
+        !effectiveFilters.date &&
+        !effectiveFilters.operation &&
+        !effectiveFilters.description &&
+        !effectiveFilters.amount;
 
-    const dateSheets =
-        getDateSheets(workbook);
+    if (isFirstLoad) {
+        const savedFilters = loadFiltersFromStorage();
 
-    selectDate.innerHTML =
-        '<option value="">الكل</option>';
+        if (savedFilters) {
+            effectiveFilters = savedFilters;
+        }
+    }
+
+    const dateSheets = getDateSheets(workbook);
+
+    selectDate.innerHTML = '<option value="">الكل</option>';
 
     dateSheets.forEach(sheetName => {
-        const option =
-            document.createElement("option");
-
+        const option = document.createElement("option");
         option.value = sheetName;
-        option.textContent =
-            formatSheetDate(sheetName);
-
+        option.textContent = formatSheetDate(sheetName);
         selectDate.appendChild(option);
     });
 
-    const operations =
-        getOperationList(workbook);
+    const operations = getOperationList();
 
-    selectOperation.innerHTML =
-        '<option value="">الكل</option>';
+    selectOperation.innerHTML = '<option value="">الكل</option>';
 
     operations.forEach(operation => {
-        const option =
-            document.createElement("option");
-
+        const option = document.createElement("option");
         option.value = operation;
         option.textContent = operation;
-
         selectOperation.appendChild(option);
     });
 
-    restoreSelectValue(selectDate, oldFilters.date);
-    restoreSelectValue(
-        selectOperation,
-        oldFilters.operation
-    );
+    restoreSelectValue(selectDate, effectiveFilters.date || "");
+    restoreSelectValue(selectOperation, effectiveFilters.operation || "");
 
-    document.getElementById("filterDescription")
-        .value = oldFilters.description;
-
-    document.getElementById("filterAmount")
-        .value = oldFilters.amount;
+    document.getElementById("filterDescription").value = effectiveFilters.description || "";
+    document.getElementById("filterAmount").value = effectiveFilters.amount || "";
 }
 
 function applyTransactionFilter(){
@@ -1904,74 +2327,167 @@ function applyTransactionFilter(){
         return;
     }
 
-    const selectedDate =
-        document.getElementById("selectDate").value;
+    const filters = getCurrentFilters();
 
-    const selectedOperation =
-        document.getElementById("selectOperation").value;
+    const amountErrorEl = document.getElementById("filterAmountError");
+    const parsedAmountFilter = parseNumericFilter(filters.amount);
 
-    const descriptionFilter =
-        document.getElementById("filterDescription")
-        .value
-        .trim();
+    if (parsedAmountFilter && !parsedAmountFilter.valid) {
+        amountErrorEl.textContent = "صيغة فلتر المبلغ غير صحيحة";
+    } else {
+        amountErrorEl.textContent = "";
+    }
 
-    const amountFilter =
-        document.getElementById("filterAmount")
-        .value
-        .trim();
+    const { rows } = computeMatchedRows(filters);
 
-    const dateSheets =
-        getDateSheets(currentWorkbook);
+    currentMatchedRows = rows;
+    txnDisplayLimit = PAGE_SIZE_TXN;
 
-    const sheetsToRead =
-        selectedDate
-        ? [selectedDate]
-        : dateSheets;
+    renderTransactionCards();
+    saveFiltersToStorage(filters);
+}
 
-    let allRows = [];
-
-    sheetsToRead.forEach(sheetName => {
-        const sheetRows =
-            getFilteredRows(
-                currentWorkbook,
-                sheetName,
-                selectedOperation,
-                descriptionFilter,
-                amountFilter
-            );
-
-        allRows = allRows.concat(sheetRows);
-    });
-
-    renderTransactionCards(allRows);
+function handleFilterChangeResetPagination(){
+    txnDisplayLimit = PAGE_SIZE_TXN;
+    applyTransactionFilter();
 }
 
 function setupFilters(){
-    document.getElementById("btnShow")
-        .onclick = applyTransactionFilter;
+    document.getElementById("btnShow").onclick = handleFilterChangeResetPagination;
 
-    document.getElementById("selectDate")
-        .onchange = applyTransactionFilter;
+    document.getElementById("selectDate").onchange = handleFilterChangeResetPagination;
+    document.getElementById("selectOperation").onchange = handleFilterChangeResetPagination;
 
-    document.getElementById("selectOperation")
-        .onchange = applyTransactionFilter;
+    const debouncedDescription = debounce(handleFilterChangeResetPagination, 220);
+    const debouncedAmount = debounce(handleFilterChangeResetPagination, 220);
 
-    document.getElementById("filterDescription")
-        .oninput = applyTransactionFilter;
+    document.getElementById("filterDescription").oninput = debouncedDescription;
+    document.getElementById("filterAmount").oninput = debouncedAmount;
 
-    document.getElementById("filterAmount")
-        .oninput = applyTransactionFilter;
+    document.getElementById("filterDescription").addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+            event.target.value = "";
+            handleFilterChangeResetPagination();
+        }
+    });
+
+    document.getElementById("clearFiltersBtn").onclick = () => {
+        document.getElementById("selectDate").value = "";
+        document.getElementById("selectOperation").value = "";
+        document.getElementById("filterDescription").value = "";
+        document.getElementById("filterAmount").value = "";
+        document.getElementById("filterAmountError").textContent = "";
+
+        handleFilterChangeResetPagination();
+    };
+
+    document.getElementById("loadMoreTxnBtn").onclick = () => {
+        txnDisplayLimit += PAGE_SIZE_TXN;
+        renderTransactionCards();
+    };
+
+    document.getElementById("loadMoreDaysBtn").onclick = () => {
+        dailyDisplayLimit += PAGE_SIZE_DAYS;
+        renderDailyCards();
+    };
+
+    const debouncedDaySearch = debounce(() => {
+        dailyDisplayLimit = PAGE_SIZE_DAYS;
+        renderDailyCards();
+    }, 220);
+
+    document.getElementById("daySearchInput").oninput = debouncedDaySearch;
+
+    document.getElementById("daySearchInput").addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+            event.target.value = "";
+            dailyDisplayLimit = PAGE_SIZE_DAYS;
+            renderDailyCards();
+        }
+    });
+
+    document.getElementById("clearDaySearchBtn").onclick = () => {
+        document.getElementById("daySearchInput").value = "";
+        dailyDisplayLimit = PAGE_SIZE_DAYS;
+        renderDailyCards();
+    };
+
+    document.getElementById("copyResultsBtn").onclick = copyResultsToClipboard;
+    document.getElementById("printResultsBtn").onclick = () => window.print();
+    document.getElementById("exportExcelBtn").onclick = exportResultsToExcel;
+}
+
+async function copyResultsToClipboard(){
+    if (currentMatchedRows.length === 0) {
+        showBanner("لا توجد نتائج لنسخها.", "info");
+        return;
+    }
+
+    const lines = currentMatchedRows.map(row => {
+        return `${row.date}\t${row.operation || "-"}\t${row.description || "-"}\t${formatNumber(row.amount)}`;
+    });
+
+    const text = "التاريخ\tالعملية\tالبيان\tالمبلغ\n" + lines.join("\n");
+
+    try {
+        await navigator.clipboard.writeText(text);
+        showBanner("تم نسخ " + formatNumberNoDecimals(currentMatchedRows.length) + " نتيجة إلى الحافظة.", "success");
+    } catch (error) {
+        showBanner("تعذر النسخ إلى الحافظة في هذا المتصفح.", "error");
+    }
+}
+
+function exportResultsToExcel(){
+    if (currentMatchedRows.length === 0) {
+        showBanner("لا توجد نتائج لتصديرها.", "info");
+        return;
+    }
+
+    try {
+        const data = currentMatchedRows.map(row => ({
+            "التاريخ":row.date,
+            "العملية":row.operation,
+            "البيان":row.description,
+            "المبلغ":row.amount
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(data);
+        const workbook = XLSX.utils.book_new();
+
+        XLSX.utils.book_append_sheet(workbook, worksheet, "نتائج");
+        XLSX.writeFile(workbook, "نتائج_صندوق_دبوس.xlsx");
+
+        showBanner(
+            "تم تصدير " + formatNumberNoDecimals(currentMatchedRows.length) + " نتيجة (كل النتائج المطابقة للفلاتر).",
+            "success"
+        );
+    } catch (error) {
+        console.error(error);
+        showBanner("تعذر تصدير الملف.", "error");
+    }
+}
+
+/* ---------- التحديث الرئيسي ---------- */
+
+function renderAllFromWorkbook(workbook){
+    transactionIndex = buildTransactionIndex(workbook);
+    allDailyRows = buildDailyRows(workbook);
+
+    renderHeroKpis(workbook);
+    renderMonthlyCards(workbook);
+    renderWeeklyCards(workbook);
+
+    dailyDisplayLimit = PAGE_SIZE_DAYS;
+    renderDailyCards();
+
+    refreshFilters(workbook);
+    applyTransactionFilter();
 }
 
 async function refreshPage(){
-    const button =
-        document.getElementById("refreshBtn");
-
-    const icon =
-        button.querySelector(".refresh-icon");
-
-    const text =
-        button.querySelector(".refresh-text");
+    const button = document.getElementById("refreshBtn");
+    const icon = button.querySelector(".refresh-icon");
+    const text = button.querySelector(".refresh-text");
 
     button.disabled = true;
     button.classList.add("loading");
@@ -1980,33 +2496,30 @@ async function refreshPage(){
     text.textContent = "جاري التحديث";
 
     try {
-        const arrayBuffer =
-            await loadWorkbook();
-
-        const workbook =
-            parseWorkbookFromBuffer(arrayBuffer);
+        const arrayBuffer = await loadWorkbook();
+        const workbook = parseWorkbookFromBuffer(arrayBuffer);
 
         currentWorkbook = workbook;
 
-        renderHeroKpis(workbook);
-        renderMonthlyCards(workbook);
-        renderWeeklyCards(workbook);
-        renderDailyCards(workbook);
-
-        refreshFilters(workbook);
-        applyTransactionFilter();
+        renderAllFromWorkbook(workbook);
 
         const nowIso = new Date().toISOString();
 
         saveToCache(arrayBuffer, nowIso);
         updateLastUpdateDisplay(nowIso);
 
+        showBanner("تم تحديث البيانات بنجاح.", "success");
+
     } catch (error) {
         console.error(error);
 
-        alert(
-            "حدث خطأ أثناء تحميل ملف صندوق دبوس.xlsx:\n" +
-            error.message
+        /*
+            مهم: لا نمسح currentWorkbook أو أي بيانات معروضة حالياً.
+            المستخدم يبقى يشاهد آخر نسخة صحيحة، فقط تظهر رسالة خطأ واضحة.
+        */
+        showBanner(
+            "تعذر تحديث البيانات: " + error.message + " — البيانات المعروضة هي آخر نسخة محفوظة.",
+            "error"
         );
     } finally {
         button.disabled = false;
@@ -2020,8 +2533,7 @@ async function refreshPage(){
 setupTabs();
 setupFilters();
 
-document.getElementById("refreshBtn")
-    .addEventListener("click", refreshPage);
+document.getElementById("refreshBtn").addEventListener("click", refreshPage);
 
 function loadFromCacheOnStartup(){
     const cached = loadFromCache();
@@ -2031,28 +2543,19 @@ function loadFromCacheOnStartup(){
     }
 
     try {
-        const workbook =
-            parseWorkbookFromBuffer(cached.arrayBuffer);
+        const workbook = parseWorkbookFromBuffer(cached.arrayBuffer);
 
         currentWorkbook = workbook;
 
-        renderHeroKpis(workbook);
-        renderMonthlyCards(workbook);
-        renderWeeklyCards(workbook);
-        renderDailyCards(workbook);
-
-        refreshFilters(workbook);
-        applyTransactionFilter();
+        renderAllFromWorkbook(workbook);
 
         updateLastUpdateDisplay(cached.timestamp);
+        showBanner("عرض نسخة محفوظة محلياً. اضغط تحديث لجلب أحدث البيانات.", "info");
 
         return true;
 
     } catch (error) {
-        console.error(
-            "تعذر عرض النسخة المحفوظة محلياً:",
-            error
-        );
+        console.error("تعذر عرض النسخة المحفوظة محلياً:", error);
 
         return false;
     }
@@ -2063,16 +2566,15 @@ window.addEventListener("load", () => {
         إذا في نسخة محفوظة محلياً، نعرضها فوراً
         بدون انتظار تحميل الملف من الشبكة.
         التحديث الفعلي بيصير فقط لما يضغط
-        المستخدم على زر "تحديث".
+        المستخدم على زر "تحديث"، أو تلقائياً عند أول فتح
+        إذا لم توجد نسخة محفوظة.
     */
-    const shownFromCache =
-        loadFromCacheOnStartup();
+    const shownFromCache = loadFromCacheOnStartup();
 
     if (!shownFromCache) {
         refreshPage();
     } else {
-        document.getElementById("refreshBtn")
-            .disabled = false;
+        document.getElementById("refreshBtn").disabled = false;
     }
 });
 </script>
